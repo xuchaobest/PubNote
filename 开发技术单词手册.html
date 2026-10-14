@@ -134,18 +134,33 @@ body{
 .entry-head{
   width:100%;display:grid;
   grid-template-columns:42px minmax(150px,214px) 128px 1fr 22px;
-  align-items:baseline;gap:16px;
-  padding:15px 10px 15px 0;background:none;border:0;
+  align-items:baseline;gap:14px;
+  padding:9px 10px 9px 0;background:none;border:0;
   font:inherit;color:inherit;text-align:left;cursor:pointer;
 }
 .entry-head:hover{background:var(--surface)}
 .entry-head:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
 .idx{font-family:var(--mono);font-size:11.5px;color:var(--ink-3)}
+.hw{min-width:0}
 .hw .w{
   display:block;font-family:var(--serif);font-weight:600;
-  font-size:21.5px;line-height:1.25;letter-spacing:-.01em;
+  font-size:20px;line-height:1.2;letter-spacing:-.01em;
 }
-.hw .ph{display:block;font-family:var(--mono);font-size:11.5px;color:var(--ink-3);margin-top:3px}
+.hw .pl{display:flex;align-items:center;gap:6px;margin-top:2px}
+.hw .ph{font-family:var(--mono);font-size:11px;color:var(--ink-3);line-height:1.4}
+.say{
+  flex:none;width:20px;height:20px;border-radius:6px;
+  display:inline-flex;align-items:center;justify-content:center;
+  color:var(--ink-3);cursor:pointer;transition:color .15s,background .15s;
+}
+.say:hover{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,transparent)}
+.say:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.say svg{width:13px;height:13px}
+.say .wv{opacity:.5}
+.say.playing{color:var(--accent)}
+.say.playing .wv{animation:wave .85s ease-in-out infinite}
+.say.playing .wv2{animation-delay:.28s}
+@keyframes wave{0%,100%{opacity:.15}50%{opacity:1}}
 .tag{display:inline-flex;align-items:center;gap:7px;font-size:12px;color:var(--ink-2)}
 .tag .dot{width:7px;height:7px;border-radius:50%;flex:none}
 .tag[data-t="dart"] .dot{background:var(--t-dart)}
@@ -163,7 +178,7 @@ mark{background:color-mix(in srgb,var(--accent) 16%,transparent);color:inherit;p
 .entry-body{display:grid;grid-template-rows:0fr;transition:grid-template-rows .3s cubic-bezier(.4,0,.2,1)}
 .entry.open .entry-body{grid-template-rows:1fr}
 .entry-body>.inner{overflow:hidden}
-.body-pad{padding:2px 10px 26px 58px;max-width:74ch}
+.body-pad{padding:2px 10px 20px 58px;max-width:74ch}
 
 .sec{margin:0 0 15px}
 .sec h4{margin:0 0 5px;font-size:12px;font-weight:500;color:var(--ink-3);letter-spacing:.02em}
@@ -210,10 +225,11 @@ table.vs strong{color:var(--ink);font-weight:600}
   .masthead{padding:36px 0 22px}
   .entry-head{
     grid-template-columns:32px 1fr 20px;grid-template-areas:"idx hw chev" "short short short" "tag tag tag";
-    gap:6px 12px;padding:14px 4px 14px 0;align-items:center;
+    gap:6px 12px;padding:9px 4px 9px 0;align-items:center;
   }
   .idx{grid-area:idx;align-self:start;padding-top:4px;font-size:12px}
-  .hw .ph{font-size:12.5px}
+  .hw .ph{font-size:12px}
+  .say{width:26px;height:26px}
   .hw{grid-area:hw}
   .tag{grid-area:tag;margin-top:2px}
   .short{grid-area:short}
@@ -238,7 +254,7 @@ table.vs strong{color:var(--ink);font-weight:600}
     <div class="meta">
       <span>收录 <b id="m-total">0</b> 条</span>
       <span>分类 <b>6</b> 个</span>
-      <span>更新 <b>2026-09-28</b></span>
+      <span>更新 <b>2026-10-14</b></span>
     </div>
   </header>
 
@@ -512,7 +528,7 @@ WORDS.push(
  ex:[["Write a migration before changing the table schema.","改表结构前先写一条迁移。"]],
  deriv:"migrate v. 迁移"},
 
-{w:"reduce / reducer",ph:"/rɪˈdjuːs/ · /rɪˈdjuːsə(r)/",pos:"v./n.",tag:"general",
+{w:"reduce / reducer",say:"reduce reducer",ph:"/rɪˈdjuːs/ · /rɪˈdjuːsə(r)/",pos:"v./n.",tag:"general",
  short:"reduce 归约：把一组值压缩成一个结果；reducer 执行归约的函数",
  def:["**reduce**：把集合里的元素逐个合并，最终得到一个值（求和、拼接、聚合都靠它）。","**reducer**：执行归约的那个函数，在 Redux / 状态管理里就是「根据旧状态与动作算出新状态」的纯函数。"],
  uses:["reduce(list, initial) 归约计算","reducer(state, action) 状态处理函数"],
@@ -680,7 +696,7 @@ WORDS.push(
  vs:[["resume","中断后接着跑"],["restart","从头重新开始"],["restore","还原数据或状态，不是继续运行"]],
  tip:"拼写相同的名词 resume /ˈrezjumeɪ/ 是「简历」，重音和读音都不一样，技术文档里基本只取「恢复」义。"},
 
-{w:"CPS",ph:"Continuation-Passing Style",pos:"n.",tag:"async",
+{w:"CPS",say:"C P S",ph:"Continuation-Passing Style",pos:"n.",tag:"async",
  short:"续体传递风格：把「后续要执行的代码」当参数传进去",
  def:["全称 **Continuation-Passing Style**，三个词：Continuation 续体 + Passing 传递 + Style 风格。","普通函数靠 return 把结果交回调用者；CPS 把后面还没执行的逻辑包装成续体参数传进去，等异步完成再调用它。"],
  uses:["CPS transformation CPS 变换","continuation: Continuation<T> 续体参数"],
@@ -746,7 +762,7 @@ WORDS.push(
  uses:["senior engineer 高级工程师","senior architect 资深架构师","senior colleague 老同事"],
  ex:[["She is a senior mobile developer on the team.","她是团队里的资深移动端开发。"]]},
 
-{w:"ANR",ph:"Application Not Responding",pos:"n.",tag:"android",
+{w:"ANR",say:"A N R",ph:"Application Not Responding",pos:"n.",tag:"android",
  short:"应用无响应：主线程被卡住太久，系统弹窗",
  def:["全称 **Application Not Responding**。系统发现**主线程长时间无法响应用户输入**，就弹出「等待 / 关闭应用」。","判定阈值：按键触摸事件约 5 秒、广播 onReceive 约 10 秒、前台服务约 20 秒。"],
  uses:["ANR dialog 无响应弹窗","main thread blocked 主线程阻塞","trace 分析 ANR 日志"],
@@ -821,21 +837,21 @@ WORDS.push(
  deriv:"shrinkage n. 收缩量；shrinkable adj. 可收缩的",
  vs:[["shrink","尺寸、体积变小"],["reduce","泛指数量或大小降低"],["compress","编码压缩，如压缩文件"]]},
 
-{w:"GMA",ph:"Google Mobile Ads",pos:"n.",tag:"dart",
+{w:"GMA",say:"G M A",ph:"Google Mobile Ads",pos:"n.",tag:"dart",
  short:"Google 移动广告 SDK 的缩写",
  def:["移动端语境下默认指 **Google Mobile Ads**，Flutter 里对应 google_mobile_ads 包。","用来接入开屏、插屏、激励视频和横幅广告。"],
  uses:["GMA SDK 谷歌移动广告 SDK","GMA rewarded ad 激励广告","GMA banner ad 横幅广告","GMA interstitial ad 插屏广告"],
  ex:[["We integrated the GMA SDK to show rewarded ads.","我们集成了 GMA SDK 来展示激励广告。"]],
  vs:[["GMA","移动端默认指谷歌移动广告"],["其他含义","Global Media Alliance 等，按上下文区分"]]},
 
-{w:"UI / UX / UE",ph:"User Interface / User Experience",pos:"n.",tag:"general",
+{w:"UI / UX / UE",say:"U I, U X, U E",ph:"User Interface / User Experience",pos:"n.",tag:"general",
  short:"界面 / 体验 / 体验（UX 的旧写法）",
  def:["**UI = User Interface**：界面长什么样，管配色、图标、布局、字体与间距。","**UX = User Experience**：用起来怎么样，管流程、交互、反馈与容错；UI 只是 UX 的一部分。","**UE** 是 UX 的旧写法，如今统一写 UX；别和 UE5（虚幻引擎）混淆。"],
  uses:["UI designer 界面设计师","UX flow 体验流程","UED 用户体验设计部门"],
  ex:[["UI is part of UX, not a synonym.","UI 是 UX 的一部分，不是同义词。"]],
  vs:[["UI","视觉界面长什么样"],["UX","整体体验与流程"],["UED","做体验设计的部门或岗位"]]},
 
-{w:"UUID",ph:"/ˌjuː juː aɪ ˈdiː/",pos:"n.",tag:"backend",
+{w:"UUID",say:"U U I D",ph:"/ˌjuː juː aɪ ˈdiː/",pos:"n.",tag:"backend",
  short:"通用唯一标识符：128 位的全局唯一 ID",
  def:["128 位的唯一标识，UUIDv4 是 36 位字符串（含 4 个连字符）。","完全无序，做主键时索引性能差；建议去掉连字符按 CHAR(32) 存储。"],
  uses:["UUIDv4 随机版本","去掉横杠得 32 位字符串","CHAR(32) 固定长度存储"],
@@ -850,7 +866,7 @@ WORDS.push(
  vs:[["Snowflake","有序递增，索引友好"],["数据库自增","连续，易被遍历，分布式下不好用"],["号段模式","批量预取，适合高并发"]],
  tip:"两个坑：服务器时间回拨会生成重复 ID，要做回拨检测；多实例部署时机器 ID 必须唯一。"},
 
-{w:"MD5",ph:"/ˌem diː ˈfaɪv/",pos:"n.",tag:"backend",
+{w:"MD5",say:"M D five",ph:"/ˌem diː ˈfaɪv/",pos:"n.",tag:"backend",
  short:"摘要算法：输出 128 位，即 32 位十六进制字符串",
  def:["哈希摘要算法，输出**固定的 32 位十六进制字符串**，不可逆。","适合做签名与完整性校验，**不适合充当业务主键**：有碰撞风险，而且完全无序。"],
  uses:["32 位 hex 字符串","签名与校验","不适合做主键"],
@@ -879,7 +895,7 @@ WORDS.push(
  ex:[["Please check this official document.","请查看这份官方文档。"]],
  deriv:"documentation n. 文档（集合）；documented adj. 有文档记录的"},
 
-{w:"API",ph:"/ˌeɪ piː ˈaɪ/",pos:"n.",tag:"backend",
+{w:"API",say:"A P I",ph:"/ˌeɪ piː ˈaɪ/",pos:"n.",tag:"backend",
  short:"应用程序接口：程序之间约定的调用入口",
  def:["全称 **Application Programming Interface**，一套约定好的调用方式。","前端调后端、SDK 对外提供能力，都要经过 API。"],
  uses:["API definition 接口定义","API endpoint 接口地址","REST API / GraphQL API"],
@@ -960,7 +976,7 @@ WORDS.push(
  ex:[["Run a release build before submitting.","提交前跑一次正式构建。"]],
  deriv:"builder n. 构建器；build.gradle 构建脚本"},
 
-{w:"SDK",ph:"/ˌes diː ˈkeɪ/",pos:"n.",tag:"general",
+{w:"SDK",say:"S D K",ph:"/ˌes diː ˈkeɪ/",pos:"n.",tag:"general",
  short:"软件开发工具包",
  def:["全称 **Software Development Kit**：把一套工具、接口和文档打包给你接入。","广告 SDK、支付 SDK、地图 SDK 都是这个套路。"],
  uses:["SDK version SDK 版本","integrate the SDK 接入 SDK","SDK upgrade SDK 升级"],
@@ -1045,12 +1061,37 @@ function secBody(e){
 
 const CHEV='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>';
 
+/* ===== 美式发音：Web Speech API 合成，无需音频文件，自动覆盖全部词条 ===== */
+const synth=('speechSynthesis' in window)?window.speechSynthesis:null;
+let voices=[];
+function loadVoices(){try{voices=synth.getVoices();}catch(e){}}
+if(synth){loadVoices();synth.onvoiceschanged=loadVoices;}
+function pickUSVoice(){
+  if(!voices.length) return null;
+  const us=voices.filter(v=>v.lang&&v.lang.toLowerCase().indexOf('en-us')===0);
+  return (us.find(v=>/google|samantha|aria|jenny|zira|siri|alex|allison|ava|karen/i.test(v.name))||us[0]||null);
+}
+function speakWord(text,el){
+  if(!synth) return;
+  synth.cancel();
+  const u=new SpeechSynthesisUtterance(text);
+  u.lang='en-US';
+  const v=pickUSVoice();
+  if(v) u.voice=v;
+  u.rate=0.92;
+  const done=()=>{if(el)el.classList.remove('playing');};
+  u.onend=done;u.onerror=done;
+  if(el)el.classList.add('playing');
+  synth.speak(u);
+}
+const SAY_ICON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H2v6h4l5 4V5Z"/><path class="wv" d="M15 9.5a4.2 4.2 0 0 1 0 5"/><path class="wv wv2" d="M17.5 7a8 8 0 0 1 0 10"/></svg>';
+
 function rowHTML(e,i){
   const on=state.open.has(e.w);
   return '<article class="entry'+(on?' open':'')+'" data-i="'+i+'" data-l="'+initial(e)+'">'
     +'<button class="entry-head" type="button" aria-expanded="'+on+'" aria-controls="body-'+i+'">'
     +'<span class="idx">'+PAD(i+1)+'</span>'
-    +'<span class="hw"><span class="w">'+hl(e.w)+'</span><span class="ph">'+esc(e.ph)+(e.pos?' · '+esc(e.pos):'')+'</span></span>'
+    +'<span class="hw"><span class="w">'+hl(e.w)+'</span><span class="pl"><span class="ph">'+esc(e.ph)+(e.pos?' · '+esc(e.pos):'')+'</span><span class="say" role="button" tabindex="0" aria-label="播放 '+esc(e.w)+' 的美式发音" title="播放美式发音">'+SAY_ICON+'</span></span></span>'
     +'<span class="tag" data-t="'+e.tag+'"><span class="dot"></span>'+TAGNAME[e.tag]+'</span>'
     +'<span class="short">'+hl(e.short)+'</span>'
     +'<span class="chev">'+CHEV+'</span>'
@@ -1074,6 +1115,11 @@ function render(){
     list.innerHTML='<div class="empty"><p class="big">没有匹配的词条</p><p>换个关键词，或者点「全部」看完整词库。</p></div>';
   }else{
     list.innerHTML=rows.map(({e,i})=>rowHTML(e,i)).join('');
+    list.querySelectorAll('.say').forEach(btn=>{
+      btn.addEventListener('keydown',ev=>{
+        if(ev.key==='Enter'||ev.key===' '){ev.preventDefault();ev.stopPropagation();btn.click();}
+      });
+    });
   }
   countEl.textContent='结果 '+rows.length+' / '+WORDS.length+' 条';
   // 字母索引
@@ -1102,6 +1148,13 @@ function render(){
 
 /* ===== 事件 ===== */
 list.addEventListener('click',ev=>{
+  const say=ev.target.closest('.say');
+  if(say){
+    ev.stopPropagation();
+    const e=WORDS[+say.closest('.entry').dataset.i];
+    speakWord(e.say||e.w,say);
+    return;
+  }
   const head=ev.target.closest('.entry-head');
   if(!head) return;
   const art=head.closest('.entry');
