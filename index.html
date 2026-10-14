@@ -511,6 +511,16 @@ const PAGES = [
     badge: ""
   },
   {
+    file: "Flutter vs OC：内存管理与混合开发性能优化对照手册.html",
+    title: "Flutter vs OC：内存管理与混合开发性能优化对照手册",
+    desc: "Flutter 与 Objective-C 双端对照：内存管理机制、混合开发架构与性能优化实践对比。",
+    cat: "Flutter",
+    tags: ["OC", "内存管理", "性能优化", "对照"],
+    date: "2026-10-14",
+    size: "53 KB",
+    badge: ""
+  },
+  {
     file: "iOS资深开发岗完全学习手册.html",
     title: "iOS 资深开发岗完全学习手册",
     desc: "OC / Swift / Flutter / 后端多栈覆盖的资深岗学习手册，含底层原理与高频面试体系。",
@@ -604,7 +614,7 @@ function renderGrid(){
     let span = "";
     if (list.length === 1) span = "card--full";
     else if (list.length >= 7 && p.featured) span = "card--lg";
-    else if (list.length >= 7 && i >= list.length - 2) span = "card--md";
+    else if (list.length === 7 && i >= list.length - 2) span = "card--md";
     else if (list.length === 2 || list.length === 4) span = "card--md";
     return `
     <a class="card ${span}" href="${esc(encodeURI(p.file))}" aria-label="打开：${esc(p.title)}">
