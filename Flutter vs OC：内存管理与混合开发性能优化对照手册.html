@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Flutter vs OC：内存管理与混合开发性能优化对照手册</title>
+<style>
+:root{--bg:#f7f8fc;--sf:#fff;--fg:#1d1d1f;--fg2:#636366;--bd:#d8d8dc;--ac:#007aff;--oc:#ff6b00;--fl:#007aff;--cbg:#f2f2f7;--code:#2c2c2e;--ok:#34c759;--warn:#ff9f0a;--err:#ff3b30;--sh:0 1px 3px rgba(0,0,0,.08);--r:10px}
+[data-theme="dark"]{--bg:#000;--sf:#1c1c1e;--fg:#f2f2f7;--fg2:#8e8e93;--bd:#38383a;--ac:#0a84ff;--cbg:#2c2c2e;--code:#1c1c1e;--sh:0 1px 3px rgba(0,0,0,.4)}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:64px}
+body{margin:0;font:13.5px/1.65 -apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--fg)}
+#progress{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--oc),var(--fl));z-index:9999;width:0;transition:width .1s}
+header{position:sticky;top:0;z-index:100;background:var(--sf);border-bottom:1px solid var(--bd);backdrop-filter:saturate(180%) blur(12px);background:rgba(255,255,255,.85)}
+[data-theme="dark"] header{background:rgba(28,28,30,.85)}
+.hdr{max-width:1200px;margin:0 auto;padding:8px 16px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.hdr h1{font-size:15px;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hdr input{flex:1;min-width:120px;padding:6px 10px;border-radius:8px;border:1px solid var(--bd);background:var(--cbg);color:var(--fg);font-size:13px}
+.btns{display:flex;gap:6px;flex-wrap:wrap}
+.btn{padding:5px 11px;border-radius:8px;border:1px solid var(--bd);background:var(--sf);color:var(--fg);font-size:12px;cursor:pointer;white-space:nowrap;user-select:none}
+.btn:hover{border-color:var(--ac);color:var(--ac)}
+.btn.active{background:var(--ac);color:#fff;border-color:var(--ac)}
+.wrap{max-width:1200px;margin:0 auto;display:flex;gap:16px;padding:12px 16px}
+nav{width:200px;flex-shrink:0;position:sticky;top:52px;align-self:flex-start;max-height:calc(100vh - 64px);overflow-y:auto;background:var(--sf);border-radius:var(--r);border:1px solid var(--bd);padding:8px 0;box-shadow:var(--sh)}
+nav a{display:block;padding:4px 14px;color:var(--fg2);text-decoration:none;font-size:12.5px;border-left:3px solid transparent}
+nav a:hover{color:var(--fg);background:var(--cbg)}
+nav a.on{color:var(--ac);border-left-color:var(--ac);font-weight:600}
+main{flex:1;min-width:0}
+.sec{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);margin-bottom:12px;box-shadow:var(--sh);overflow:hidden}
+.sec-h{padding:10px 14px;font-weight:700;font-size:14px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;user-select:none}
+.sec-h:hover{background:var(--cbg)}
+.sec-h .tag{font-size:11px;font-weight:400;color:var(--fg2);margin-left:8px}
+.sec-b{padding:0 14px 14px;display:grid;gap:10px}
+.sec-b.hide{display:none}
+h3{font-size:13.5px;margin:8px 0 4px;color:var(--fg)}
+p{margin:4px 0}
+table{width:100%;border-collapse:collapse;font-size:12.5px;margin:6px 0}
+th,td{border:1px solid var(--bd);padding:5px 8px;text-align:left;vertical-align:top}
+th{background:var(--cbg);font-weight:600;position:sticky;top:52px}
+.oc-col{border-left:3px solid var(--oc)!important}
+.fl-col{border-left:3px solid var(--fl)!important}
+body.focus-oc .fl-col{opacity:.25}body.focus-fl .oc-col{opacity:.25}
+body.focus-oc .fl-only,body.focus-fl .oc-only{display:none}
+.legend{display:flex;gap:12px;font-size:12px;color:var(--fg2);flex-wrap:wrap;margin:4px 0}
+.legend span::before{content:"";display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:4px;vertical-align:middle}
+.l-oc::before{background:var(--oc)}.l-fl::before{background:var(--fl)}.l-stk::before{background:#5856d6}.l-heap::before{background:#ff2d55}.l-ext::before{background:#af52de}.l-ro::before{background:#34c759}.l-map::before{background:#64d2ff}
+.badge{display:inline-block;padding:1px 7px;border-radius:99px;font-size:11px;font-weight:600}
+.b-oc{background:#fff3e6;color:#c44d00}.b-fl{background:#e6f0ff;color:#0055cc}
+[data-theme="dark"] .b-oc{background:#3a2400;color:#ff9f4d}[data-theme="dark"] .b-fl{background:#001a3a;color:#6db3ff}
+.mem{display:inline-block;padding:2px 8px;border-radius:6px;font-size:11.5px;cursor:pointer;border:1px solid var(--bd);background:var(--cbg);margin:1px}
+.tabs{display:flex;gap:4px;flex-wrap:wrap;border-bottom:1px solid var(--bd);padding:0 14px;background:var(--cbg)}
+.tab{padding:7px 12px;font-size:12.5px;cursor:pointer;border-bottom:2px solid transparent;color:var(--fg2);user-select:none}
+.tab:hover{color:var(--fg)}.tab.on{color:var(--ac);border-bottom-color:var(--ac);font-weight:600}
+.tp{display:none;padding:12px 14px}.tp.on{display:block}
+pre{background:var(--code);color:#f2f2f7;padding:10px;border-radius:8px;overflow-x:auto;font-size:12.5px;line-height:1.5;position:relative;margin:6px 0}
+pre code{font-family:"SF Mono",Menlo,monospace}
+.cp{position:absolute;top:6px;right:6px;padding:3px 8px;border-radius:6px;border:none;background:rgba(255,255,255,.15);color:#fff;font-size:11px;cursor:pointer}
+.cp:hover{background:rgba(255,255,255,.3)}
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;align-items:center;justify-content:center}
+.modal-bg.show{display:flex}
+.modal{background:var(--sf);border:1px solid var(--bd);border-radius:14px;padding:18px;max-width:520px;width:92%;max-height:80vh;overflow-y:auto;box-shadow:0 12px 40px rgba(0,0,0,.25)}
+.modal h4{margin-top:0}
+.kbd{background:var(--cbg);border:1px solid var(--bd);border-radius:4px;padding:1px 5px;font-size:11px;font-family:monospace}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:860px){
+nav{display:none;position:fixed;left:0;top:50px;bottom:0;z-index:150;width:220px;border-radius:0;border-right:1px solid var(--bd);box-shadow:4px 0 20px rgba(0,0,0,.15)}
+nav.open{display:block}
+.grid2{grid-template-columns:1fr}
+.hdr h1 span{display:none}
+}
+#menuBtn{display:none}
+@media(max-width:860px){#menuBtn{display:inline-flex}}
+.backtop{position:fixed;right:16px;bottom:16px;width:38px;height:38px;border-radius:50%;background:var(--ac);color:#fff;border:none;font-size:18px;cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,.25);display:none;z-index:90}
+.backtop.show{display:flex;align-items:center;justify-content:center}
+.dim{color:var(--fg2);font-size:12px}
+ul{margin:4px 0;padding-left:18px}li{margin:2px 0}
+.note{background:var(--cbg);border-left:3px solid var(--ac);padding:6px 10px;border-radius:0 8px 8px 0;font-size:12.5px;margin:6px 0}
+.warn{border-left-color:var(--warn)}.err{border-left-color:var(--err)}
+</style>
+</head>
+<body>
+<div id="progress"></div>
+<header>
+<div class="hdr">
+<button class="btn" id="menuBtn" onclick="document.getElementById('nav').classList.toggle('open')">☰ 目录</button>
+<h1>Flutter vs OC <span>内存管理与混合开发性能优化对照手册</span></h1>
+<input id="q" placeholder="搜索章节 / 表格内容…（如 String、GC、Channel）" oninput="filter()">
+<div class="btns">
+<button class="btn active" data-m="all" onclick="focusMode('all',this)">全部</button>
+<button class="btn" data-m="oc" onclick="focusMode('oc',this)">只看 OC</button>
+<button class="btn" data-m="fl" onclick="focusMode('fl',this)">只看 Flutter</button>
+<button class="btn" onclick="toggleTheme()">🌗 主题</button>
+<button class="btn" onclick="expandAll()">± 展开</button>
+</div>
+</div>
+</header>
+<div class="wrap">
+<nav id="nav"></nav>
+<main id="main"></main>
+</div>
+<button class="backtop" id="bt" onclick="scrollTo({top:0})">↑</button>
+<div class="modal-bg" id="mbg" onclick="if(event.target===this)closeM()">
+<div class="modal" id="mbox"><h4 id="mt"></h4><div id="mc"></div><p class="dim" style="margin-top:10px">点击空白处关闭</p></div>
+</div>
+
+<script>
+/* ===== 数据 ===== */
+const S=[
+{id:"arch",t:"一、三层架构与双线程模型（先建立坐标系）",c:`<div class="legend"><span class="l-oc">OC/iOS</span><span class="l-fl">Flutter</span></div>
+<p>OC 的世界是「单线程 RunLoop + 主队列 + 系统框架」，内存由 ARC 在编译期插入 retain/release 管理；Flutter 则是三层结构 + 两条渲染线程 + 独立 GC，理解这一层差异，后面所有对照才有落点。</p>
+<table><tr><th class="oc-col">维度</th><th class="fl-col">Flutter / Dart</th><th class="oc-col">OC / iOS</th></tr>
+<tr><td class="oc-col">分层</td><td class="fl-col"><b>Framework</b>(Dart, Widget/RenderObject/Element) → <b>Engine</b>(C++, Skia/Impeller, txt, dart_ui) → <b>Embedder</b>(平台层，iOS 的 FlutterEngine/FlutterViewController)</td><td class="oc-col">UIKit/AppKit(Framework) → CoreFoundation/CoreGraphics(系统库) → XNU 内核</td></tr>
+<tr><td class="oc-col">执行线程</td><td class="fl-col"><b>UI Task Runner</b>(Dart 单线程事件循环) + <b>Raster Task Runner</b>(GPU 命令提交) + Platform Task Runner + IO Task Runner(图片解码等)</td><td class="oc-col">主线程 RunLoop + 若干 GCD 队列；渲染由 CA Commit 交给 render server 进程</td></tr>
+<tr><td class="oc-col">并发单元</td><td class="fl-col"><b>Isolate</b>：各自独立堆、独立 GC、不共享对象（只有 SendPort 消息传递，深拷贝/转移语义）</td><td class="oc-col">线程共享同一堆，靠锁/原子/GCD 屏障保证安全；对象可跨线程持有（需注意线程安全与 weak 悬挂）</td></tr>
+<tr><td class="oc-col">内存管理者</td><td class="fl-col">分代垃圾回收器（新生代复制 + 老生代标记清扫/压缩），程序员管 <code>dispose()</code> 而非 release</td><td class="oc-col">ARC 编译期插入引用计数 + autoreleasepool，程序员管 strong/weak/unowned 与循环引用</td></tr>
+<tr><td class="oc-col">泄漏主因</td><td class="fl-col">忘记 dispose、长生命 StreamSubscription/Timer/AnimationController、闭包捕获 State、图片缓存不释放</td><td class="oc-col">retain cycle(block/self/delegate)、NSTimer 强引用 target、CF 对象未 CFRelease、僵尸对象</td></tr>
+</table>
+<div class="note">关键心智迁移：OC 里「对象何时释放」由引用计数决定，是确定性的；Flutter 里「Dart 对象何时释放」由 GC 决定，是非确定性的——但你必须<strong>确定性</strong>地释放非 Dart 资源（文件句柄、texture、native 侧代理），这就是 <code>dispose()</code> 存在的根本原因。</div>`},
+
+{id:"compile",t:"二、编译模式：为什么 Debug 下的内存和帧率都不可信",c:`<table><tr><th class="oc-col">模式</th><th class="fl-col">Dart 行为</th><th class="oc-col">OC 类比</th></tr>
+<tr><td class="oc-col">debug</td><td class="fl-col">JIT + 检查模式（assert、类型检查、边界检查全开）、未 tree-shake、未混淆、启用了大量诊断开销；GC 更频繁、内存占用明显偏高</td><td class="oc-col">Debug 编译（-O0），符号完整、无 LTO，同样不能代表真实性能</td></tr>
+<tr><td class="oc-col">profile</td><td class="fl-col">AOT、关闭 assert、保留 tracing（DevTools 可用）→ <b>性能测量的唯一正确模式</b></td><td class="oc-col">Release 但保留符号/Instruments 可用</td></tr>
+<tr><td class="oc-col">release</td><td class="fl-col">AOT + tree-shaking + 混淆 + 常量折叠；<code>const</code> 构造在编译期常驻只读区，零运行时分配</td><td class="oc-col">Release(-Oz)，Dead Code Elimination、LTO</td></tr>
+</table>
+<div class="note warn">⚠️ 常见误判：在 debug 下用 DevTools 看内存曲线并怀疑泄漏 —— 请先切 profile 复现。debug 模式下 Dart 堆的「锯齿」很大程度是诊断开销与 JIT 产生的临时对象。</div>`},
+
+{id:"layout",t:"三、内存分区对照地图（核心章节）",c:`<div class="legend"><span class="l-stk">栈</span><span class="l-heap">堆</span><span class="l-ext">外部内存</span><span class="l-ro">只读/常量</span><span class="l-map">mmap</span></div>
+<table><tr><th style="width:22%">区域</th><th class="oc-col">OC / iOS</th><th class="fl-col">Flutter / Dart VM</th><th>对照结论</th></tr>
+<tr><td class="oc-col"><b>代码区</b></td><td class="oc-col">Mach-O <code>__TEXT</code>（含 <code>__text</code>/<code>__const</code>），r-x 映射，ASLR 滑动</td><td class="fl-col">AOT snapshot 映射为 r-x 的 Code Space；JIT 下是可读写执行的 JIT 区</td><td>都是只读映射，不计入「堆内存」，但计入进程 RSS</td></tr>
+<tr><td class="oc-col"><b>全局/常量</b></td><td class="oc-col"><code>__DATA_CONST</code>、字符串常量区；<code>@"literal"</code> 编译期唯一、永不释放</td><td class="fl-col"><code>const</code> 对象（含 const String）编译期规范化(intern)，驻留在老生代/只读侧，整个 isolate 共享同一实例</td><td>OC 的 <code>NSString</code> 常量 ≈ Dart 的 <code>const</code> 字符串；Dart 的 <code>final x = "hi"</code> 仍是运行时对象</td></tr>
+<tr><td class="oc-col"><b>栈</b></td><td class="oc-col">每线程 1MB 级（主线程可配置），放局部变量、struct、IMP、block 初始体</td><td class="fl-col">每 isolate 独立 Dart 栈（增长式），放局部变量与 Smi（小整数直接存在栈/寄存器里，是标签指针）</td><td>Dart 的 int 在小值时根本不占堆 —— 这是与 NSNumber 最大的差异</td></tr>
+<tr><td class="oc-col"><b>堆</b></td><td class="oc-col">malloc zone / nano zone；ObjC 对象头 isa + 引用计数（inline 或 side table）</td><td class="fl-col"><b>新生代</b>(from/to 两个 semi-space，复制收集) + <b>老生代</b>(标记-清扫/压缩)；对象头含 class id、mark bit、hash</td><td>OC 无分代概念；Dart 没有「引用计数」，只有可达性</td></tr>
+<tr><td class="oc-col"><b>外部内存</b></td><td class="oc-col">CFData/CGImage backing store、mmap 的图像解码缓冲、Metal buffer</td><td class="fl-col"><code>Uint8List</code> 的 backing、<code>ImageDescriptor</code>、<code>Codec</code>、<code>File</code> 映射；单独计数，<b>不触发 GC 除非显式报告</b></td><td>这是 Flutter「Dart 堆很小但进程 RSS 很高」的头号原因，对应 OC 的 IOKit/图像缓冲</td></tr>
+<tr><td class="oc-col"><b>mmap</b></td><td class="oc-col">dyld 共享缓存、字体、大文件映射</td><td class="fl-col">引擎侧字体、asset、skia 缓存、texture 上传</td><td>两边都不受各自内存管理器管辖</td></tr>
+</table>`},
+
+{id:"arcgc",t:"四、原理 PK：ARC 引用计数 vs 分代 GC",c:`<div class="grid2">
+<div><h3><span class="badge b-oc">OC</span> ARC 的本质</h3>
+<ul>
+<li>编译器在<strong>编译期</strong>插入 retain/release/autorelease，运行时无 GC 停顿；释放是<b>确定性</b>的（最后一个强引用消失即 dealloc）。</li>
+<li>引用计数存于对象头（inline），被 weak 引用或散列时溢出到 <b>Side Table</b>（引用计数表 + weak 表）。</li>
+<li><code>__weak</code> 会被登记进 weak 表，对象 dealloc 时由 runtime 把所有 weak 指针<b>清零</b>（zeroing weak），所以访问 dangling weak 不会崩溃，只会得到 nil。</li>
+<li><code>__unsafe_unretained</code> 不登记 → 悬垂指针 → EXC_BAD_ACCESS（类似 Dart 里你手动保留了 native 句柄却没清）。</li>
+<li><code>autorelease</code>：放入当前 NSAutoreleasePool，pool drain 时统一 release；Runloop 每轮自动包一层 pool。注意「大批量循环创建临时对象」会导致 pool 内峰值暴涨 → 需手动 <code>@autoreleasepool {}</code>。</li>
+<li>循环引用：strong 环 → 永远不 dealloc。解法：weak/unowned、break cycle（delegate 用 weak、timer 用 proxy、block 用 weakSelf/strongSelf）。</li>
+<li>CF 对象（CoreFoundation）不受 ARC 管，需手动 CFRelease / 遵循 Create Rule。</li>
+</ul></div>
+<div><h3><span class="badge b-fl">Flutter</span> Dart GC 的本质</h3>
+<ul>
+<li><b>分代假设</b>：大多数对象朝生夕死。新生代用 <b>Semi-Space 复制</b>：from→to 只复制存活者，死亡者免费清空；存活且超过晋升年龄阈值的移入老生代。</li>
+<li>老生代：<b>三色标记-清扫</b>（必要时压缩），增量/并发标记以减少停顿；写屏障（Card Table + Remembered Set）保证跨代引用能被准确扫描——即「老对象指向新对象」的写入会被记录，避免每次全扫老生代。</li>
+<li>无引用计数 → 无循环引用问题（环不影响回收），但也意味着<b>释放时机不可预测</b>。</li>
+<li><b>External memory</b>（如图片解码缓冲）需对象自己向 GC 报告（<code>ExternalAllocatedMemory</code>），否则 GC 看不到真实压力，表现为「堆很小却 OOM」。</li>
+<li><code>Finalizer</code> / <code>NativeFinalizer</code>：对象被回收后回调，用于释放 native 侧资源（≈ OC 的 dealloc，但<b>时机不确定</b>，不能用来做时效性释放）。</li>
+<li>Isolate 间<b>不共享堆</b>，消息传递默认深拷贝；大消息可用 <code>SendPort.send(x, [x])</code> 转移语义（transferable）避免复制。</li>
+<li>GC 停顿的典型表现不是「内存涨」，而是<b>掉帧（jank）</b>——因为 GC 停在 UI 线程上跑。</li>
+</ul></div></div>
+<div class="note err">❗最重要的迁移结论：OC 里「我忘了 release」→ 内存单调涨（泄漏）；Flutter 里「我忘了 dispose」→ <b>内存未必涨很多，但会一直监听/一直重绘/一直持有 native 资源</b>，症状常是掉帧、回调重复触发、页面退出后还在发请求。两者表象完全不同。</div>`},
+
+{id:"types",t:"五、类型逐项对照：String / 标量 / 结构体 / 类 / 容器 / 闭包",c:`<div class="tabs" id="t1"></div><div id="p1"></div>`},
+
+{id:"matrix",t:"六、类型 → 内存位置 → 内存状态 矩阵",c:`<table><tr><th>Dart 实体</th><th>落在哪</th><th>谁负责回收</th><th>典型状态流转</th><th>OC 等价物</th></tr>
+<tr><td><code>int</code> 小值</td><td><span class="mem" data-d="Smi：31/63位标签指针，直接嵌在栈/寄存器/对象槽里，零堆分配">Smi</span></td><td>无需回收</td><td>常驻</td><td><code>NSInteger</code> / <code>int</code>（栈）</td></tr>
+<tr><td><code>int</code> 大值/Mint</td><td>老生代堆对象</td><td>GC</td><td>可达→标记→存活/清扫</td><td><code>NSNumber</code>（堆）</td></tr>
+<tr><td><code>double</code></td><td>堆对象（Double）</td><td>GC</td><td>同上</td><td><code>NSNumber</code> / <code>CGFloat</code></td></tr>
+<tr><td><code>bool</code></td><td><code>true</code>/<code>false</code> 是单例常量</td><td>永不回收</td><td>常驻</td><td><code>BOOL</code>（栈）+ <code>NSNumber bool</code></td></tr>
+<tr><td><code>String</code> const</td><td>只读/规范化区</td><td>永不回收</td><td>编译期唯一</td><td><code>@"literal"</code> 常量区</td></tr>
+<tr><td><code>String</code> 运行时</td><td>新生代 →（熬过几次 GC）→ 老生代</td><td>GC</td><td>新生→晋升→标记清扫</td><td><code>NSString</code> 堆对象</td></tr>
+<tr><td><code>List</code> 小</td><td>新生代（元素槽 inline）</td><td>GC</td><td>扩容时新建 backing → 旧 backing 变垃圾</td><td><code>NSArray</code> 堆 + 指针数组</td></tr>
+<tr><td><code>Uint8List</code></td><td>对象头在堆，<b>数据在外部内存</b></td><td>GC 回收头 + 外部内存报告</td><td>external alloc → finalize</td><td><code>NSData</code> backing / <code>CFData</code></td></tr>
+<tr><td>Widget(const)</td><td>只读，整棵树可共享</td><td>不回收</td><td>build 反复复用，零分配</td><td>无直接等价（最接近：静态常量 view 配置）</td></tr>
+<tr><td>State / StreamSubscription</td><td>老生代（长寿）</td><td>GC 可达性上「活着」→ 必须 <code>dispose</code></td><td>mounted→active→disposed→不可达→GC</td><td>ViewController 强持有链</td></tr>
+<tr><td>Closure 捕获变量</td><td>Context 对象（堆），逃逸出栈</td><td>GC</td><td>context chain 随 closure 存活</td><td>Block 从栈 <code>_NSConcreteStackBlock</code> 拷贝到堆 <code>_NSConcreteMallocBlock</code>，<code>__block</code> 变量搬到堆</td></tr>
+<tr><td>Platform Channel  pending reply</td><td>engine 侧 message queue + Dart Future</td><td>reply 后释放；长期 pending = 泄漏</td><td>send → await → complete</td><td>GCD async block 强捕获 self</td></tr>
+</table>`},
+
+{id:"lifecycle",t:"七、生命周期对照：UIViewController ↔ StatefulWidget",c:`<table><tr><th>OC / UIViewController</th><th>Flutter / State</th><th>内存含义</th></tr>
+<tr><td class="oc-col"><code>init(coder:)</code> / <code>loadView</code></td><td class="fl-col"><code>createState()</code> → <code>initState()</code>（只调用一次）</td><td>在这里创建 Controller/Listener/Subscription；相当于 <code>viewDidLoad</code> 前的初始化</td></tr>
+<tr><td class="oc-col"><code>viewDidLoad</code></td><td class="fl-col"><code>didChangeDependencies()</code>（InheritedWidget 变化会重复）</td><td>依赖就绪；注意它会<b>多次</b>调用，别在这里重复订阅</td></tr>
+<tr><td class="oc-col"><code>viewWillAppear/DidAppear</code></td><td class="fl-col">无精确等价；用 <code>WidgetsBindingObserver.didChangeAppLifecycleState</code> 或 <code>RouteAware</code></td><td>可见性 ≠ 存在性</td></tr>
+<tr><td class="oc-col"><code>viewWillDisappear</code></td><td class="fl-col"><code>deactivate()</code>（可能再挂载）</td><td>不要在这里释放资源</td></tr>
+<tr><td class="oc-col"><code>dealloc</code></td><td class="fl-col"><code>dispose()</code>（确定性的、你必须调 <code>super.dispose()</code>）</td><td>唯一的确定性释放点 —— 这就是 Flutter 里的 dealloc</td></tr>
+<tr><td class="oc-col"><code>didReceiveMemoryWarning</code></td><td class="fl-col"><code>ImageCache.clear()</code> / <code>evict()</code> 需自己响应</td><td>Flutter 没有系统级的内存警告回调到 widget，要自己监听</td></tr>
+</table>
+<h3>dispose() 必查清单（照抄成 Code Review checklist）</h3>
+<p><code>AnimationController</code> · <code>TextEditingController</code> · <code>ScrollController</code> · <code>FocusNode</code> · <code>ValueNotifier/ChangeNotifier</code>（removeListener）· <code>StreamSubscription.cancel()</code> · <code>Timer.cancel()</code> · <code>TickerProvider</code> · <code>ImageProvider.evict()</code>（大图）· channel method call 的 pending Future · <code>OverlayEntry.remove()</code> · 自定义 <code>RenderObject</code> 的 layer/listener</p>
+<div class="note warn">⚠️ 与 OC 的关键差别：<code>dispose()</code> 之后该 State 对象仍可能被 Dart 堆保留一段时间（GC 未跑），所以 <b>绝不能</b> 在 dispose 后使用 —— 用 <code>mounted</code> 守卫 setState，就像 OC 里用 <code>wouldDealloc</code> 或 weak-strong dance 守卫异步回调。</div>`},
+
+{id:"tools",t:"八、工具链映射：把 Instruments 的手感平移过去",c:`<table><tr><th>你要做的事</th><th class="oc-col">iOS / Instruments</th><th class="fl-col">Flutter / DevTools</th></tr>
+<tr><td class="oc-col">看对象分配与存活</td><td class="oc-col">Allocations（generation analysis、标记持久化）</td><td class="fl-col">DevTools → Memory → Take snapshot（对比两次快照找新增常驻）</td></tr>
+<tr><td class="oc-col">查泄漏</td><td class="oc-col">Leaks + Malloc Stack Logging + 循环引用图</td><td class="fl-col">Memory 快照 diff + <code>LeakTracker</code>（Flutter 内置泄漏追踪，可在测试中断言）</td></tr>
+<tr><td class="oc-col">野指针/僵尸</td><td class="oc-col">Zombies、Address Sanitizer</td><td class="fl-col">Dart 无野指针（GC）；但 native 侧插件仍会 → 开 ASan 测 iOS/Android host</td></tr>
+<tr><td class="oc-col">CPU/耗时</td><td class="oc-col">Time Profiler、os_signpost</td><td class="fl-col">CPU Profiler（采样）、Timeline（帧轨道：UI/Raster/Platform 三线）</td></tr>
+<tr><td class="oc-col">看进程内存构成</td><td class="oc-col"><code>vmmap</code>、Xcode Debug navigator、OSSignposter</td><td class="fl-col">DevTools Memory 的「External」、<code>dart:developer</code> service extension、<code>flutter run --profile</code> + Observatory</td></tr>
+<tr><td class="oc-col">看帧率/jank</td><td class="oc-col">Core Animation FPS、MetricKit</td><td class="fl-col">Performance Overlay（<code>showPerformanceOverlay</code>）、<code>--trace-skia</code>、jank 统计</td></tr>
+<tr><td class="oc-col">包体积</td><td class="oc-col">App Thinning Size Report、<code>ld -map</code></td><td class="fl-col"><code>flutter build ipa --analyze-size</code> / <code>apk</code> 同理</td></tr>
+</table>
+<pre><code># 常用命令
+flutter run --profile            # 性能测量必须 profile
+flutter run --profile --trace-skia
+flutter build apk --split-per-abi
+flutter build ipa --analyze-size # 体积拆解
+dart devtools                    # 本地打开 DevTools
+flutter pub deps                 # 依赖树，查多余 plugin</code><button class="cp" onclick="copy(this)">复制</button></pre>`},
+
+{id:"perf",t:"九、混合开发性能优化技术（9 大面板）",c:`<div class="tabs" id="t2"></div><div id="p2"></div>`},
+
+{id:"integration",t:"十、混合工程集成：引擎、通道、Platform View、路由",c:`<div class="tabs" id="t3"></div><div id="p3"></div>`},
+
+{id:"symptom",t:"十一、症状 → 根因 → 修法 速查",c:`<table><tr><th>症状</th><th>最可能的根因</th><th>验证手段</th><th>修法</th></tr>
+<tr><td>RSS 高但 Dart 堆小</td><td>外部内存：大图解码、Uint8List、Codec 未释放</td><td>Memory 面板看 External</td><td><code>cacheWidth/Height</code>、<code>ImageCache.maximumSize/maximumSizeBytes</code>、<code>evict()</code>、及时 dispose Codec</td></tr>
+<tr><td>内存锯齿 + 周期性掉帧</td><td>高频临时对象 → 新生代 GC 频繁</td><td>Timeline 看 GC 轨道 + 堆增长速率</td><td>build 内避免新建闭包/字面量集合、用 const、<code>ValueKey</code>、对象复用池</td></tr>
+<tr><td>退出页面内存不回</td><td>Subscription/Timer/Controller 未 dispose；channel 回调强捕获</td><td>快照 diff 找常驻 State</td><td>dispose 清单逐条核对 + LeakTracker</td></tr>
+<tr><td>列表滚动掉帧</td><td>build 过重、无 itemExtent、图片同步解码、隐式 saveLayer</td><td>Performance Overlay 看 UI>Raster 谁高</td><td>itemExtent/prototypeItem、<code>ListView.builder</code>、RepaintBoundary、降采样、去掉 shadow/blur</td></tr>
+<tr><td>UI 时间低但 Raster 高</td><td>GPU 侧过贵：overdraw、大 clip+blur、复杂 Path、texture 上传</td><td>GPU 视图 / <code>--trace-skia</code></td><td>RepaintBoundary 隔离动画、栅格缓存、简化图层、减少 opacity 嵌套</td></tr>
+<tr><td>首屏慢（白屏久）</td><td>引擎冷启动 + shader 编译 + 同步 channel 阻塞</td><td>Timeline 看 engine init / first frame</td><td>预热引擎、骨架屏、deferred loading、Baseline Profile、shader warm up</td></tr>
+<tr><td>跨端通信卡顿</td><td>每帧调用 MethodChannel、大 base64 传图、JSON 序列化在主线程</td><td>Timeline Platform 轨道</td><td>批量合帧、走 Texture、Pigeon 二进制 codec、计算挪到后台 isolate/native</td></tr>
+<tr><td>包体积暴增</td><td>每个 module 打一个 engine、未 tree-shake、重复 font/so</td><td><code>--analyze-size</code></td><td>engine group 共享、移除未用 plugin、R8/strip、资源分包</td></tr>
+</table>`},
+
+{id:"faq",t:"十二、FAQ（OC 开发者最常问的 10 个问题）",c:`<ol>
+<li><b>Dart 有没有 weak？</b> 有 <code>WeakReference</code>，但<b>非 zeroing 语义的保证较弱</b>，且不能用于普通变量的「防循环引用」（Dart 不需要防循环引用，GC 能收环）。它主要用于缓存键。真正需要的是 Finalizer 做 native 清理。</li>
+<li><b>要不要像 OC 那样把不用的对象置 nil？</b> 不需要。可达性决定一切，置 nil 只在「打破长生命容器的持有」时有意义（如清空 cache Map）。</li>
+<li><b>const 和 final 在内存上差多少？</b> 巨大。<code>const</code> 是编译期规范化的单例，零运行时分配；<code>final</code> 只是运行时不可变的堆对象。能用 const 就用 const（Widget 尤其）。</li>
+<li><b>Dart 有 struct 吗？</b> 没有值类型的 struct。Record（<code>(int,String)</code>）是值语义但实现上仍可能装箱；需要值语义 equality 时用 <code>freezed</code> 或自写 <code>==/hashCode</code>。这点与 Swift struct 完全不同，更接近「只有 class 的 Java」。</li>
+<li><b>String 的 substring 会拷贝吗？</b> Dart String 不可变且基于 UTF-16 code units，截取通常产生新 String（实现上可能共享，但不要依赖）；要注意 <code>length</code> 是 code unit 数而非字符数，emoji 要用 <code>runes</code> / <code>characters</code> 包 —— 这与 OC <code>NSString.length</code>（UTF-16 code unit）一致，与 Swift <code>String.count</code>（字形簇）不同。</li>
+<li><b>Isolate 能不能共享内存？</b> 一般不能。Dart 提供了 <code>Isolate.run()</code>（简便 API）和 <code>SendPort</code>；大数据用 transferable 避免拷贝。这比 GCD 的共享内存模型更像 Actor。</li>
+<li><b>为什么我的 dispose 写了还是泄漏？</b> 三种常见：① controller 被传给子 Widget 后由父 dispose，子又 dispose 一次（ ownership 不清）；② 匿名 closure 作为 listener 无法 remove（必须持引用）；③ native 侧（如 iOS 的 delegate/observer）没移除 → 用 WeakReference 思路在 native 侧破环。</li>
+<li><b>Flutter 里 autoreleasepool 的对应物是什么？</b> 没有完全对应的东西。最接近的是「避免在帧循环里制造临时对象」+ 让 GC 自己处理；若你在 native 侧桥接层批量创建 ObjC 对象，仍要在 native 侧包 <code>@autoreleasepool</code> —— 这一点很多人漏掉。</li>
+<li><b>release 包崩溃怎么定位？</b> <code>--split-debug-info</code> + <code>flutter symbolize</code>，类比 iOS dSYM + symbolicate。</li>
+<li><b>我应该先学什么？</b> 顺序建议：<code>Widget/Element/RenderObject</code> 三棵树 → <code>State</code> 生命周期与 dispose → <code>const/key/RepaintBoundary</code> 三类性能开关 → DevTools Timeline 读法 → Platform Channel。前三项解决 80% 的内存与卡顿问题。</li>
+</ol>`}
+];
+
+const TABS={t1:[
+["String","<table><tr><th class='oc-col'>NSString / NSMutableString</th><th class='fl-col'>Dart String</th></tr><tr><td class='oc-col'>堆对象，immutable；可变用 NSMutableString（注意作为 key 时被修改会破坏 NSDictionary 哈希）</td><td class='fl-col'>immutable，UTF-16 code unit 序列，<code>length</code>=code unit 数；<code>runes</code> 取码点；<code>characters</code> 包取字形簇</td></tr><tr><td class='oc-col'><code>characterSet</code>、<code>rangeOfString</code> 基于 UTF-16，emoji 代理对会劈开</td><td class='fl-col'><code>codeUnitAt(i)</code> 同理；<code>substring</code> 也按 code unit 索引</td></tr><tr><td class='oc-col'>@\"\" 常量在常量区，运行时 <code>stringWithFormat:</code> 产生堆对象</td><td class='fl-col'><code>const 'x'</code> 编译期规范化（intern）；<code>'a'+'b'</code> 编译期常量折叠；<code>'$v'</code> 插值产生新 String（有分配）</td></tr><tr><td class='oc-col'>substring 返回新对象，历史上可能共享 buffer（CFString 有 _contents）</td><td class='fl-col'>实现细节不可依赖，当作新分配；大量拼接用 <code>StringBuffer</code>（≈ NSMutableString，单次 grow 的 builder）</td></tr><tr><td class='oc-col'>编码转换：<code>NSEncoding</code> → <code>dataUsingEncoding:</code></td><td class='fl-col'><code>utf8.encode(s)</code> / <code>String.fromCharCodes</code>；与 native 传 JSON 字符串时注意 UTF-8 ↔ UTF-16 转码开销</td></tr></table>"],
+["标量与装箱","<table><tr><th class='oc-col'>OC</th><th class='fl-col'>Dart</th></tr><tr><td class='oc-col'><code>int/BOOL/CGFloat</code> 纯栈值；要进集合必须 <code>@(x)</code> 装箱成 <code>NSNumber</code>（堆对象）</td><td class='fl-col'><code>int</code> 小值是 <b>Smi</b>（标签指针，嵌在槽里，不分配堆）；溢出变 <code>Mint</code> 堆对象；<code>double</code> 是堆对象 <code>Double</code></td></tr><tr><td class='oc-col'><code>NSNumber</code> 有 tagged-integer 优化（某些值不分配）</td><td class='fl-col'><code>true/false/null</code> 是单例常量；<code>bool</code> 从不在堆上分配</td></tr><tr><td class='oc-col'>拆箱成本：<code>intValue</code> 虚方法调用</td><td class='fl-col'>拆箱几乎免费（类型测试 + 位移）；但 <code>double</code> ↔ <code>int</code> 转换在 tight loop 里有 measurable 成本</td></tr><tr><td class='oc-col'>指针/Unsafe：<code>void*</code>、<code>UnsafePointer</code></td><td class='fl-col'><code>dart:ffi</code> 的 <code>Pointer&lt;T&gt;</code>、<code>Struct</code>（真正的值类型布局，可对应 C struct）、<code>Array</code>；这块是 Dart 唯一「手动内存」区域，必须 <code>calloc.free</code> / 用 <code>arena</code></td></tr></table>"],
+["结构体 vs 值语义","<table><tr><th class='oc-col'>OC struct / Swift struct</th><th class='fl-col'>Dart（无 struct）</th></tr><tr><td class='oc-col'>值语义、栈分配、memcpy 传递、天然线程安全、可做字典 key（需 hash 自定义）</td><td class='fl-col'>只有 class（引用语义）+ record（值语义但实现细节不定）；要值语义需自写 <code>==/hashCode</code> 或用 <code>freezed</code> 生成</td></tr><tr><td class='oc-col'>Swift struct 大值会逃逸到堆（existential/泛型擦除时）</td><td class='fl-col'>record 在多数实现中仍装箱；因此「用 record 省内存」要实测，别当 Swift struct 用</td></tr><tr><td class='oc-col'>CGRect/CGSize 等几何类型是纯 struct，零分配</td><td class='fl-col'><code>Rect/Size/Offset</code> 是 <b>class</b>！但有 <code>const</code> 构造 → 用 <code>const Rect.fromLTRB(...)</code> 才能做到零分配；这是 Flutter 性能优化的第一习惯</td></tr></table>"],
+["类、继承、扩展","<table><tr><th class='oc-col'>OC 运行时</th><th class='fl-col'>Dart</th></tr><tr><td class='oc-col'>isa 指针 + class ro/rw、side table、category、method swizzle、associated object、KVC/KVO、NSProxy</td><td class='fl-col'>class id 在对象头；tree-shaking 会删掉未使用的类与方法；<b>无反射元数据全集</b>（<code>runtimeType</code> 仅在 debug/checked 可靠），生产环境别靠反射做 DI</td></tr><tr><td class='oc-col'>多继承无；protocol 是接口</td><td class='fl-col'>单继承 + <b>mixin</b>（线性化，with 顺序有意义）+ <b>interface</b>（implements）</td></tr><tr><td class='oc-col'>category 在运行时合并，同名方法覆盖（未定义行为风险）</td><td class='fl-col'><b>extension</b> 是<b>静态解析</b>的，不改 isa、不参与动态分发、不能加字段；等同于「命名空间工具函数」</td></tr><tr><td class='oc-col'>属性 = ivar + getter/setter，KVO 依赖 isa-swizzle</td><td class='fl-col'>字段直访（public field 常见，如 <code>widget.title</code>），getter/setter 是语法；无 KVO → 用 <code>ValueNotifier/ChangeNotifier/Stream</code> 替代</td></tr><tr><td class='oc-col'>nil 消息 = no-op（安全但易藏 bug）</td><td class='fl-col'>null 方法调用 = <code>NoSuchMethodError</code>（崩溃）；空安全在编译期消灭大部分 null 错误</td></tr></table>"],
+["容器","<table><tr><th class='oc-col'>NSArray/NSDictionary/NSSet</th><th class='fl-col'>List/Map/Set</th></tr><tr><td class='oc-col'>指针数组，存 ObjC 对象；<code>NSMutableArray</code> 扩容 realloc；强引用持有元素</td><td class='fl-col'><code>List</code> 是对象，growable 有 capacity，扩容约 2× 重建 backing；<code>List.filled/fixed</code> 可定长</td></tr><tr><td class='oc-col'>值类型放进去必须装箱</td><td class='fl-col'>类型化数组 <code>Int32List/Float64List/Uint8List</code>：<b>连续内存 + 外部 backing</b>，与 FFI/native 交互、图片像素、音频缓冲的唯一正确选择（≈ <code>malloc</code> 的那块）</td></tr><tr><td class='oc-col'>枚举遍历用 for-in（NSFastEnumeration）</td><td class='fl-col'>for-in 有 iterator 分配；hot loop 用普通 for 或 <code>forEach</code> 实测；<code>.map().toList()</code> 链式会产生中间 List</td></tr><tr><td class='oc-col'>NSDictionary key 需 <code>copy/hash/isEqual:</code></td><td class='fl-col'>Map key 用 <code>hashCode/==</code>；自定义类做 key 必须重写两者，否则按身份（地址）判等 —— 这是 OC 开发者最常踩的坑之一</td></tr></table>"],
+["闭包与捕获","<table><tr><th class='oc-col'>Block</th><th class='fl-col'>Closure</th></tr><tr><td class='oc-col'>初始在栈（<code>_NSConcreteStackBlock</code>），异步传递需 copy 到堆；<code>__block</code> 变量搬到堆并可写</td><td class='fl-col'>捕获变量打包成 <b>Context 对象</b>（堆），多个 closure 共享同一 context；无「栈 block」概念，closure 天生可逃逸</td></tr><tr><td class='oc-col'>循环引用：block 强捕获 self → weakSelf/strongSelf</td><td class='fl-col'>closure 捕获的是<b>变量本身</b>（可写），捕获 <code>this</code>/State 会延长其寿命 → 用局部变量快照值、或在 dispose 里 cancel；没有 weak-capture 语法</td></tr><tr><td class='oc-col'><code>dispatch_async</code> 一次性的捕获很便宜</td><td class='fl-col'>每帧新建 closure（如 <code>ListView.builder</code> 内 <code>onTap: ()=&gt;...</code>）会产生大量短期对象 → 新生代压力；抽成成员方法或用 const 回调</td></tr></table>"]
+],
+t2:[
+["① 度量先行","<p>所有优化必须先回答「瓶颈在哪条轨道」。Flutter 一帧的预算 16.6ms 分属三条轨道，互不借用：</p><ul><li><b>UI 线程高</b> → build/layout 过重、GC、序列化、同步 channel 调用</li><li><b>Raster 线程高</b> → GPU 侧：saveLayer、阴影、模糊、overdraw、texture 上传</li><li><b>Platform 线程高</b> → 原生侧工作、channel 编解码、Platform View 合成</li></ul><p>判定法：开 Performance Overlay，看 UI 线（绿色）与 Raster 线（橙色）谁顶到 16ms 线；再用 Timeline 展开具体函数。OC 经验里「 Instruments Time Profiler 看自时间占比」的思路完全通用。</p><div class='note'>⚠️ 切记：profile 模式测量，debug 模式的数字没有可比性。</div>"],
+["② 启动与首帧","<ul><li><b>引擎冷启动</b>是最贵的部分（isolate 创建 + snapshot 映射 + shader 编译）。iOS Add-to-App 应<b>提前预热一个共享引擎</b>（engine group），避免首次 push 时才创建。</li><li><b>Shader 预热</b>：Impeller/Skia 首次遇到某绘制路径要编译 shader → 首屏滚动卡顿。解法：录制 shader warm-up（<code>flutter build ios --bundle-sksl-path</code> / Impeller 的 shader library 打包），把常见动画路径跑一遍固化。</li><li><b>Deferred loading</b>：<code>import 'x.dart' deferred as x</code> 延迟加载大模块，减小启动 snapshot 与初始内存；代价是首次使用时有一次异步加载抖动，适合次级页面。</li><li><b>Android</b>：Baseline Profile（生成后加速类验证/JIT 路径）、App Startup 库延迟初始化 plugin、R8 去无用类。</li><li><b>iOS</b>：减少 launch 到 first frame 之间的同步 channel 调用（每一个 <code>invokeMethod</code> 都要跨线程往返）；把必要配置改成异步 + 骨架屏占位。</li><li><b>骨架屏</b>：用纯 const Widget 画占位，零内存开销且能掩盖引擎启动时间 —— 这是性价比最高的启动优化。</li></ul>"],
+["③ UI 线程（Dart）","<ul><li><b>const 构造函数</b>：widget 树里能 const 就 const，整棵子树可复用、跳过 build 比较（相当于把「view 配置」变成常量区数据）。</li><li><b>局部刷新</b>：<code>setState((){})</code> 会重 build 整个 State 的子树 → 把会变的部分抽成独立 Widget / 用 <code>ValueListenableBuilder</code>、<code>Selector</code>、<code>AnimatedBuilder</code> 缩小范围。</li><li><b>列表</b>：<code>ListView.builder</code> + <code>itemExtent</code>（或 <code>prototypeItem</code>）消除动态高度测量；长列表用 <code>cacheExtent</code> 控制离屏保留；十万级用虚拟滚动（<code>flutter_slidable</code>/自定义 viewport）。</li><li><b>build 里禁止</b>：网络/文件 IO、复杂计算（挪到 <code>compute()</code> 或独立 isolate）、新建大型集合字面量、<code>Image.network</code> 不带缓存策略。</li><li><b>key 的正确用法</b>：<code>ValueKey</code> 让 Element 复用，避免同类型 widget 被销毁重建（重建 = 重新分配 State + 重新布局）。</li><li><b>GC 抖动</b>：表现是「内存曲线锯齿 + 周期性 20~80ms 卡顿」。对策：对象复用池、避免每帧创建 closure/Color/Rect（改 const）、减少 <code>.map().toList()</code> 链。</li></ul>"],
+["④ Raster / GPU","<ul><li><b>隐式 saveLayer 的四大元凶</b>（每一层都会额外分配一张离屏缓冲）：<code>BoxShadow</code>、<code>ClipRRect</code>+模糊、<code>Opacity</code>（对非透明度的替代：用 <code>AnimatedOpacity</code> 或 <code>Color.withOpacity</code> 并不更好；真正省的做法是把透明度合并到 paint）、<code>ShaderMask</code>、<code>Blur</code>、<code>ColorFilter</code>。</li><li><b>RepaintBoundary</b>：把「动的」和「静的」切开，使动画只重绘局部；但<b>过多</b>会增加合成与显存开销（每张 boundary 是一张离屏 texture）→ 用 <code>debugRepaintRainbowEnabled</code> 可视化后再决定。</li><li><b>RasterCache</b>：对稳定不变的子树（如复杂图标、静态图表）引擎会自动缓存为 skia picture；给它明确的尺寸与不变性提示效果更好。</li><li><b>overdraw</b>：避免多层全屏背景叠加；<code>Material</code> 嵌套、<code>Scaffold</code>+外层 Container 都有背景色是常见浪费。</li><li><b>Path/Canvas</b>：复杂 Path 用 <code>Path.combine</code> 预处理并缓存；避免在 <code>paint()</code> 里新建 Paint/Path（改为 final 常量或成员）。</li></ul>"],
+["⑤ 图片与资源（内存大头）","<ul><li>解码后的位图 = 宽×高×4 字节，一张 2000×2000 的图 ≈ 16MB —— 这是 Flutter 内存问题的第一大来源，与 OC 的 <code>CGImage</code> 完全同理。</li><li><b>永远降采样</b>：<code>Image.network(url, cacheWidth: w, cacheHeight: h)</code> 让引擎解码到显示尺寸（GPU 上传量随之下降）。</li><li><b>缓存上限</b>：<code>ImageCache</code> 默认较大，低端机应主动调小 <code>maximumSizeBytes</code>；收到内存警告（Android onTrimMemory / iOS didReceiveMemoryWarning 在 native 侧监听）时 <code>clearLiveImages()/evict()</code>。</li><li><b>格式</b>：WebP/AVIF 优于 PNG/JPEG；透明小图用矢量/字体图标；避免 GIF 多图同时播放（每个 Animator 一份解码缓冲）。</li><li><b>复用 Provider</b>：同一个 url 应共用同一个 ImageProvider 实例，否则缓存失效导致重复解码。</li><li><b>及时释放</b>：离开页面后对大图 <code>imageProvider.evict()</code>；自定义 <code>Codec</code> 要 <code>dispose()</code>。</li></ul>"],
+["⑥ 内存与 GC 抖动","<ul><li>三条主线排查：<b>Dart 堆</b>（快照 diff 找常驻）/<b>External</b>（图片、typed data、FFI）/<b>native 堆</b>（plugin、metal buffer、host 侧泄漏）。</li><li>External 不报账 → 手工报告 / 改用 <code>ByteBuffer</code> 复用；音频/视频/相机这类场景务必在 native 侧用 Instruments/Profiler 复核。</li><li>避免「短时大对象风暴」：JSON 大报文解析会产生大量临时 Map/List → 用流式解析（<code>json.decode</code> 分批、或 proto/binary 格式）。</li><li>Isolate 是真正的并行：把 JSON 解析、图片处理、加密、正则匹配丢给 <code>Isolate.run()</code>，UI 线程立刻干净；注意传输成本，优先传 typed data（可转移）而非 JSON 字符串。</li><li>Finalizer 只能做「兜底清理」，不能做「及时释放」——把它当成 dealloc 的不确定版本来理解就对了。</li></ul>"],
+["⑦ 跨边界通信优化","<ul><li><b>原则：减少次数、增大粒度、避开主线程、避开字符串</b>。</li><li>MethodChannel 每次调用都要：Dart 侧序列化 → 平台线程编解码 → 主线程 dispatch → 回包反向流程。每帧调用 = 灾难。</li><li><b>批量化</b>：把 N 次小调用合并成一次（如一次性传整页数据而非逐条）；用事件流（EventChannel / StreamHandler）代替轮询。</li><li><b>Pigeon</b>：生成类型化的二进制 codec，比手写 JSON MethodChannel 快一个量级且编译期发现签名错误（≈ 从 NSDictioary 弱类型升级到 protocol buffer）。</li><li><b>大图不要走 base64</b>：base64 会使体积膨胀 ~33% 且产生两份字符串副本。正确做法是 native 侧注册 <code>Texture</code>（textureId），Dart 侧用 <code>Texture()</code> 直接渲染 —— 零拷贝展示相机/视频/OpenGL 画面。</li><li><b>Platform View</b>：iOS Hybrid Composition（<code>UIView</code> 直接嵌入）正确但合成成本高；Virtual Display 便宜但有离屏渲染与输入事件限制。能不用就不用，必须用时加 RepaintBoundary 隔离并固定尺寸。</li><li><b>线程约定</b>：channel 回调在平台主线程，耗时操作必须自己在 native 侧切到后台队列，否则直接卡 UI（这在 OC 侧是最常见的「接了 Flutter 就卡」的原因）。</li></ul>"],
+["⑧ 包体积与工程","<ul><li><code>flutter build ipa --analyze-size</code> / <code>apk --analyze-size</code> 定位大头；Dart AOT snapshot、engine so/framework、资源、plugin native so 各占一块。</li><li>共享引擎（engine group）替代多 engine 实例：每个 engine ≈ 一份 isolate + 一份 raster 线程 + 一份 font/image cache，内存成倍增加。</li><li>Tree-shaking：移除未使用的 plugin、条件导入平台特定代码、<code>--split-debug-info</code> 把符号剥离（还能显著减小包）。</li><li>资源：只用需要的密度（Android 分包、iOS asset catalog）、字体子集化、动态下发非首屏资源。</li></ul>"],
+["⑨ 上线前清单","<p><b>内存</b>：profile 下进出目标页面 10 次，快照 diff 常驻 ≤ 基线；低端机（如 4GB RAM Android）滚动 5 分钟 RSS 平稳；图片降采样全覆盖。<br><b>帧率</b>：典型列表滑动 jank 率达标（自定阈值，如 &lt;3% 帧 &gt;16ms）；首帧时间 ≤ 目标。<br><b>启动</b>：冷启动到 first frame 计时（iOS 用 os_signpost / MetricKit，Android 用 StartupTimingMetric）；baseline profile 已生成并提交。<br><b>稳定性</b>：symbolicate 链路打通（dSYM + split-debug-info + symbolize）；ANR/OOM 上报带上 Dart stack。<br><b>回归</b>：把「页面进出内存差」「首帧时间」做成 CI 基准测试（LeakTracker + flutter drive），防止二次泄漏。</p>"]
+],
+t3:[
+["引擎与生命周期","<p>iOS Add-to-App：预建 <code>FlutterEngine</code>（AppDelegate 持有），push 时传入；用 <b>engine group</b> 让多个 engine 共享 isolate group 的资源。注意：多 engine = 多份内存，低端机慎用。<br>Android：<code>FlutterActivity</code>/<code>FlutterFragment</code> 或 <code>FlutterView</code> 自定义 attach；注意 Activity 重建（旋转/语言切换）时 engine 的 detach/re-attach 与 channel 重注册。<br>生命周期对齐：Flutter <code>AppLifecycleState</code> ↔ iOS <code>sceneWillEnterForeground</code> ↔ Android <code>onStart/onResume</code>，三方状态机不完全一致，需在 native 侧做归一化事件下发。</p>"],
+["通道与 Pigeon","<p>三层选型：<b>MethodChannel</b>（简单、少量调用）→ <b>EventChannel</b>（持续事件流）→ <b>Pigeon</b>（高频、类型安全、二进制、推荐做主力）。<br>Pigeon 优点：接口即契约（.dart 定义生成 oc/java 模板）、编译期校验、支持 nullable/async、可自定义 codec；缺点：接口变更需重新生成，版本需与 host 同步发布。<br>最佳实践：把 channel 封成单一 Facade + 版本号，Dart 侧统一做超时与降级，避免散落各处难以治理。</p>"],
+["Platform View 与路由","<p>Platform View 三方案权衡：<b>Hybrid Composition</b>（正确性最好，iOS 14+/Android 新版默认，合成开销大）/ <b>Virtual Display</b>（便宜，离屏渲染，手势/键盘兼容差）/ <b>Texture</b>（最快，只适合视频/相机/自绘）。<br>路由：Flutter 路由栈与 native 导航栈是两套，混排时会出现「返回行为不一致」「手势冲突」「deep link 落地页错位」。建议以一方为主（通常 native 管理顶层栈，Flutter 内部自管理），跨栈跳转走 channel 统一调度。</p>"],
+["构建产物与调试","<p>iOS：产出 <code>Flutter.framework</code> + <code>App.framework</code>（AOT snapshot），CocoaPods 集成；注意 bitcode 已废弃、模拟器架构（arm64 simulator）配置。<br>Android：aar + <code>libflutter.so</code>，注意 ABI 过滤（armeabi-v7a 已基本可弃）、R8 规则保留 plugin 反射类。<br>调试：<code>flutter attach</code> 连已有进程；混合工程需在 host 侧正确设置 <code>FLUTTER_BUILD_MODE=profile</code> 与符号路径；日志用 <code>dart:developer.log</code> 可落入 Xcode console。</p>"]
+]};
+
+/* ===== 渲染 ===== */
+function renderTabs(tid,items,wrap){
+ const box=document.getElementById(wrap),bar=document.getElementById(tid);
+ items.forEach((it,i)=>{
+  const b=document.createElement('div');b.className='tab'+(i?'':' on');b.textContent=it[0];
+  b.onclick=()=>{bar.querySelectorAll('.tab').forEach((t,j)=>t.classList.toggle('on',j===i));box.querySelectorAll('.tp').forEach((p,j)=>p.classList.toggle('on',j===i))};
+  bar.appendChild(b);
+  const p=document.createElement('div');p.className='tp'+(i?'':' on');p.innerHTML=it[1];box.appendChild(p);
+ });
+}
+function build(){
+ const nav=document.getElementById('nav'),main=document.getElementById('main');
+ S.forEach((s,i)=>{
+  nav.insertAdjacentHTML('beforeend',`<a href="#${s.id}" data-i="${i}">${s.t}</a>`);
+  const isTab=s.id==='types'||s.id==='perf'||s.id==='integration';
+  main.insertAdjacentHTML('beforeend',`<section class="sec" id="${s.id}" data-t="${s.t.toLowerCase()}"><div class="sec-h" onclick="tog(this)"><span>${s.t}</span><span class="tag">${isTab?'面板':'可折叠'}</span></div><div class="sec-b">${s.c}</div></section>`);
+ });
+ renderTabs('t1',TABS.t1,'p1');renderTabs('t2',TABS.t2,'p2');renderTabs('t3',TABS.t3,'p3');
+ document.querySelectorAll('pre').forEach(p=>{if(!p.querySelector('.cp'))p.insertAdjacentHTML('beforeend','<button class="cp" onclick="copy(this)">复制</button>')});
+ document.querySelectorAll('.mem').forEach(m=>m.onclick=function(){openM(this.dataset.d||this.textContent,this.textContent)});
+}
+function tog(h){h.nextElementSibling.classList.toggle('hide')}
+function expandAll(){const hs=document.querySelectorAll('.sec-b');const all=[...hs].every(x=>x.classList.contains('hide'));hs.forEach(x=>x.classList.toggle('hide',!all))}
+function filter(){const q=document.getElementById('q').value.toLowerCase();
+ document.querySelectorAll('.sec').forEach(s=>{const hit=s.dataset.t.includes(q)||s.innerText.toLowerCase().includes(q);s.style.display=hit?'':'none'});
+ document.querySelectorAll('nav a').forEach(a=>{a.style.display=a.textContent.toLowerCase().includes(q)?'':'none'});
+}
+function focusMode(m,btn){document.body.className=m==='oc'?'focus-oc':m==='fl'?'focus-fl':'';document.querySelectorAll('.btns .btn').forEach(b=>{if(b.dataset.m)b.classList.toggle('active',b.dataset.m===m)})}
+function toggleTheme(){const d=document.documentElement,now=d.getAttribute('data-theme')==='dark';d.setAttribute('data-theme',now?'light':'dark');try{localStorage.setItem('theme',now?'light':'dark')}catch(e){}}
+function openM(t,c){document.getElementById('mt').textContent=t;document.getElementById('mc').innerHTML=c;document.getElementById('mbg').classList.add('show')}
+function closeM(){document.getElementById('mbg').classList.remove('show')}
+function copy(btn){const code=btn.parentElement.querySelector('code')?.textContent||btn.parentElement.textContent;navigator.clipboard?.writeText(code.replace('复制','').trim());const o=btn.textContent;btn.textContent='✓';setTimeout(()=>btn.textContent=o,1200)}
+/* scroll spy & progress */
+window.addEventListener('scroll',()=>{
+ const h=document.documentElement,prog=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100;
+ document.getElementById('progress').style.width=prog+'%';
+ document.getElementById('bt').classList.toggle('show',h.scrollTop>400);
+ const secs=document.querySelectorAll('.sec'),as=document.querySelectorAll('nav a');let cur=0;
+ secs.forEach((s,i)=>{if(s.getBoundingClientRect().top<120)cur=i});as.forEach((a,i)=>a.classList.toggle('on',i===cur));
+},{passive:true});
+(function init(){try{if(localStorage.getItem('theme')==='dark')document.documentElement.setAttribute('data-theme','dark')}catch(e){}build()})();
+</script>
+</body>
+</html>
