@@ -1,0 +1,2630 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>iOS 资深开发岗完全学习手册 —— OC / Swift / Flutter / 后端</title>
+<style>
+:root {
+  --bg: #0f1117;
+  --bg-secondary: #161822;
+  --bg-card: #1c1f2e;
+  --bg-hover: #252840;
+  --border: #2a2d3e;
+  --text: #e4e6f0;
+  --text-secondary: #9a9db5;
+  --text-muted: #6b6e85;
+  --accent: #6c8cff;
+  --accent-glow: rgba(108, 140, 255, 0.15);
+  --accent2: #4ecdc4;
+  --oc-color: #ff9f43;
+  --swift-color: #f05138;
+  --flutter-color: #05d9fd;
+  --backend-color: #a29bfe;
+  --warning: #ffd166;
+  --danger: #ff6b6b;
+  --success: #51cf66;
+  --code-bg: #12141c;
+  --radius: 10px;
+  --shadow: 0 4px 24px rgba(0,0,0,0.3);
+}
+[data-theme="light"] {
+  --bg: #f5f6fa;
+  --bg-secondary: #ffffff;
+  --bg-card: #ffffff;
+  --bg-hover: #eef0f7;
+  --border: #e2e5ef;
+  --text: #1a1d2e;
+  --text-secondary: #555a70;
+  --text-muted: #8a8fa5;
+  --accent: #4a6cf7;
+  --accent-glow: rgba(74, 108, 247, 0.08);
+  --code-bg: #f0f2f8;
+  --shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  transition: background 0.3s, color 0.3s;
+}
+.topbar {
+  position: sticky; top: 0; z-index: 100;
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border);
+  backdrop-filter: blur(12px);
+  padding: 0 24px; height: 60px;
+  display: flex; align-items: center; gap: 16px;
+}
+.topbar h1 {
+  font-size: 16px; font-weight: 700; white-space: nowrap;
+  background: linear-gradient(135deg, var(--oc-color), var(--swift-color), var(--flutter-color), var(--backend-color));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.topbar .search-box { flex: 1; max-width: 400px; position: relative; }
+.topbar .search-box input {
+  width: 100%; padding: 8px 14px 8px 36px;
+  border: 1px solid var(--border); border-radius: 8px;
+  background: var(--bg); color: var(--text); font-size: 13px; outline: none;
+  transition: border-color 0.2s;
+}
+.topbar .search-box input:focus { border-color: var(--accent); }
+.topbar .search-box::before { content: "🔍"; position: absolute; left: 10px; top: 50%; transform: translateY(-50%); font-size: 13px; opacity: 0.5; }
+.topbar .actions { display: flex; gap: 8px; margin-left: auto; }
+.btn {
+  padding: 7px 14px; border: 1px solid var(--border); border-radius: 7px;
+  background: var(--bg); color: var(--text-secondary); font-size: 12px;
+  cursor: pointer; transition: all 0.2s; white-space: nowrap;
+}
+.btn:hover { background: var(--bg-hover); color: var(--text); border-color: var(--accent); }
+.layout { display: flex; max-width: 1400px; margin: 0 auto; }
+.sidebar {
+  width: 260px; min-width: 260px; position: sticky; top: 60px;
+  height: calc(100vh - 60px); overflow-y: auto;
+  border-right: 1px solid var(--border); padding: 20px 0;
+  background: var(--bg-secondary);
+}
+.sidebar::-webkit-scrollbar { width: 4px; }
+.sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+.sidebar .nav-section { margin-bottom: 4px; }
+.sidebar .nav-title {
+  padding: 8px 20px; font-size: 11px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted);
+  cursor: pointer; display: flex; align-items: center; justify-content: space-between;
+  transition: color 0.2s;
+}
+.sidebar .nav-title:hover { color: var(--accent); }
+.sidebar .nav-title .arrow { transition: transform 0.2s; font-size: 10px; }
+.sidebar .nav-section.collapsed .arrow { transform: rotate(-90deg); }
+.sidebar .nav-items { overflow: hidden; transition: max-height 0.3s ease; }
+.sidebar .nav-section.collapsed .nav-items { max-height: 0 !important; }
+.sidebar .nav-item {
+  display: block; padding: 6px 20px 6px 32px; font-size: 13px;
+  color: var(--text-secondary); text-decoration: none; cursor: pointer;
+  transition: all 0.15s; border-left: 2px solid transparent;
+}
+.sidebar .nav-item:hover { color: var(--text); background: var(--accent-glow); }
+.sidebar .nav-item.active { color: var(--accent); border-left-color: var(--accent); background: var(--accent-glow); }
+.main { flex: 1; padding: 32px 40px 80px; min-width: 0; }
+.hero {
+  text-align: center; padding: 48px 20px 40px; margin-bottom: 32px;
+  border-radius: var(--radius);
+  background: linear-gradient(135deg, var(--accent-glow), transparent);
+  border: 1px solid var(--border);
+}
+.hero h2 {
+  font-size: 30px; font-weight: 800; margin-bottom: 12px;
+  background: linear-gradient(135deg, var(--oc-color), var(--swift-color), var(--flutter-color), var(--backend-color));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.hero p { color: var(--text-secondary); font-size: 14px; max-width: 680px; margin: 0 auto 20px; }
+.hero .badges { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+.badge {
+  padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 600;
+  background: var(--bg-card); border: 1px solid var(--border); color: var(--text-secondary);
+}
+.badge.oc { color: var(--oc-color); border-color: var(--oc-color); }
+.badge.swift { color: var(--swift-color); border-color: var(--swift-color); }
+.badge.flutter { color: var(--flutter-color); border-color: var(--flutter-color); }
+.badge.backend { color: var(--backend-color); border-color: var(--backend-color); }
+.category-label {
+  display: inline-block; padding: 3px 10px; border-radius: 4px;
+  font-size: 11px; font-weight: 700; margin-right: 8px;
+}
+.category-label.oc { background: rgba(255,159,67,0.15); color: var(--oc-color); }
+.category-label.swift { background: rgba(240,81,56,0.15); color: var(--swift-color); }
+.category-label.flutter { background: rgba(5,217,253,0.15); color: var(--flutter-color); }
+.category-label.backend { background: rgba(162,155,254,0.15); color: var(--backend-color); }
+.volume {
+  margin-bottom: 16px; border: 1px solid var(--border);
+  border-radius: var(--radius); background: var(--bg-card); overflow: hidden;
+  transition: box-shadow 0.2s;
+}
+.volume:hover { box-shadow: var(--shadow); }
+.volume-header {
+  padding: 20px 24px; cursor: pointer; display: flex;
+  align-items: center; gap: 16px; transition: background 0.2s; user-select: none;
+}
+.volume-header:hover { background: var(--bg-hover); }
+.volume-num {
+  width: 48px; height: 48px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 800; font-size: 14px; color: #fff; flex-shrink: 0; text-align: center; line-height: 1.2;
+}
+.volume-num.oc { background: linear-gradient(135deg, var(--oc-color), #ee8a2e); }
+.volume-num.swift { background: linear-gradient(135deg, var(--swift-color), #d63a24); }
+.volume-num.flutter { background: linear-gradient(135deg, var(--flutter-color), #04b8d6); }
+.volume-num.backend { background: linear-gradient(135deg, var(--backend-color), #8b7fe8); }
+.volume-num.appendix { background: linear-gradient(135deg, var(--accent), var(--accent2)); }
+.volume-info { flex: 1; min-width: 0; }
+.volume-info h3 { font-size: 17px; font-weight: 700; margin-bottom: 4px; }
+.volume-info .chapters-preview {
+  font-size: 12px; color: var(--text-muted);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.volume-toggle {
+  width: 28px; height: 28px; border-radius: 50%; border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; color: var(--text-secondary);
+  transition: transform 0.3s, background 0.2s; flex-shrink: 0;
+}
+.volume.open .volume-toggle { transform: rotate(180deg); background: var(--accent); color: #fff; border-color: var(--accent); }
+.volume-body { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; }
+.volume.open .volume-body { max-height: 100000px; }
+.volume-content { padding: 8px 24px 28px; }
+.chapter { margin-top: 24px; padding-top: 20px; border-top: 1px dashed var(--border); }
+.chapter:first-child { border-top: none; margin-top: 0; padding-top: 0; }
+.chapter h4 {
+  font-size: 18px; font-weight: 700; margin-bottom: 14px; color: var(--text);
+  display: flex; align-items: center; gap: 8px;
+}
+.chapter h4::before {
+  content: ""; width: 4px; height: 18px;
+  background: linear-gradient(180deg, var(--accent), var(--accent2));
+  border-radius: 2px;
+}
+.subsection { margin: 18px 0; }
+.subsection h5 { font-size: 15px; font-weight: 600; margin-bottom: 10px; color: var(--accent); }
+.subsection h6 { font-size: 14px; font-weight: 600; margin: 12px 0 8px; color: var(--text); }
+p { margin-bottom: 10px; color: var(--text-secondary); font-size: 14px; }
+strong { color: var(--text); font-weight: 600; }
+table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 13px; border-radius: 8px; overflow: hidden; }
+th, td { padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--border); }
+th { background: var(--bg); font-weight: 600; color: var(--text); font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+td { color: var(--text-secondary); }
+tr:hover td { background: var(--bg-hover); }
+pre {
+  background: var(--code-bg); border: 1px solid var(--border); border-radius: 8px;
+  padding: 16px; overflow-x: auto; margin: 12px 0;
+  font-size: 13px; line-height: 1.6;
+}
+code { font-family: "JetBrains Mono", "Fira Code", "SF Mono", Consolas, monospace; font-size: 13px; }
+:not(pre) > code { background: var(--code-bg); padding: 2px 6px; border-radius: 4px; color: var(--accent2); font-size: 12.5px; }
+pre code { color: #c9d1d9; }
+ul, ol { margin: 8px 0 12px 20px; color: var(--text-secondary); font-size: 14px; }
+li { margin-bottom: 5px; }
+li::marker { color: var(--accent); }
+.callout { padding: 14px 18px; border-radius: 8px; margin: 14px 0; font-size: 13px; border-left: 3px solid; }
+.callout.tip { background: rgba(81, 207, 102, 0.08); border-color: var(--success); color: var(--text-secondary); }
+.callout.warn { background: rgba(255, 209, 102, 0.08); border-color: var(--warning); color: var(--text-secondary); }
+.callout.danger { background: rgba(255, 107, 107, 0.08); border-color: var(--danger); color: var(--text-secondary); }
+.callout.info { background: var(--accent-glow); border-color: var(--accent); color: var(--text-secondary); }
+.callout strong { display: block; margin-bottom: 4px; }
+.formula {
+  background: var(--code-bg); border: 1px solid var(--border); border-radius: 8px;
+  padding: 16px; text-align: center; font-family: "JetBrains Mono", monospace;
+  font-size: 14px; color: var(--accent2); margin: 12px 0;
+}
+.ascii-art {
+  background: var(--code-bg); border: 1px solid var(--border); border-radius: 8px;
+  padding: 16px; overflow-x: auto; font-family: "JetBrains Mono", monospace;
+  font-size: 12.5px; line-height: 1.5; color: var(--text-secondary); margin: 12px 0; white-space: pre;
+}
+.interview-q {
+  background: var(--bg); border: 1px solid var(--border); border-radius: 8px;
+  padding: 14px 18px; margin: 10px 0;
+}
+.interview-q .q { font-weight: 600; color: var(--text); margin-bottom: 8px; font-size: 14px; }
+.interview-q .q::before { content: "Q："; color: var(--warning); }
+.interview-q .a { color: var(--text-secondary); font-size: 13px; }
+.interview-q .a::before { content: "答题要点："; color: var(--success); font-weight: 600; }
+mark { background: var(--warning); color: #000; padding: 1px 3px; border-radius: 3px; }
+.back-top {
+  position: fixed; bottom: 30px; right: 30px; width: 44px; height: 44px;
+  border-radius: 50%; background: var(--accent); color: #fff; border: none;
+  cursor: pointer; font-size: 18px; box-shadow: var(--shadow);
+  opacity: 0; transform: translateY(20px); transition: all 0.3s; z-index: 99;
+}
+.back-top.show { opacity: 1; transform: translateY(0); }
+.back-top:hover { transform: translateY(-3px); }
+.progress-bar {
+  position: fixed; top: 0; left: 0; height: 3px;
+  background: linear-gradient(90deg, var(--oc-color), var(--swift-color), var(--flutter-color), var(--backend-color));
+  z-index: 200; transition: width 0.1s;
+}
+@media (max-width: 900px) {
+  .sidebar { display: none; }
+  .main { padding: 20px 16px 60px; }
+  .hero h2 { font-size: 22px; }
+  .topbar h1 { display: none; }
+}
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+@media print {
+  .topbar, .sidebar, .back-top, .progress-bar { display: none; }
+  .volume-body { max-height: none !important; }
+  .volume { break-inside: avoid; }
+}
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progressBar"></div>
+
+<nav class="topbar">
+  <h1>📱 iOS 资深开发岗学习手册</h1>
+  <div class="search-box">
+    <input type="text" id="searchInput" placeholder="搜索知识要点…（输入后自动展开匹配章节）">
+  </div>
+  <div class="actions">
+    <button class="btn" onclick="toggleAll()">全部展开/折叠</button>
+    <button class="btn" onclick="toggleTheme()" id="themeBtn">🌙 暗色</button>
+  </div>
+</nav>
+
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="nav-section" data-target="cat1">
+      <div class="nav-title" onclick="toggleNav(this)">🟠 Objective-C <span class="arrow">▼</span></div>
+      <div class="nav-items">
+        <a class="nav-item" onclick="scrollToVolume('cat1')">第1章 OC基础语法</a>
+        <a class="nav-item" onclick="scrollToVolume('cat1')">第2章 内存管理</a>
+        <a class="nav-item" onclick="scrollToVolume('cat1')">第3章 Runtime</a>
+        <a class="nav-item" onclick="scrollToVolume('cat1')">第4章 RunLoop</a>
+        <a class="nav-item" onclick="scrollToVolume('cat1')">第5章 Block</a>
+        <a class="nav-item" onclick="scrollToVolume('cat1')">第6章 KVO/KVC</a>
+        <a class="nav-item" onclick="scrollToVolume('cat1')">第7章 多线程</a>
+        <a class="nav-item" onclick="scrollToVolume('cat1')">第8章 性能优化</a>
+        <a class="nav-item" onclick="scrollToVolume('cat1')">第9章 架构设计</a>
+        <a class="nav-item" onclick="scrollToVolume('cat1')">第10章 OC资深面试题库</a>
+      </div>
+    </div>
+    <div class="nav-section" data-target="cat2">
+      <div class="nav-title" onclick="toggleNav(this)">🔴 Swift / SwiftUI <span class="arrow">▼</span></div>
+      <div class="nav-items">
+        <a class="nav-item" onclick="scrollToVolume('cat2')">第11章 Swift基础</a>
+        <a class="nav-item" onclick="scrollToVolume('cat2')">第12章 Swift高级特性</a>
+        <a class="nav-item" onclick="scrollToVolume('cat2')">第13章 Swift内存管理</a>
+        <a class="nav-item" onclick="scrollToVolume('cat2')">第14章 Swift Concurrency</a>
+        <a class="nav-item" onclick="scrollToVolume('cat2')">第15章 SwiftUI基础</a>
+        <a class="nav-item" onclick="scrollToVolume('cat2')">第16章 SwiftUI进阶</a>
+        <a class="nav-item" onclick="scrollToVolume('cat2')">第17章 混编与工程化</a>
+        <a class="nav-item" onclick="scrollToVolume('cat2')">第18章 Swift资深面试题库</a>
+      </div>
+    </div>
+    <div class="nav-section" data-target="cat3">
+      <div class="nav-title" onclick="toggleNav(this)">🔵 Flutter <span class="arrow">▼</span></div>
+      <div class="nav-items">
+        <a class="nav-item" onclick="scrollToVolume('cat3')">第19章 Dart语言</a>
+        <a class="nav-item" onclick="scrollToVolume('cat3')">第20章 Flutter核心原理</a>
+        <a class="nav-item" onclick="scrollToVolume('cat3')">第21章 状态管理</a>
+        <a class="nav-item" onclick="scrollToVolume('cat3')">第22章 路由与导航</a>
+        <a class="nav-item" onclick="scrollToVolume('cat3')">第23章 网络与原生交互</a>
+        <a class="nav-item" onclick="scrollToVolume('cat3')">第24章 性能优化与发布</a>
+        <a class="nav-item" onclick="scrollToVolume('cat3')">第25章 Flutter面试题库</a>
+      </div>
+    </div>
+    <div class="nav-section" data-target="cat4">
+      <div class="nav-title" onclick="toggleNav(this)">🟣 后端开发 <span class="arrow">▼</span></div>
+      <div class="nav-items">
+        <a class="nav-item" onclick="scrollToVolume('cat4')">第26章 Node.js核心</a>
+        <a class="nav-item" onclick="scrollToVolume('cat4')">第27章 Express/Koa框架</a>
+        <a class="nav-item" onclick="scrollToVolume('cat4')">第28章 PostgreSQL</a>
+        <a class="nav-item" onclick="scrollToVolume('cat4')">第29章 腾讯CloudBase</a>
+        <a class="nav-item" onclick="scrollToVolume('cat4')">第30章 API设计与安全</a>
+        <a class="nav-item" onclick="scrollToVolume('cat4')">第31章 部署运维</a>
+        <a class="nav-item" onclick="scrollToVolume('cat4')">第32章 后端面试题库</a>
+      </div>
+    </div>
+    <div class="nav-section" data-target="appendix">
+      <div class="nav-title" onclick="toggleNav(this)">📎 附录速查 <span class="arrow">▼</span></div>
+      <div class="nav-items">
+        <a class="nav-item" onclick="scrollToVolume('appendix')">命令速查表</a>
+        <a class="nav-item" onclick="scrollToVolume('appendix')">SQL速查</a>
+        <a class="nav-item" onclick="scrollToVolume('appendix')">学习资源</a>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="hero">
+      <h2>iOS 资深开发岗完全学习手册</h2>
+      <p>覆盖 Objective-C 底层原理、Swift/SwiftUI 现代开发、Flutter 跨平台、后端全栈（Node.js + PostgreSQL + 腾讯 CloudBase），目标直指中级→资深岗面试与实战能力。</p>
+      <div class="badges">
+        <span class="badge oc">Objective-C</span>
+        <span class="badge swift">Swift / SwiftUI</span>
+        <span class="badge flutter">Flutter</span>
+        <span class="badge backend">Node.js / PG / CloudBase</span>
+        <span class="badge">32 章系统知识</span>
+        <span class="badge">资深面试题库</span>
+      </div>
+    </div>
+
+    <!-- ========== 分类一：Objective-C ========== -->
+    <div class="volume" id="cat1">
+      <div class="volume-header" onclick="toggleVolume(this)">
+        <div class="volume-num oc">OC</div>
+        <div class="volume-info">
+          <h3>分类一 · Objective-C 语法 & 中级/资深面试知识</h3>
+          <div class="chapters-preview">基础语法 ｜ 内存管理 ｜ Runtime ｜ RunLoop ｜ Block ｜ KVO/KVC ｜ 多线程 ｜ 性能优化 ｜ 架构设计 ｜ 资深面试题库</div>
+        </div>
+        <div class="volume-toggle">▼</div>
+      </div>
+      <div class="volume-body"><div class="volume-content">
+
+        <div class="chapter">
+          <h4><span class="category-label oc">OC</span>第 1 章 OC 基础语法</h4>
+          <div class="subsection">
+            <h5>1.1 类与对象</h5>
+            <p>OC 是 C 语言的超集，采用消息发送机制而非函数调用。<code>@interface</code> 声明接口，<code>@implementation</code> 实现。</p>
+            <pre><code>// .h 文件
+@interface Person : NSObject
+@property (nonatomic, copy) NSString *name;
+@property (nonatomic, assign) NSInteger age;
+- (instancetype)initWithName:(NSString *)name age:(NSInteger)age;
+- (void)sayHello;
+@end
+
+// .m 文件
+@implementation Person
+- (instancetype)initWithName:(NSString *)name age:(NSInteger)age {
+    self = [super init];
+    if (self) {
+        _name = [name copy];
+        _age = age;
+    }
+    return self;
+}
+- (void)sayHello {
+    NSLog(@"Hello, I'm %@, %ld years old", self.name, (long)self.age);
+}
+@end</code></pre>
+          </div>
+          <div class="subsection">
+            <h5>1.2 属性关键字</h5>
+            <table>
+              <tr><th>关键字</th><th>作用</th><th>默认</th></tr>
+              <tr><td>atomic / nonatomic</td><td>原子性（线程安全）/ 非原子</td><td>atomic</td></tr>
+              <tr><td>assign</td><td>直接赋值，不改变引用计数</td><td>基本类型默认</td></tr>
+              <tr><td>strong</td><td>强引用，引用计数 +1</td><td>对象默认</td></tr>
+              <tr><td>weak</td><td>弱引用，不改变引用计数，对象释放后自动置 nil</td><td>—</td></tr>
+              <tr><td>copy</td><td>拷贝对象，常用于 NSString/Block</td><td>—</td></tr>
+              <tr><td>readonly / readwrite</td><td>只读 / 读写</td><td>readwrite</td></tr>
+            </table>
+            <div class="callout warn"><strong>面试高频</strong>atomic 只能保证 getter/setter 原子性，不能保证多线程安全（如遍历数组时被修改）。nonatomic 性能更好，iOS 开发中几乎都用 nonatomic。</div>
+          </div>
+          <div class="subsection">
+            <h5>1.3 分类（Category）与扩展（Extension）</h5>
+            <table>
+              <tr><th>维度</th><th>Category</th><th>Extension</th></tr>
+              <tr><td>位置</td><td>独立 .h/.m 或 .m 中</td><td>必须在 .m 文件中</td></tr>
+              <tr><td>添加属性</td><td>只能声明，需 Runtime 关联对象实现</td><td>可以添加私有属性</td></tr>
+              <tr><td>添加方法</td><td>可以添加方法</td><td>声明私有方法</td></tr>
+              <tr><td>命名</td><td>有名字（如 NSString+Utils）</td><td>匿名</td></tr>
+              <tr><td>实现</td><td>必须有实现</td><td>实现写在主 @implementation 中</td></tr>
+            </table>
+            <div class="callout danger"><strong>注意</strong>Category 中如果实现了与原类同名的方法，会覆盖原方法（实际是方法列表中先被找到），且多个 Category 同名方法的执行顺序不确定（取决于编译顺序）。</div>
+          </div>
+          <div class="subsection">
+            <h5>1.4 协议（Protocol）</h5>
+            <pre><code>@protocol DataManagerDelegate <NSObject>
+@required
+- (void)dataDidLoad:(NSArray *)data;
+@optional
+- (void)dataDidFailWithError:(NSError *)error;
+@end
+
+@interface ViewController : UIViewController <DataManagerDelegate>
+@end</code></pre>
+            <p>协议中的属性只声明 setter/getter，不自动合成 ivar。委托模式中 delegate 必须用 weak 避免循环引用。</p>
+          </div>
+        </div>
+
+        <div class="chapter">
+          <h4><span class="category-label oc">OC</span>第 2 章 内存管理</h4>
+          <div class="subsection">
+            <h5>2.1 MRC 与 ARC</h5>
+            <p><strong>MRC（手动引用计数）</strong>：手动调用 retain/release/autorelease。<strong>ARC（自动引用计数）</strong>：编译器在编译时自动插入 retain/release，开发者通过 strong/weak/copy/assign 控制引用关系。</p>
+            <div class="callout info"><strong>核心原则</strong>谁创建（alloc/new/copy/mutableCopy）谁释放；谁 retain 谁 release。ARC 下不能直接调用 retain/release/dealloc 中调用 [super dealloc]。</div>
+          </div>
+          <div class="subsection">
+            <h5>2.2 autoreleasepool</h5>
+            <pre><code>@autoreleasepool {
+    for (int i = 0; i < 100000; i++) {
+        NSString *str = [NSString stringWithFormat:@"%d", i];
+        // 大量临时对象，在 pool 结束时统一释放
+    }
+}</code></pre>
+            <p>autorelease 对象会被加入当前最近的 autoreleasepool，pool 销毁时统一 release。主线程的 RunLoop 在每次事件循环开始时创建 pool，结束时销毁。<strong>循环中创建大量临时对象时手动加 autoreleasepool 可降低内存峰值。</strong></p>
+          </div>
+          <div class="subsection">
+            <h5>2.3 循环引用与解决</h5>
+            <p><strong>常见场景</strong>：self -> block -> self；self -> delegate -> self；NSTimer -> target -> self。</p>
+            <pre><code>// Block 循环引用的标准解决：weak-strong dance
+__weak typeof(self) weakSelf = self;
+self.block = ^{
+    __strong typeof(weakSelf) strongSelf = weakSelf;
+    if (strongSelf) {
+        [strongSelf doSomething];
+    }
+};</code></pre>
+            <p><strong>NSTimer 循环引用</strong>：用 weak proxy 中介对象（NSProxy 子类）打破强引用链，或用 iOS 10+ 的 block-based API。</p>
+            <pre><code>// iOS 10+ block 方式（仍需注意 self 被 block 捕获）
+__weak typeof(self) weakSelf = self;
+[NSTimer scheduledTimerWithTimeInterval:1.0 repeats:YES block:^(NSTimer * _Nonnull timer) {
+    [weakSelf tick];
+}];</code></pre>
+          </div>
+          <div class="subsection">
+            <h5>2.4 weak 实现原理</h5>
+            <p>Runtime 维护一个 weak 表（hash 表），key 是对象地址，value 是指向该对象的 weak 指针地址列表。对象 dealloc 时，Runtime 遍历 weak 表，将所有指向该对象的 weak 指针置为 nil。</p>
+            <div class="callout tip"><strong>weak vs assign</strong>：assign 不自动置 nil，对象释放后变成野指针（EXC_BAD_ACCESS）；weak 自动置 nil，更安全。assign 用于基本类型，weak 用于对象。</div>
+          </div>
+        </div>
+
+        <div class="chapter">
+          <h4><span class="category-label oc">OC</span>第 3 章 Runtime（运行时）</h4>
+          <div class="subsection">
+            <h5>3.1 消息发送机制</h5>
+            <p>OC 的方法调用本质是消息发送：<code>[receiver message]</code> 编译为 <code>objc_msgSend(receiver, @selector(message))</code>。</p>
+            <div class="ascii-art">objc_msgSend 流程：
+1. 通过对象的 isa 指针找到类对象
+2. 在类对象的方法缓存（cache_t）中查找 SEL
+3. 缓存命中 → 直接调用 IMP
+4. 缓存未命中 → 在类的方法列表（method_list_t）中查找
+5. 找到 → 加入缓存，调用 IMP
+6. 未找到 → 沿 superclass 链向上查找
+7. 仍未找到 → 进入消息转发流程</div>
+          </div>
+          <div class="subsection">
+            <h5>3.2 消息转发三阶段</h5>
+            <div class="ascii-art">阶段1：动态方法解析
+  +resolveInstanceMethod: / +resolveClassMethod:
+  → 可以动态添加方法实现
+
+阶段2：快速转发
+  -forwardingTargetForSelector:
+  → 返回一个能处理该消息的对象
+
+阶段3：完整转发
+  -methodSignatureForSelector: 获取方法签名
+  -forwardInvocation: 手动处理 NSInvocation
+  → 可以修改参数、选择目标、多对象分发</div>
+            <div class="callout warn"><strong>面试高频</strong>如果三阶段都不处理，最终调用 doesNotRecognizeSelector: 抛出异常（unrecognized selector sent to instance）。</div>
+          </div>
+          <div class="subsection">
+            <h5>3.3 方法交换（Method Swizzling）</h5>
+            <pre><code>#import <objc/runtime.h>
+
+@implementation UIViewController (Tracking)
++ (void)load {
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        Class class = [self class];
+        SEL originalSelector = @selector(viewWillAppear:);
+        SEL swizzledSelector = @selector(track_viewWillAppear:);
+        Method originalMethod = class_getInstanceMethod(class, originalSelector);
+        Method swizzledMethod = class_getInstanceMethod(class, swizzledSelector);
+        // 先尝试添加原方法，防止父类未实现
+        BOOL didAddMethod = class_addMethod(class, originalSelector,
+            method_getImplementation(swizzledMethod),
+            method_getTypeEncoding(swizzledMethod));
+        if (didAddMethod) {
+            class_replaceMethod(class, swizzledSelector,
+                method_getImplementation(originalMethod),
+                method_getTypeEncoding(originalMethod));
+        } else {
+            method_exchangeImplementations(originalMethod, swizzledMethod);
+        }
+    });
+}
+- (void)track_viewWillAppear:(BOOL)animated {
+    [self track_viewWillAppear:animated]; // 调用原方法
+    NSLog(@"页面曝光: %@", NSStringFromClass([self class]));
+}
+@end</code></pre>
+            <div class="callout danger"><strong>注意事项</strong>必须在 +load 中执行（保证尽早交换）；用 dispatch_once 保证线程安全；交换的方法必须调用原实现（除非故意替换）；避免交换父类方法影响所有子类。</div>
+          </div>
+          <div class="subsection">
+            <h5>3.4 关联对象（Associated Objects）</h5>
+            <pre><code>#import <objc/runtime.h>
+
+static const void *kNameKey = &kNameKey;
+
+- (void)setName:(NSString *)name {
+    objc_setAssociatedObject(self, kNameKey, name, OBJC_ASSOCIATION_COPY_NONATOMIC);
+}
+- (NSString *)name {
+    return objc_getAssociatedObject(self, kNameKey);
+}</code></pre>
+            <p>关联对象策略：<code>OBJC_ASSOCIATION_ASSIGN</code>、<code>RETAIN_NONATOMIC</code>、<code>COPY_NONATOMIC</code>、<code>RETAIN</code>、<code>COPY</code>。常用于 Category 中添加属性。</p>
+          </div>
+          <div class="subsection">
+            <h5>3.5 isa 指针与类的结构</h5>
+            <div class="ascii-art">instance 对象
+  └─ isa → class 对象（类对象）
+              ├─ isa → metaclass（元类对象）
+              ├─ superclass → 父类对象
+              ├─ method_list → 实例方法列表
+              ├─ cache → 方法缓存
+              └─ ivar_list → 成员变量列表
+
+instance 的方法存在 class 中
+class 的方法（类方法）存在 metaclass 中
+metaclass 的 isa 指向根元类（NSObject metaclass）
+根元类的 superclass 指向 NSObject class（类对象）
+NSObject class 的 superclass = nil</div>
+          </div>
+        </div>
+
+        <div class="chapter">
+          <h4><span class="category-label oc">OC</span>第 4 章 RunLoop</h4>
+          <div class="subsection">
+            <h5>4.1 RunLoop 基础</h5>
+            <p>RunLoop 是一个事件循环，保持线程存活并处理事件。<strong>主线程默认开启 RunLoop</strong>，子线程需要手动获取并运行。</p>
+            <table>
+              <tr><th>模式（Mode）</th><th>说明</th></tr>
+              <tr><td>NSDefaultRunLoopMode</td><td>默认模式，处理大部分事件</td></tr>
+              <tr><td>UITrackingRunLoopMode</td><td>滚动时的模式，优先级高</td></tr>
+              <tr><td>NSRunLoopCommonModes</td><td>默认模式 + 滚动模式的集合</td></tr>
+            </table>
+            <div class="callout warn"><strong>经典问题</strong>NSTimer 在 UIScrollView 滚动时不触发，因为 RunLoop 切换到了 UITrackingRunLoopMode，而 timer 默认在 default mode。解决：将 timer 添加到 NSRunLoopCommonModes。</div>
+          </div>
+          <div class="subsection">
+            <h5>4.2 RunLoop 事件源</h5>
+            <ul>
+              <li><strong>Source0</strong>：非基于 port 的事件，如 UIEvent、performSelector</li>
+              <li><strong>Source1</strong>：基于 port 的事件，如进程间通信、系统事件</li>
+              <li><strong>Timer</strong>：NSTimer、dispatch_source_t timer</li>
+              <li><strong>Observer</strong>：监听 RunLoop 状态（进入、休眠、唤醒、退出）</li>
+            </ul>
+          </div>
+          <div class="subsection">
+            <h5>4.3 RunLoop 应用场景</h5>
+            <ol>
+              <li><strong>保持线程存活</strong>：子线程中开启 RunLoop，实现常驻线程（如 AFNetworking 的网络线程）</li>
+              <li><strong>监控卡顿</strong>：添加 Observer 监听 RunLoop 进入休眠前的状态，超时则判定卡顿</li>
+              <li><strong>异步绘制</strong>：在 RunLoop 空闲时（BeforeWaiting）执行绘制任务</li>
+              <li><strong>AutoreleasePool</strong>：RunLoop 管理 autoreleasepool 的创建和销毁</li>
+              <li><strong>事件响应</strong>：触摸事件、手势识别都依赖 RunLoop 分发</li>
+            </ol>
+          </div>
+          <div class="subsection">
+            <h5>4.4 卡顿监控实现</h5>
+            <pre><code>static void runLoopObserverCallBack(CFRunLoopObserverRef observer,
+    CFRunLoopActivity activity, void *info) {
+    MyMonitor *monitor = (__bridge MyMonitor *)info;
+    monitor->currentActivity = activity;
+    dispatch_semaphore_signal(monitor->semaphore);
+}
+
+- (void)startMonitor {
+    CFRunLoopObserverContext context = {0, (__bridge void *)self, NULL, NULL};
+    CFRunLoopObserverRef observer = CFRunLoopObserverCreate(
+        kCFAllocatorDefault, kCFRunLoopAllActivities, YES, 0,
+        &runLoopObserverCallBack, &context);
+    CFRunLoopAddObserver(CFRunLoopGetMain(), observer, kCFRunLoopCommonModes);
+
+    dispatch_async(dispatch_get_global_queue(0, 0), ^{
+        while (YES) {
+            // 等待 50ms，超时则认为可能卡顿
+            long result = dispatch_semaphore_wait(self.semaphore,
+                dispatch_time(DISPATCH_TIME_NOW, 50 * NSEC_PER_MSEC));
+            if (result != 0) {
+                if (self.currentActivity == kCFRunLoopBeforeSources ||
+                    self.currentActivity == kCFRunLoopAfterWaiting) {
+                    NSLog(@"检测到卡顿！");
+                }
+            }
+        }
+    });
+}</code></pre>
+          </div>
+        </div>
+
+        <div class="chapter">
+          <h4><span class="category-label oc">OC</span>第 5 章 Block</h5>
+          <div class="subsection">
+            <h5>5.1 Block 的三种类型</h5>
+            <table>
+              <tr><th>类型</th><th>存储区域</th><th>条件</th></tr>
+              <tr><td>NSGlobalBlock</td><td>全局区（数据段）</td><td>不捕获外部变量，或只捕获全局/静态变量</td></tr>
+              <tr><td>NSStackBlock</td><td>栈区</td><td>捕获了局部变量，在 MRC 下存在；ARC 下通常自动 copy 到堆</td></tr>
+              <tr><td>NSMallocBlock</td><td>堆区</td><td>StackBlock 调用 copy 后，或 Block 作为属性被 strong/copy 修饰</td></tr>
+            </table>
+            <div class="callout info"><strong>ARC 下</strong>大多数情况下编译器会自动将 StackBlock copy 到堆上，开发者感知不到三种类型的区别。但理解底层对面试很重要。</div>
+          </div>
+          <div class="subsection">
+            <h5>5.2 Block 捕获变量</h5>
+            <pre><code>int globalVar = 10;
+static int staticVar = 20;
+
+void (^block)(void) = ^{
+    // 全局变量、静态变量：直接访问，可修改
+    globalVar = 100;
+    staticVar = 200;
+    // 局部变量：值捕获，不可修改（编译报错）
+    // localVar = 300; // ❌
+    NSLog(@"localVar = %d", localVar); // ✅ 只读访问
+};
+
+// __block 修饰的变量：引用捕获，可修改
+__block int blockVar = 30;
+void (^block2)(void) = ^{
+    blockVar = 300; // ✅
+};</code></pre>
+            <div class="callout warn"><strong>__block 原理</strong>编译器将 __block 变量包装成一个结构体（__Block_byref_var_0），包含 forwarding 指针和变量值。Block 捕获的是这个结构体的指针，因此可以修改原始变量。</div>
+          </div>
+          <div class="subsection">
+            <h5>5.3 Block 循环引用</h5>
+            <p>self 强引用 block（属性），block 内强引用 self → 循环引用。解决：weak-strong dance（见第 2 章）。</p>
+            <div class="callout tip"><strong>延迟调用场景</strong>如果 block 内需要异步延迟执行，weakSelf 可能在执行前被释放。此时在 block 内用 strongSelf 持有，保证 block 执行期间 self 不被释放。</div>
+          </div>
+        </div>
+
+        <div class="chapter">
+          <h4><span class="category-label oc">OC</span>第 6 章 KVO / KVC</h4>
+          <div class="subsection">
+            <h5>6.1 KVO 实现原理</h5>
+            <p>KVO（Key-Value Observing）基于 Runtime 实现。当对一个对象的属性添加观察者时，Runtime 动态创建一个该类的子类（NSKVONotifying_OriginalClass），重写被观察属性的 setter 方法，在 setter 中调用 willChangeValueForKey: 和 didChangeValueForKey:，通知观察者。</p>
+            <div class="ascii-art">添加观察者后：
+Person 对象的 isa → 从 Person 类变为 NSKVONotifying_Person 类
+NSKVONotifying_Person 重写 setName:
+  - willChangeValueForKey:@"name"
+  - 调用父类 setName:（真正赋值）
+  - didChangeValueForKey:@"name" → 通知观察者
+
+NSKVONotifying_Person 还重写：
+  - class：返回原类名（隐藏子类存在）
+  - dealloc：释放资源
+  - _isKVOA：返回 YES</div>
+          </div>
+          <div class="subsection">
+            <h5>6.2 KVO 使用</h5>
+            <pre><code>// 添加观察
+[self.person addObserver:self forKeyPath:@"name"
+    options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld
+    context:nil];
+
+// 接收通知
+- (void)observeValueForKeyPath:(NSString *)keyPath
+                      ofObject:(id)object
+                        change:(NSDictionary *)change
+                       context:(void *)context {
+    if ([keyPath isEqualToString:@"name"]) {
+        NSLog(@"name changed: %@ -> %@",
+            change[NSKeyValueChangeOldKey], change[NSKeyValueChangeNewKey]);
+    }
+}
+
+// 移除观察（必须，否则崩溃）
+- (void)dealloc {
+    [self.person removeObserver:self forKeyPath:@"name"];
+}</code></pre>
+            <div class="callout danger"><strong>注意</strong>必须移除观察者，否则对象释放后再收到通知会崩溃。手动调用 setter 才会触发 KVO，直接修改成员变量（_name = xxx）不会触发。</div>
+          </div>
+          <div class="subsection">
+            <h5>6.3 KVC</h5>
+            <p>KVC（Key-Value Coding）通过字符串 key 访问属性。<code>setValue:forKey:</code> 查找顺序：setKey: → _setKey: → 访问 _key → _isKey → key → isKey → setValue:forUndefinedKey:。</p>
+            <pre><code>[person setValue:@"Tom" forKey:@"name"];
+NSString *name = [person valueForKey:@"name"];
+
+// 字典转模型
+NSDictionary *dict = @{@"name": @"Tom", @"age": @25};
+[person setValuesForKeysWithDictionary:dict];
+
+// 集合操作
+NSArray *ages = [people valueForKeyPath:@"@avg.age"]; // 平均年龄</code></pre>
+          </div>
+        </div>
+
+        <div class="chapter">
+          <h4><span class="category-label oc">OC</span>第 7 章 多线程</h4>
+          <div class="subsection">
+            <h5>7.1 GCD 核心概念</h5>
+            <table>
+              <tr><th>队列类型</th><th>说明</th></tr>
+              <tr><td>主队列（main）</td><td>串行，主线程执行，UI 操作必须在这里</td></tr>
+              <tr><td>全局队列（global）</td><td>并发，4 个优先级（default/userInitiated/utility/background）</td></tr>
+              <tr><td>自定义串行队列</td><td>串行，FIFO，常用于资源保护或任务顺序执行</td></tr>
+              <tr><td>自定义并发队列</td><td>并发，可用于多任务并行执行</td></tr>
+            </table>
+            <pre><code>// 异步回到主线程
+dispatch_async(dispatch_get_global_queue(0, 0), ^{
+    // 耗时操作
+    dispatch_async(dispatch_get_main_queue(), ^{
+        // 更新 UI
+    });
+});
+
+// 一次性执行（单例）
++ (instancetype)sharedInstance {
+    static id instance;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        instance = [[self alloc] init];
+    });
+    return instance;
+}
+
+// 延迟执行
+dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.0 * NSEC_PER_SEC)),
+    dispatch_get_main_queue(), ^{
+    NSLog(@"2秒后执行");
+});
+
+// 队列组（等待多个异步任务完成）
+dispatch_group_t group = dispatch_group_create();
+dispatch_group_async(group, queue, ^{ /* task1 */ });
+dispatch_group_async(group, queue, ^{ /* task2 */ });
+dispatch_group_notify(group, dispatch_get_main_queue(), ^{
+    NSLog(@"所有任务完成");
+});</code></pre>
+          </div>
+          <div class="subsection">
+            <h5>7.2 线程同步与锁</h5>
+            <table>
+              <tr><th>锁</th><th>性能</th><th>特点</th></tr>
+              <tr><td>@synchronized</td><td>低</td><td>语法简单，自动释放锁，性能差</td></tr>
+              <tr><td>NSLock</td><td>中</td><td>Foundation 层，lock/unlock 配对</td></tr>
+              <tr><td>dispatch_semaphore</td><td>高</td><td>GCD 信号量，性能最好</td></tr>
+              <tr><td>pthread_mutex</td><td>高</td><td>C 语言级，性能好</td></tr>
+              <tr><td>os_unfair_lock</td><td>最高</td><td>iOS 10+，替代 OSSpinLock（有优先级反转问题）</td></tr>
+            </table>
+            <pre><code>// dispatch_semaphore 实现线程安全
+dispatch_semaphore_t semaphore = dispatch_semaphore_create(1);
+- (void)setName:(NSString *)name {
+    dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
+    _name = name;
+    dispatch_semaphore_signal(semaphore);
+}
+
+// 多读单写（barrier）
+dispatch_queue_t queue = dispatch_queue_create("com.example.rw", DISPATCH_QUEUE_CONCURRENT);
+- (id)read {
+    __block id result;
+    dispatch_sync(queue, ^{ result = self.data; });
+    return result;
+}
+- (void)write:(id)data {
+    dispatch_barrier_async(queue, ^{ self.data = data; });
+}</code></pre>
+          </div>
+          <div class="subsection">
+            <h5>7.3 NSOperation & NSOperationQueue</h5>
+            <p>NSOperation 是 GCD 的 OC 封装，支持：依赖（addDependency）、优先级、取消、KVO 观察状态、最大并发数。</p>
+            <pre><code>NSOperationQueue *queue = [[NSOperationQueue alloc] init];
+queue.maxConcurrentOperationCount = 2;
+
+NSBlockOperation *op1 = [NSBlockOperation blockOperationWithBlock:^{
+    NSLog(@"任务1");
+}];
+NSBlockOperation *op2 = [NSBlockOperation blockOperationWithBlock:^{
+    NSLog(@"任务2（依赖任务1完成）");
+}];
+[op2 addDependency:op1]; // op2 等 op1 完成
+[queue addOperations:@[op1, op2] waitUntilFinished:NO];</code></pre>
+          </div>
+        </div>
+
+        <div class="chapter">
+          <h4><span class="category-label oc">OC</span>第 8 章 性能优化</h4>
+          <div class="subsection">
+            <h5>8.1 启动优化</h5>
+            <p><strong>启动阶段</strong>：pre-main（dyld 加载动态库、rebase/binding、ObjC 初始化、+load）→ main（UIApplicationMain、首屏渲染）。</p>
+            <ul>
+              <li><strong>减少 +load 方法</strong>：将 +load 中的逻辑移到 +initialize 或首屏后</li>
+              <li><strong>减少动态库</strong>：合并动态库，Apple 建议少于 6 个</li>
+              <li><strong>懒加载</strong>：非首屏页面延迟加载</li>
+              <li><strong>首屏简化</strong>：减少首屏视图层级和计算</li>
+              <li><strong>二进制重排</strong>：通过 Order File 减少缺页中断（Page Fault）</li>
+            </ul>
+          </div>
+          <div class="subsection">
+            <h5>8.2 卡顿优化</h5>
+            <p>屏幕刷新率 60fps，每帧 16.7ms。主线程在 16.7ms 内未完成布局和绘制就会掉帧。</p>
+            <ul>
+              <li><strong>异步绘制</strong>：将文本、图片绘制放到子线程（YYAsyncLayer、AsyncDisplayKit）</li>
+              <li><strong>减少离屏渲染</strong>：避免 cornerRadius+maskToBounds 同时使用大量视图；用预渲染图片替代</li>
+              <li><strong>减少视图层级</strong>：扁平化视图结构，减少约束计算</li>
+              <li><strong>缓存</strong>：行高缓存、Cell 高度预计算、图片缓存</li>
+              <li><strong>滑动优化</strong>：RunLoop 空闲时加载图片，避免滑动时同步解码</li>
+            </ul>
+          </div>
+          <div class="subsection">
+            <h5>8.3 内存优化</h5>
+            <ul>
+              <li>用 Instruments（Leaks/Allocations）检测内存泄漏和循环引用</li>
+              <li>大图压缩：解码后尺寸远大于显示尺寸时，先缩放再解码</li>
+              <li>列表图片使用 NSCache 管理，收到内存警告时清理</li>
+              <li>autoreleasepool 控制大循环中的临时对象</li>
+              <li>WKWebView 替代 UIWebView（内存占用大幅降低）</li>
+            </ul>
+          </div>
+          <div class="subsection">
+            <h5>8.4 离屏渲染</h5>
+            <p>离屏渲染是指 GPU 在当前屏幕缓冲区之外开辟新的缓冲区进行渲染，然后再合成到屏幕。会导致性能损耗。</p>
+            <p><strong>触发离屏渲染的操作</strong>：cornerRadius + masksToBounds（部分情况）、shadow（阴影）、shouldRasterize（光栅化）、mask（遮罩）、allowsEdgeAntialiasing。</p>
+            <div class="callout tip"><strong>优化圆角</strong>：用贝塞尔曲线绘制圆形图片（Core Graphics），或让服务端返回圆形/圆角图片，避免大量离屏渲染。</div>
+          </div>
+        </div>
+
+        <div class="chapter">
+          <h4><span class="category-label oc">OC</span>第 9 章 架构设计</h4>
+          <div class="subsection">
+            <h5>9.1 MVC / MVVM / VIPER 对比</h5>
+            <table>
+              <tr><th>架构</th><th>分层</th><th>优点</th><th>缺点</th></tr>
+              <tr><td>MVC</td><td>Model-View-Controller</td><td>简单，Apple 原生</td><td>Controller 过于臃肿（Massive VC）</td></tr>
+              <tr><td>MVVM</td><td>Model-View-ViewModel</td><td>分离视图逻辑，可测试，配合绑定</td><td>需要 ReactiveCocoa/RAC 或 KVO 绑定</td></tr>
+              <tr><td>VIPER</td><td>View-Interactor-Presenter-Entity-Router</td><td>职责最清晰，最易测试</td><td>代码量大，学习成本高</td></tr>
+            </table>
+          </div>
+          <div class="subsection">
+            <h5>9.2 常用设计模式</h5>
+            <ul>
+              <li><strong>单例</strong>：dispatch_once 实现，全局共享状态</li>
+              <li><strong>观察者</strong>：KVO、NSNotificationCenter</li>
+              <li><strong>委托</strong>：delegate 模式，一对一回调</li>
+              <li><strong>工厂</strong>：创建对象时隐藏具体实现</li>
+              <li><strong>策略</strong>：将算法封装为可互换的策略类</li>
+              <li><strong>装饰器</strong>：Category、Delegation 动态添加行为</li>
+            </ul>
+          </div>
+          <div class="subsection">
+            <h5>9.3 组件化</h5>
+            <p>方案：<strong>URL-router</strong>（MGJRouter、CTMediator）、<strong>Protocol-Class</strong>（组件间通过协议通信）、<strong>Target-Action</strong>（CTMediator 通过 runtime 调用）。</p>
+            <p>核心原则：模块间不直接依赖，通过中间层（mediator/router）解耦；每个模块可独立编译运行。</p>
+          </div>
+        </div>
+
+        <div class="chapter">
+          <h4><span class="category-label oc">OC</span>第 10 章 OC 资深面试题库</h4>
+          <div class="interview-q">
+            <div class="q">说一下 OC 的消息发送机制和消息转发流程。</div>
+            <div class="a">objc_msgSend 通过 isa 找类 → 查缓存 → 查方法列表 → 沿父类链查找 → 都没找到进入消息转发。转发三阶段：①动态方法解析（resolveInstanceMethod: 可动态添加方法）②快速转发（forwardingTargetForSelector: 返回替代对象）③完整转发（methodSignatureForSelector: 获取签名 + forwardInvocation: 处理 NSInvocation）。都不处理则抛 unrecognized selector 异常。</div>
+          </div>
+          <div class="interview-q">
+            <div class="q">Runtime 有哪些实际应用场景？</div>
+            <div class="a">①Method Swizzling 埋点/无痕埋点 ②关联对象给 Category 添加属性 ③动态添加方法（@dynamic 属性、JSPatch 热修复）④字典转模型（KVC + Runtime 获取属性列表）⑤获取类的所有属性/方法/成员变量 ⑥KVO 底层实现 ⑦消息转发实现多代理、安全调用。</div>
+          </div>
+          <div class="interview-q">
+            <div class="q">Block 为什么用 copy 而不是 strong？</div>
+            <div class="a">Block 默认创建在栈上（NSStackBlock），栈上的 Block 在函数返回后会被销毁。用 copy 会将 Block 从栈复制到堆上（NSMallocBlock），堆上的 Block 生命周期由引用计数管理。用 strong 修饰时，ARC 下编译器也会自动 copy，但历史上 MRC 时期必须用 copy，所以习惯上 Block 属性用 copy。</div>
+          </div>
+          <div class="interview-q">
+            <div class="q">__block 和 __weak 的区别？</div>
+            <div class="a">__block 修饰的变量在 Block 内可以被修改（引用捕获，编译器包装成结构体），但会被 Block 强引用，可能导致循环引用。__weak 修饰的变量是弱引用，不增加引用计数，对象释放后自动置 nil，用于打破循环引用。两者用途不同：__block 解决"修改变量"，__weak 解决"循环引用"。</div>
+          </div>
+          <div class="interview-q">
+            <div class="q">RunLoop 和线程的关系？怎么实现一个常驻线程？</div>
+            <div class="a">RunLoop 和线程一一对应，主线程默认开启，子线程需要手动获取并运行。常驻线程实现：在子线程中获取 RunLoop，添加一个 Source/Timer（保证 RunLoop 有事件源，不会立即退出），然后调用 run 方法。注意：如果 RunLoop 没有任何 Source/Timer，调用 run 会立即返回。AFNetworking 就是用常驻线程处理网络回调。</div>
+          </div>
+          <div class="interview-q">
+            <div class="q">NSTimer 为什么会导致循环引用？怎么解决？</div>
+            <div class="a">NSTimer 会强引用 target（self），而 self 通常又强引用 timer（作为属性），形成循环引用。解决方案：①用 weak proxy（NSProxy 子类）作为 target 中介，proxy 弱引用 self ②iOS 10+ 用 block-based API + weakSelf ③在 viewWillDisappear 时 invalidate timer。注意 invalidate 必须在创建 timer 的线程调用。</div>
+          </div>
+          <div class="interview-q">
+            <div class="q">atomic 是线程安全的吗？</div>
+            <div class="a">atomic 只保证 getter/setter 的原子性（加锁防止读写同时进行），但不保证整体线程安全。例如数组属性 atomic 只保证赋值和获取是原子的，但多线程同时调用 addObject: 仍可能崩溃。线程安全需要开发者自己加锁或使用串行队列。</div>
+          </div>
+          <div class="interview-q">
+            <div class="q">iOS 中怎么检测内存泄漏？</div>
+            <div class="a">①Instruments Leaks 工具 ②Instruments Allocations 看对象是否该释放未释放 ③FBRetainCycleDetector（Facebook 开源，运行时检测循环引用）④MLeaksFinder（自动检测 UIViewController 泄漏）⑤dealloc 中加日志看是否调用 ⑥Xcode Memory Graph Debugger（可视化引用关系）。</div>
+          </div>
+          <div class="interview-q">
+            <div class="q">说一下 iOS 启动优化的思路和具体手段。</div>
+            <div class="a">分 pre-main 和 main 两阶段。pre-main：减少动态库数量（合并）、减少 +load 方法（移到 +initialize）、减少 rebase/binding（减少 OC 类/分类/C++ 静态构造函数）。main：延迟非首屏初始化、首屏视图层级简化、数据预加载、使用 xib/storyboard 减少代码创建。进阶：二进制重排（Order File）减少 Page Fault，可通过 clang -fsanitize-coverage 收集函数调用顺序。</div>
+          </div>
+          <div class="interview-q">
+            <div class="q">离屏渲染是什么？哪些情况会触发？怎么优化？</div>
+            <div class="a">离屏渲染是 GPU 在当前屏幕缓冲区外开辟新缓冲区渲染再合成，会导致性能损耗。触发：cornerRadius+masksToBounds（叠加裁剪时）、shadow 阴影、mask 遮罩、shouldRasterize 光栅化、allowsEdgeAntialiasing。优化：圆角用 Core Graphics 预绘制圆形图片、阴影用 shadowPath 指定路径、减少光栅化使用、Instruments Core Animation 勾选 Color Offscreen-Rendered Yellow 检测。</div>
+          </div>
+        </div>
+
+      </div></div>
+    </div>
+
+    <!-- ========== 分类二：Swift / SwiftUI ========== -->
+    <div class="volume" id="cat2">
+      <div class="volume-header" onclick="toggleVolume(this)">
+        <div class="volume-num swift">Swift</div>
+        <div class="volume-info">
+          <h3>分类二 · Swift / SwiftUI 完整学习 & 中级/资深面试</h3>
+          <div class="chapters-preview">Swift基础 ｜ 高级特性 ｜ 内存管理 ｜ Concurrency并发 ｜ SwiftUI基础 ｜ SwiftUI进阶 ｜ 混编工程化 ｜ 资深面试题库</div>
+        </div>
+        <div class="volume-toggle">▼</div>
+      </div>
+      <div class="volume-body"><div class="volume-content">
+
+        <div class="chapter">
+          <h4><span class="category-label swift">Swift</span>第 11 章 Swift 基础</h4>
+          <div class="subsection">
+            <h5>11.1 类型系统</h5>
+            <p>Swift 是强类型、类型安全的语言。分为值类型（struct/enum）和引用类型（class）。</p>
+            <table>
+              <tr><th>维度</th><th>Struct（值类型）</th><th>Class（引用类型）</th></tr>
+              <tr><td>赋值</td><td>拷贝（值拷贝）</td><td>引用（指针拷贝）</td></tr>
+              <tr><td>内存</td><td>栈（大值类型可能在堆）</td><td>堆</td></tr>
+              <tr><td>继承</td><td>不支持</td><td>支持</td></tr>
+              <tr><td>ARC</td><td>不需要</td><td>需要</td></tr>
+              <tr><td>修改方法</td><td>需 mutating 关键字</td><td>直接修改</td></tr>
+              <tr><td>类型方法</td><td>static</td><td>class（可被子类重写）/ static</td></tr>
+            </table>
+            <div class="callout tip"><strong>选择原则</strong>优先用 struct。需要继承、引用语义、身份标识（===）时才用 class。SwiftUI 中 View 都是 struct。</div>
+          </div>
+          <div class="subsection">
+            <h5>11.2 可选型（Optional）</h5>
+            <pre><code>var name: String? = "Tom"  // Optional<String>，可能为 nil
+
+// 强制解包（危险，nil 时崩溃）
+let count = name!.count
+
+// 可选绑定（安全）
+if let name = name {
+    print(name.count)
+}
+
+// guard let（提前退出）
+guard let name = name else { return }
+print(name.count)
+
+// 可选链
+let count = name?.count  // name 为 nil 时整个表达式为 nil
+
+// 空合运算符
+let finalName = name ?? "Default"
+
+// switch 匹配
+switch name {
+case .some(let value): print(value)
+case .none: print("nil")
+}</code></pre>
+            <div class="callout danger"><strong>隐式解包可选型（IUO）</strong><code>String!</code> 声明时无需解包即可使用，但为 nil 时访问会崩溃。仅用于确定在使用前一定会被赋值的场景（如 IBOutlet），尽量避免。</div>
+          </div>
+          <div class="subsection">
+            <h5>11.3 闭包（Closure）</h5>
+            <pre><code>// 闭包表达式
+let add: (Int, Int) -> Int = { (a, b) in
+    return a + b
+}
+
+// 尾随闭包
+UIView.animate(withDuration: 0.3) {
+    self.view.alpha = 0
+}
+
+// 自动闭包 @autoclosure：自动将表达式包装成闭包
+func assert(_ condition: @autoclosure () -> Bool, _ message: String) {
+    if !condition() { print(message) }
+}
+assert(1 > 2, "错误") // 1 > 2 自动包装成 () -> Bool
+
+// 逃逸闭包 @escaping：闭包在函数返回后才执行
+func fetchData(completion: @escaping (Result<Data, Error>) -> Void) {
+    URLSession.shared.dataTask(with: url) { data, _, error in
+        // 这个闭包是逃逸的
+    }.resume()
+}</code></pre>
+          </div>
+          <div class="subsection">
+            <h5>11.4 枚举（Enum）</h5>
+            <pre><code>// 关联值枚举
+enum NetworkResult {
+    case success(data: Data)
+    case failure(error: Error)
+}
+
+// 原始值枚举
+enum Direction: String {
+    case north = "N"
+    case south = "S"
+    case east = "E"
+    case west = "W"
+}
+
+// 递归枚举（indirect）
+indirect enum BinaryTree {
+    case leaf(value: Int)
+    case node(left: BinaryTree, value: Int, right: BinaryTree)
+}
+
+// CaseIterable
+enum Weekday: String, CaseIterable {
+    case monday, tuesday, wednesday, thursday, friday
+}
+Weekday.allCases.count // 5</code></pre>
+          </div>
+        </div>
+
+        <div class="chapter">
+          <h4><span class="category-label swift">Swift</span>第 12 章 Swift 高级特性</h4>
+          <div class="subsection">
+            <h5>12.1 泛型</h5>
+            <pre><code>// 泛型函数
+func swapValues<T>(_ a: inout T, _ b: inout T) {
+    let temp = a; a = b; b = temp
+}
+
+// 泛型类型
+struct Stack<Element> {
+    private var items: [Element] = []
+    mutating func push(_ item: Element) { items.append(item) }
+    mutating func pop() -> Element? { items.popLast() }
+}
+
+// 泛型约束
+func fetch<T: Decodable>(_ type: T.Type, from data: Data) throws -> T {
+    return try JSONDecoder().decode(T.self, from: data)
+}
+
+// 协议关联类型
+protocol Container {
+    associatedtype Item
+    mutating func append(_ item: Item)
+    var count: Int { get }
+}
+
+// where 子句
+func allItemsMatch<C1: Container, C2: Container>(_ c1: C1, _ c2: C2) -> Bool
+    where C1.Item == C2.Item, C1.Item: Equatable {
+    // 两个容器的元素类型相同且可比较
+    return true
+}</code></pre>
+          </div>
+          <div class="subsection">
+            <h5>12.2 协议（Protocol）与面向协议编程</h5>
+            <pre><code>protocol Identifiable {
+    var id: String { get }
+}
+
+protocol Payload: Identifiable {
+    associatedtype Body
+    var body: Body { get }
+}
+
+// 协议扩展（默认实现）
+extension Identifiable {
+    var description: String { "ID: \(id)" }
+}
+
+// 协议组合
+func process(_ item: Identifiable & Codable) {}
+
+// 不透明类型（some）
+func makeView() -> some View {
+    Text("Hello") // 编译器知道具体类型，但调用方不暴露
+}
+
+// 存在类型（any），iOS 16+
+var items: [any Identifiable] = []</code></pre>
+            <div class="callout info"><strong>some vs any</strong>some（不透明类型）：编译器知道具体类型，同一函数返回类型固定，性能好。any（存在类型）：运行时才确定类型，有性能开销，用于需要存储不同类型的集合。</div>
+          </div>
+          <div class="subsection">
+            <h5>12.3 属性包装器（Property Wrapper）</h5>
+            <pre><code>@propertyWrapper
+struct UserDefault<T> {
+    let key: String
+    let defaultValue: T
+    var wrappedValue: T {
+        get { UserDefaults.standard.object(forKey: key) as? T ?? defaultValue }
+        set { UserDefaults.standard.set(newValue, forKey: key) }
+    }
+}
+
+// 使用
+struct Settings {
+    @UserDefault(key: "theme", defaultValue: "dark")
+    static var theme: String
+}
+Settings.theme = "light" // 自动写入 UserDefaults</code></pre>
+            <p>SwiftUI 中的 <code>@State</code>、<code>@Binding</code>、<code>@ObservedObject</code>、<code>@EnvironmentObject</code>、<code>@AppStorage</code> 都是属性包装器。</p>
+          </div>
+          <div class="subsection">
+            <h5>12.4 结果构建器（Result Builder）</h5>
+            <p>SwiftUI 的 ViewBuilder 就是结果构建器，允许用声明式语法构建视图树。</p>
+            <pre><code>@resultBuilder
+struct StringBuilder {
+    static func buildBlock(_ components: String...) -> String {
+        components.joined(separator: "\n")
+    }
+}
+
+@StringBuilder func makeGreeting() -> String {
+    "Hello"
+    "World"
+}
+// 输出 "Hello\nWorld"</code></pre>
+          </div>
+        </div>
+
+        <div class="chapter">
+          <h4><span class="category-label swift">Swift</span>第 13 章 Swift 内存管理</h4>
+          <div class="subsection">
+            <h5>13.1 ARC 与引用循环</h5>
+            <p>Swift 使用 ARC 管理 class 对象内存。值类型（struct/enum）不参与 ARC。</p>
+            <pre><code>class Person {
+    let name: String
+    var apartment: Apartment?
+    init(name: String) { self.name = name }
+    deinit { print("\(name) 被释放") }
+}
+
+class Apartment {
+    let unit: String
+    weak var tenant: Person? // weak 打破循环引用
+    init(unit: String) { self.unit = unit }
+}
+
+// unowned 类似 OC 的 assign，不自动置 nil，对象释放后访问崩溃
+class Customer {
+    let name: String
+    var creditCard: CreditCard?
+}
+class CreditCard {
+    let number: String
+    unowned let customer: Customer // 信用卡一定属于某个客户，生命周期 >= card
+    init(number: String, customer: Customer) {
+        self.number = number
+        self.customer = customer
+    }
+}</code></pre>
+            <table>
+              <tr><th>关键字</th><th>是否自动置 nil</th><th>适用场景</th></tr>
+              <tr><td>weak</td><td>是</td><td>引用对象可能先于自身释放</td></tr>
+              <tr><td>unowned</td><td>否</td><td>引用对象生命周期 >= 自身，确定不会为 nil</td></tr>
+              <tr><td>unowned(unsafe)</td><td>否</td><td>不做安全检查，性能略好，极不推荐</td></tr>
+            </table>
+          </div>
+          <div class="subsection">
+            <h5>13.2 闭包循环引用</h5>
+            <pre><code>// 闭包捕获列表
+class ViewController {
+    var name = "VC"
+    lazy var closure: () -> Void = { [weak self] in
+        guard let self = self else { return }
+        print(self.name)
+    }
+
+    // 也可以用 unowned（确定闭包执行时 self 一定存在）
+    lazy var closure2: () -> Void = { [unowned self] in
+        print(self.name)
+    }
+}</code></pre>
+            <div class="callout warn"><strong>delegate 在 Swift 中</strong>协议需要声明为 class-only（<code>protocol Delegate: AnyObject</code>），才能用 weak 修饰 delegate 属性。</div>
+          </div>
+          <div class="subsection">
+            <h5>13.3 值类型写时复制（Copy-on-Write）</h5>
+            <p>Swift 的值类型（如 Array、Dictionary、String）在赋值时并不立即拷贝，而是共享底层存储。只有当修改发生时才真正拷贝。这是 Swift 性能优化的重要机制。</p>
+            <pre><code>var array1 = [1, 2, 3]
+var array2 = array1 // 此时不拷贝，共享底层存储
+array1.append(4)    // 修改时才触发拷贝
+// array1 = [1,2,3,4], array2 = [1,2,3]</code></pre>
+            <p>自定义 struct 实现 COW：用 <code>isKnownUniquelyReferenced</code> 检查引用唯一性。</p>
+          </div>
+        </div>
+
+        <div class="chapter">
+          <h4><span class="category-label swift">Swift</span>第 14 章 Swift Concurrency（并发）</h4>
+          <div class="subsection">
+            <h5>14.1 async/await</h5>
+            <pre><code>// 异步函数
+func fetchUser(id: String) async throws -> User {
+    let (data, response) = try await URLSession.shared.data(from: url)
+    guard let httpResponse = response as? HTTPURLResponse,
+          httpResponse.statusCode == 200 else {
+        throw APIError.invalidResponse
+    }
+    return try JSONDecoder().decode(User.self, from: data)
+}
+
+// 调用
+Task {
+    do {
+        let user = try await fetchUser(id: "123")
+        print(user.name)
+    } catch {
+        print(error)
+    }
+}
+
+// 并行执行（同时发起，等待全部完成）
+async let users = fetchUsers()
+async let posts = fetchPosts()
+let (usersResult, postsResult) = await (try users, try posts)</code></pre>
+          </div>
+          <div class="subsection">
+            <h5>14.2 Task 与 TaskGroup</h5>
+            <pre><code>// Task：异步执行单元
+let task = Task {
+    await doSomething()
+}
+task.cancel() // 取消
+
+// TaskGroup：动态数量的并发任务
+func fetchAllImages(urls: [URL]) async -> [UIImage] {
+    await withTaskGroup(of: UIImage?.self) { group in
+        for url in urls {
+            group.addTask {
+                try? await self.fetchImage(url: url)
+            }
+        }
+        var images: [UIImage] = []
+        for await image in group {
+            if let image = image { images.append(image) }
+        }
+        return images
+    }
+}</code></pre>
+          </div>
+          <div class="subsection">
+            <h5>14.3 Actor</h5>
+            <p>Actor 是 Swift 并发的核心安全机制，保证同一时间只有一个线程访问其可变状态，自动消除数据竞争。</p>
+            <pre><code>actor Counter {
+    private var count = 0
+    func increment() { count += 1 }
+    func getCount() -> Int { count }
+}
+
+let counter = Counter()
+// 访问 actor 的方法/属性需要 await
+await counter.increment()
+let value = await counter.getCount()
+
+// MainActor：主线程 actor，UI 操作必须在这里
+@MainActor
+class ViewModel: ObservableObject {
+    @Published var data: [Item] = []
+    func load() async {
+        // data 操作自动在主线程
+        data = try await API.fetchItems()
+    }
+}</code></pre>
+            <div class="callout info"><strong>Actor 隔离</strong>Actor 内部状态只能通过 await 异步访问。非隔离方法（nonisolated）可以直接调用但不能访问隔离状态。@MainActor 修饰的类/方法/属性自动在主线程执行。</div>
+          </div>
+          <div class="subsection">
+            <h5>14.4 Sendable 协议</h5>
+            <p>Sendable 表示类型可以安全地跨并发域传递。值类型（struct/enum）默认满足 Sendable，class 需要显式声明 <code>final class X: Sendable</code> 且所有属性都是 let 或 Sendable。</p>
+            <pre><code>struct User: Sendable {
+    let id: String
+    let name: String
+}
+
+// 函数参数标记 @Sendable
+func process(_ completion: @Sendable (Result) -> Void) {}</code></pre>
+          </div>
+          <div class="subsection">
+            <h5>14.5 GCD 与 Swift Concurrency 桥接</h5>
+            <pre><code>// 将 GCD 回调封装为 async
+func fetchData() async throws -> Data {
+    try await withCheckedThrowingContinuation { continuation in
+        URLSession.shared.dataTask(with: url) { data, response, error in
+            if let error = error {
+                continuation.resume(throwing: error)
+            } else if let data = data {
+                continuation.resume(returning: data)
+            }
+        }.resume()
+    }
+}</code></pre>
+          </div>
+        </div>
+
+        <div class="chapter">
+          <h4><span class="category-label swift">SwiftUI</span>第 15 章 SwiftUI 基础</h4>
+          <div class="subsection">
+            <h5>15.1 声明式 UI</h5>
+            <pre><code>struct ContentView: View {
+    var body: some View {
+        VStack(spacing: 16) {
+            Text("Hello, SwiftUI")
+                .font(.title)
+                .foregroundColor(.blue)
+            Button("点击我") {
+                print("tapped")
+            }
+            .buttonStyle(.borderedProminent)
+        }
+        .padding()
+    }
+}</code></pre>
+            <p>SwiftUI 的 View 是 struct（值类型），body 是计算属性，返回 some View。修改器（modifier）返回新的 View，形成视图树。</p>
+          </div>
+          <div class="subsection">
+            <h5>15.2 状态管理</h5>
+            <table>
+              <tr><th>属性包装器</th><th>用途</th><th>生命周期</th></tr>
+              <tr><td>@State</td><td>视图内部私有状态</td><td>视图拥有，视图销毁时释放</td></tr>
+              <tr><td>@Binding</td><td>从父视图传递的状态引用</td><td>不拥有数据</td></tr>
+              <tr><td>@StateObject</td><td>拥有 ObservableObject</td><td>视图拥有，仅创建一次</td></tr>
+              <tr><td>@ObservedObject</td><td>引用外部 ObservableObject</td><td>不拥有，外部注入</td></tr>
+              <tr><td>@EnvironmentObject</td><td>从环境注入的全局对象</td><td>祖先视图注入</td></tr>
+              <tr><td>@Environment</td><td>读取系统环境值（colorScheme 等）</td><td>系统提供</td></tr>
+              <tr><td>@AppStorage</td><td>UserDefaults 封装</td><td>持久化</td></tr>
+              <tr><td>@FocusState</td><td>焦点状态管理</td><td>视图拥有</td></tr>
+            </table>
+            <pre><code>class ViewModel: ObservableObject {
+    @Published var count = 0
+    func increment() { count += 1 }
+}
+
+struct CounterView: View {
+    @StateObject private var vm = ViewModel()
+    var body: some View {
+        VStack {
+            Text("Count: \(vm.count)")
+            Button("+1") { vm.increment() }
+        }
+    }
+}</code></pre>
+            <div class="callout warn"><strong>@StateObject vs @ObservedObject</strong>@StateObject 由视图拥有，只创建一次（视图刷新时不会重新初始化）。@ObservedObject 由外部注入，视图不负责创建。如果在视图内部创建 ObservableObject，必须用 @StateObject，否则每次视图刷新都会重新创建。</div>
+          </div>
+          <div class="subsection">
+            <h5>15.3 常用容器视图</h5>
+            <ul>
+              <li><strong>VStack/HStack/ZStack</strong>：垂直/水平/层叠布局</li>
+              <li><strong>List/ForEach</strong>：列表，需要 Identifiable 或 id</li>
+              <li><strong>ScrollView</strong>：滚动视图</li>
+              <li><strong>NavigationStack</strong>：导航栈（iOS 16+）</li>
+              <li><strong>TabView</strong>：标签页</li>
+              <li><strong>Alert/Sheet/FullScreenCover</strong>：模态展示</li>
+              <li><strong>GeometryReader</strong>：获取父视图尺寸</li>
+              <li><strong>Group</strong>：逻辑分组，不影响布局</li>
+            </ul>
+          </div>
+          <div class="subsection">
+            <h5>15.4 动画</h5>
+            <pre><code>struct AnimationView: View {
+    @State private var scale = 1.0
+    @State private var show = false
+    var body: some View {
+        Circle()
+            .fill(.blue)
+            .frame(width: 100, height: 100)
+            .scaleEffect(scale)
+            .opacity(show ? 1 : 0)
+            .onTapGesture {
+                withAnimation(.spring(response: 0.5, dampingFraction: 0.6)) {
+                    scale = scale == 1.0 ? 1.5 : 1.0
+                    show.toggle()
+                }
+            }
+        // 隐式动画
+        // .animation(.easeInOut, value: scale)
+    }
+}</code></pre>
+          </div>
+        </div>
+
+        <div class="chapter">
+          <h4><span class="category-label swift">SwiftUI</span>第 16 章 SwiftUI 进阶</h4>
+          <div class="subsection">
+            <h5>16.1 自定义视图</h5>
+            <pre><code>struct CustomCard<Content: View>: View {
+    let title: String
+    @ViewBuilder let content: () -> Content
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text(title).font(.headline)
+            content()
+        }
+        .padding()
+        .background(Color(.systemBackground))
+        .cornerRadius(12)
+        .shadow(radius: 4)
+    }
+}
+
+// 使用
+CustomCard(title: "用户信息") {
+    Text("姓名：张三")
+    Text("年龄：25")
+}</code></pre>
+          </div>
+          <div class="subsection">
+            <h5>16.2 PreferenceKey 与视图通信</h5>
+            <p>PreferenceKey 用于子视图向父视图传递数据（如尺寸、位置），是实现自定义布局的关键。</p>
+            <pre><code>struct SizePreferenceKey: PreferenceKey {
+    static var defaultValue: CGSize = .zero
+    static func reduce(value: inout CGSize, nextValue: () -> CGSize) {
+        value = nextValue()
+    }
+}
+
+// 子视图传递尺寸
+.background(GeometryReader { geo in
+    Color.clear.preference(key: SizePreferenceKey.self, value: geo.size)
+})
+// 父视图接收
+.onPreferenceChange(SizePreferenceKey.self) { size in
+    self.childSize = size
+}</code></pre>
+          </div>
+          <div class="subsection">
+            <h5>16.3 性能优化</h5>
+            <ul>
+              <li><strong>避免 body 频繁重算</strong>：将不依赖状态的子视图提取为独立 struct，利用值类型语义减少刷新</li>
+              <li><strong>Equatable 优化</strong>：让 View 遵循 Equatable，自定义 == 方法，SwiftUI 会跳过无变化的视图刷新</li>
+              <li><strong>List 性能</strong>：使用 Identifiable，避免在 ForEach 中做复杂计算</li>
+              <li><strong>懒加载</strong>：LazyVStack/LazyHStack 只渲染可见区域</li>
+              <li><strong>减少修改器链</strong>：修改器顺序影响性能，.background 等放在最后</li>
+            </ul>
+            <pre><code>struct HeavyView: View, Equatable {
+    let item: Item
+    static func == (lhs: HeavyView, rhs: HeavyView) -> Bool {
+        lhs.item.id == rhs.item.id // 只比较 id，减少刷新
+    }
+    var body: some View { /* ... */ }
+}</code></pre>
+          </div>
+          <div class="subsection">
+            <h5>16.4 SwiftUI 生命周期</h5>
+            <table>
+              <tr><th>修饰器</th><th>触发时机</th></tr>
+              <tr><td>.onAppear</td><td>视图出现时</td></tr>
+              <tr><td>.onDisappear</td><td>视图消失时</td></tr>
+              <tr><td>.task</td><td>视图出现时启动异步任务，消失时自动取消</td></tr>
+              <tr><td>.onChange(of:)</td><td>指定值变化时</td></tr>
+              <tr><td>.refreshable</td><td>下拉刷新</td></tr>
+            </table>
+            <pre><code>.task {
+    // 视图出现时自动执行，消失时自动取消
+    await viewModel.loadData()
+}</code></pre>
+          </div>
+        </div>
+
+        <div class="chapter">
+          <h4><span class="category-label swift">Swift</span>第 17 章 混编与工程化</h4>
+          <div class="subsection">
+            <h5>17.1 Swift 与 OC 混编</h5>
+            <ul>
+              <li><strong>OC 调用 Swift</strong>：需要 <code>@objc</code> 暴露，Swift 类继承 NSObject，使用 <code>{ProductModuleName}-Swift.h</code> 头文件</li>
+              <li><strong>Swift 调用 OC</strong>：通过 <code>{ProductModuleName}-Bridging-Header.h</code> 桥接头文件引入 OC 头文件</li>
+              <li><strong>@objc 限制</strong>：不能暴露泛型、struct（非类）、enum（非 Int 原始值）、tuple 等纯 Swift 类型</li>
+            </ul>
+          </div>
+          <div class="subsection">
+            <h5>17.2 Swift Package Manager</h5>
+            <pre><code>// Package.swift
+// swift-tools-version: 5.9
+import PackageDescription
+let package = Package(
+    name: "MyLibrary",
+    platforms: [.iOS(.v15)],
+    products: [.library(name: "MyLibrary", targets: ["MyLibrary"])],
+    dependencies: [
+        .package(url: "https://github.com/Alamofire/Alamofire.git", from: "5.8.0")
+    ],
+    targets: [
+        .target(name: "MyLibrary", dependencies: ["Alamofire"]),
+        .testTarget(name: "MyLibraryTests", dependencies: ["MyLibrary"])
+    ]
+)</code></pre>
+          </div>
+        </div>
+
+        <div class="chapter">
+          <h4><span class="category-label swift">Swift</span>第 18 章 Swift 资深面试题库</h4>
+          <div class="interview-q">
+            <div class="q">struct 和 class 的区别？什么时候用 struct？</div>
+            <div class="a">struct 是值类型（赋值拷贝、栈分配、无继承、不需要 ARC），class 是引用类型（赋值引用、堆分配、支持继承、ARC 管理）。Swift 优先用 struct，因为值类型更安全（无共享状态、无循环引用）、性能更好（栈分配）。需要继承、引用语义、身份标识（===比较）、deinit 时用 class。SwiftUI 中所有 View 都是 struct。</div>
+          </div>
+          <div class="interview-q">
+            <div class="q">说一下 Swift 的写时复制（COW）机制。</div>
+            <div class="a">值类型赋值时不立即拷贝底层存储，而是共享。只有当修改发生时才真正拷贝。Array/Dictionary/String 都实现了 COW。自定义 struct 实现 COW 用 isKnownUniquelyReferenced 检查引用是否唯一，不唯一时才拷贝。COW 大幅提升了值类型在大量传递时的性能。</div>
+          </div>
+          <div class="interview-q">
+            <div class="q">@StateObject 和 @ObservedObject 的区别？</div>
+            <div class="a">@StateObject 由视图拥有，SwiftUI 保证只创建一次（视图刷新时不会重新初始化），用于在视图内部创建 ObservableObject。@ObservedObject 由外部注入，视图不拥有，每次视图刷新可能重新赋值。如果在视图内部创建 ObservableObject 必须用 @StateObject，否则会被反复创建导致状态丢失。</div>
+          </div>
+          <div class="interview-q">
+            <div class="q">Actor 是怎么保证线程安全的？和锁有什么区别？</div>
+            <div class="a">Actor 通过隔离（isolation）保证同一时间只有一个执行流访问其可变状态。编译器在编译期强制所有外部访问必须 await（异步排队），从根源上消除数据竞争。和锁的区别：锁是运行时机制，容易忘记加锁/死锁；Actor 是编译期保证，开发者无法绕过。Actor 内部方法是同步执行的，外部调用自动排队。@MainActor 是特殊的 Actor，绑定主线程。</div>
+          </div>
+          <div class="interview-q">
+            <div class="q">some 和 any 的区别？</div>
+            <div class="a">some（不透明类型）：编译器知道具体类型，同一函数返回类型固定，调用方不知道但编译器知道，零开销。any（存在类型）：运行时才确定具体类型，有性能开销（装箱、动态派发），用于需要存储不同类型的集合（如 [any View]）。Swift 5.7 后 any 必须显式标注。优先用 some，只有需要异构集合时才用 any。</div>
+          </div>
+          <div class="interview-q">
+            <div class="q">SwiftUI 的视图刷新机制是怎样的？</div>
+            <div class="a">SwiftUI 是声明式框架，当 @State/@Published 等状态变化时，视图的 body 被重新计算，生成新的视图树，SwiftUI diff 新旧视图树，只更新变化的部分。优化手段：提取子视图为独立 struct（值类型语义，SwiftUI 可判断是否需要刷新）、遵循 Equatable 自定义比较、使用 EquatableView、LazyVStack 懒加载、避免在 body 中做复杂计算。</div>
+          </div>
+          <div class="interview-q">
+            <div class="q">Swift 的错误处理机制有哪些？</div>
+            <div class="a">①throws/do-catch/try：可恢复错误 ②Result<Success, Failure> 类型：异步回调中传递结果 ③try?：错误转为可选型 ④try!：强制解包，错误则崩溃 ⑤assert/precondition：调试/发布断言 ⑥fatalError：不可恢复错误。Swift Concurrency 中 async throws 函数用 try await 调用。</div>
+          </div>
+          <div class="interview-q">
+            <div class="q">怎么理解 @escaping 和 @autoclosure？</div>
+            <div class="a">@escaping 标记逃逸闭包：闭包在函数返回后才执行（如网络回调），需要显式标记，且会捕获 self 可能导致循环引用。非逃逸闭包在函数返回前执行完，不允许存储。@autoclosure 自动将表达式包装成无参数闭包，延迟执行（如 && 的短路求值、assert 的条件），避免表达式在不需要时被计算。</div>
+          </div>
+        </div>
+
+      </div></div>
+    </div>
+
+    <!-- ========== 分类三：Flutter ========== -->
+    <div class="volume" id="cat3">
+      <div class="volume-header" onclick="toggleVolume(this)">
+        <div class="volume-num flutter">Flutter</div>
+        <div class="volume-info">
+          <h3>分类三 · Flutter 完整学习 & 中级/资深面试</h3>
+          <div class="chapters-preview">Dart语言 ｜ 三棵树核心原理 ｜ 状态管理 ｜ 路由导航 ｜ 网络与原生交互 ｜ 性能优化发布 ｜ 面试题库</div>
+        </div>
+        <div class="volume-toggle">▼</div>
+      </div>
+      <div class="volume-body"><div class="volume-content">
+
+        <div class="chapter">
+          <h4><span class="category-label flutter">Flutter</span>第 19 章 Dart 语言</h4>
+          <div class="subsection">
+            <h5>19.1 核心特性</h5>
+            <ul>
+              <li><strong>强类型 + 类型推断</strong>：var/final/const/dynamic</li>
+              <li><strong>单线程事件循环</strong>：Event Loop + Microtask Queue</li>
+              <li><strong>async/await</strong>：基于 Future 的异步</li>
+              <li><strong>Stream</strong>：异步数据流</li>
+              <li><strong>Mixin</strong>：多继承能力（with 关键字）</li>
+              <li><strong>级联操作符</strong>：.. 链式调用</li>
+              <li><strong>可选参数</strong>：命名参数 {}、位置参数 []</li>
+            </ul>
+            <pre><code>// 类与 Mixin
+abstract class Animal {
+  void speak();
+}
+mixin Flyer {
+  void fly() => print('flying');
+}
+class Bird extends Animal with Flyer {
+  @override
+  void speak() => print('chirp');
+}
+
+// 级联
+var button = Button()
+  ..text = 'Click'
+  ..color = Colors.blue
+  ..onTap = () => print('tapped');
+
+// 异步
+Future<String> fetchData() async {
+  final response = await http.get(Uri.parse(url));
+  return response.body;
+}
+
+// Stream
+Stream<int> countStream(int max) async* {
+  for (int i = 0; i < max; i++) {
+    yield i;
+    await Future.delayed(Duration(seconds: 1));
+  }
+}</code></pre>
+          </div>
+          <div class="subsection">
+            <h5>19.2 事件循环</h5>
+            <div class="ascii-art">Dart 单线程事件循环：
+  Microtask Queue（微任务队列）→ 优先级最高
+  Event Queue（事件队列）→ Future、Timer、IO、手势
+  执行顺序：先清空 Microtask，再处理一个 Event，
+  然后再清空 Microtask，循环往复</div>
+            <pre><code>// scheduleMicrotask 优先级高于 Future
+scheduleMicrotask(() => print('microtask'));
+Future(() => print('future'));
+Future.microtask(() => print('future microtask'));
+// 输出顺序：microtask → future microtask → future</code></pre>
+          </div>
+        </div>
+
+        <div class="chapter">
+          <h4><span class="category-label flutter">Flutter</span>第 20 章 Flutter 核心原理</h4>
+          <div class="subsection">
+            <h5>20.1 三棵树</h5>
+            <div class="ascii-art">Widget 树（配置）→ Element 树（实例）→ RenderObject 树（布局绘制）
+
+Widget：不可变配置，描述 UI 应该长什么样
+  ↓ inflateWidget
+Element：Widget 的实例，持有 BuildContext，连接 Widget 和 RenderObject
+  ↓ createRenderObject / updateRenderObject
+RenderObject：真正负责布局（layout）、绘制（paint）、命中测试</div>
+            <div class="callout info"><strong>关键理解</strong>Widget 是轻量的配置对象，每次 setState 都会重建 Widget 树（成本低）。Element 树会复用（通过 canUpdate 判断），RenderObject 树只在需要时更新。这是 Flutter 高性能的核心。</div>
+          </div>
+          <div class="subsection">
+            <h5>20.2 StatelessWidget vs StatefulWidget</h5>
+            <table>
+              <tr><th>维度</th><th>StatelessWidget</th><th>StatefulWidget</th></tr>
+              <tr><td>状态</td><td>无状态，不可变</td><td>有状态，State 对象持有状态</td></tr>
+              <tr><td>重建</td><td>父 Widget 重建时重建</td><td>setState 时重建</td></tr>
+              <tr><td>生命周期</td><td>build 一次</td><td>initState/didChangeDependencies/build/setState/didUpdateWidget/deactivate/dispose</td></tr>
+              <tr><td>适用</td><td>静态展示</td><td>需要交互、动画、异步数据</td></tr>
+            </table>
+            <pre><code>class Counter extends StatefulWidget {
+  const Counter({super.key});
+  @override
+  State<Counter> createState() => _CounterState();
+}
+class _CounterState extends State<Counter> {
+  int _count = 0;
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      onPressed: () => setState(() => _count++),
+      child: Text('$_count'),
+    );
+  }
+}</code></pre>
+          </div>
+          <div class="subsection">
+            <h5>20.3 BuildContext</h5>
+            <p>BuildContext 是 Element 的抽象，代表 Widget 在树中的位置。用于查找祖先 Widget（Theme.of、Navigator.of、MediaQuery.of）、获取尺寸（MediaQuery）、显示 SnackBar 等。</p>
+            <div class="callout warn"><strong>常见错误</strong>在异步回调中使用 context 可能导致 "Do not use BuildContexts across async gaps"。需要在异步前判断 mounted：<code>if (!mounted) return;</code></div>
+          </div>
+          <div class="subsection">
+            <h5>20.4 布局原理</h5>
+            <p>Flutter 布局是约束传递（Constraints go down）、尺寸传递（Sizes go up）、父节点定位（Parent sets position）。</p>
+            <ul>
+              <li>父 Widget 向下传递约束（min/max width/height）</li>
+              <li>子 Widget 向上返回自身尺寸</li>
+              <li>父 Widget 决定子 Widget 的位置</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="chapter">
+          <h4><span class="category-label flutter">Flutter</span>第 21 章 状态管理</h4>
+          <div class="subsection">
+            <h5>21.1 主流方案对比</h5>
+            <table>
+              <tr><th>方案</th><th>特点</th><th>适用场景</th></tr>
+              <tr><td>setState</td><td>内置，简单</td><td>局部状态、简单页面</td></tr>
+              <tr><td>Provider</td><td>官方推荐，InheritedWidget 封装</td><td>中小项目，全局状态</td></tr>
+              <tr><td>Riverpod</td><td>Provider 升级版，编译安全，可测试</td><td>中大型项目，推荐</td></tr>
+              <tr><td>Bloc/Cubit</td><td>事件驱动，单向数据流</td><td>复杂业务、需要严格状态流</td></tr>
+              <tr><td>GetX</td><td>全能型，路由+状态+依赖注入</td><td>快速开发，但侵入性强</td></tr>
+              <tr><td>Riverpod Generator</td><td>代码生成，类型安全</td><td>大型项目</td></tr>
+            </table>
+          </div>
+          <div class="subsection">
+            <h5>21.2 Riverpod 示例</h5>
+            <pre><code>// 定义 Provider
+final counterProvider = StateProvider<int>((ref) => 0);
+
+// 异步 Provider
+final userProvider = FutureProvider<User>((ref) async {
+  return await API.fetchUser();
+});
+
+// 消费
+class CounterWidget extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final count = ref.watch(counterProvider);
+    return Column(children: [
+      Text('$count'),
+      ElevatedButton(
+        onPressed: () => ref.read(counterProvider.notifier).state++,
+        child: Text('+1'),
+      ),
+    ]);
+  }
+}</code></pre>
+          </div>
+          <div class="subsection">
+            <h5>21.3 Bloc 示例</h5>
+            <pre><code>// Event
+abstract class CounterEvent {}
+class Increment extends CounterEvent {}
+
+// Bloc
+class CounterBloc extends Bloc<CounterEvent, int> {
+  CounterBloc() : super(0) {
+    on<Increment>((event, emit) => emit(state + 1));
+  }
+}
+
+// 使用
+BlocProvider(
+  create: (_) => CounterBloc(),
+  child: BlocBuilder<CounterBloc, int>(
+    builder: (context, count) => Text('$count'),
+  ),
+)</code></pre>
+          </div>
+        </div>
+
+        <div class="chapter">
+          <h4><span class="category-label flutter">Flutter</span>第 22 章 路由与导航</h4>
+          <div class="subsection">
+            <h5>22.1 Navigator 1.0</h5>
+            <pre><code>// 跳转
+Navigator.push(context, MaterialPageRoute(builder: (_) => DetailPage()));
+// 带参数
+Navigator.pushNamed(context, '/detail', arguments: id);
+// 返回
+Navigator.pop(context);
+// 返回并传值
+Navigator.pop(context, result);
+
+// 命名路由
+MaterialApp(
+  routes: {
+    '/': (context) => HomePage(),
+    '/detail': (context) => DetailPage(),
+  },
+)</code></pre>
+          </div>
+          <div class="subsection">
+            <h5>22.2 GoRouter（推荐）</h5>
+            <pre><code>final router = GoRouter(
+  routes: [
+    GoRoute(path: '/', builder: (_, __) => HomePage()),
+    GoRoute(
+      path: '/detail/:id',
+      builder: (context, state) => DetailPage(id: state.pathParameters['id']!),
+    ),
+  ],
+);
+MaterialApp.router(routerConfig: router);
+
+// 跳转
+context.go('/detail/123');
+context.push('/detail/123');</code></pre>
+          </div>
+        </div>
+
+        <div class="chapter">
+          <h4><span class="category-label flutter">Flutter</span>第 23 章 网络与原生交互</h5>
+          <div class="subsection">
+            <h5>23.1 网络请求</h5>
+            <pre><code>// Dio（推荐）
+final dio = Dio();
+Response response = await dio.get('https://api.example.com/users',
+  queryParameters: {'page': 1},
+  options: Options(headers: {'Authorization': 'Bearer token'}),
+);
+
+// JSON 序列化
+class User {
+  final String id;
+  final String name;
+  User({required this.id, required this.name});
+  factory User.fromJson(Map<String, dynamic> json) =>
+      User(id: json['id'], name: json['name']);
+}</code></pre>
+          </div>
+          <div class="subsection">
+            <h5>23.2 Platform Channel 原生交互</h5>
+            <pre><code>// Dart 端
+const channel = MethodChannel('com.example/battery');
+final batteryLevel = await channel.invokeMethod<int>('getBatteryLevel');
+
+// iOS 端（Swift）
+let channel = FlutterMethodChannel(name: "com.example/battery",
+    binaryMessenger: controller.binaryMessenger)
+channel.setMethodCallHandler { call, result in
+    if call.method == "getBatteryLevel" {
+        let level = UIDevice.current.batteryLevel
+        result(level)
+    } else {
+        result(FlutterMethodNotImplemented)
+    }
+}</code></pre>
+          </div>
+        </div>
+
+        <div class="chapter">
+          <h4><span class="category-label flutter">Flutter</span>第 24 章 性能优化与发布</h4>
+          <div class="subsection">
+            <h5>24.1 性能优化</h5>
+            <ul>
+              <li><strong>避免不必要的重建</strong>：const 构造函数、拆分 Widget、Selector（Provider）/select（Riverpod）</li>
+              <li><strong>列表优化</strong>：ListView.builder 懒加载、避免在 itemBuilder 中做重计算</li>
+              <li><strong>图片优化</strong>：cached_network_image 缓存、指定 cacheWidth/cacheHeight 减少解码内存</li>
+              <li><strong>RepaintBoundary</strong>：隔离重绘区域，避免整个界面重绘</li>
+              <li><strong>异步任务</strong>：compute 跑在 isolate，避免阻塞 UI 线程</li>
+              <li><strong>帧率监控</strong>：PerformanceOverlay、Flutter DevTools</li>
+            </ul>
+          </div>
+          <div class="subsection">
+            <h5>24.2 打包发布</h5>
+            <pre><code># Android
+flutter build apk --release --split-per-abi
+flutter build appbundle --release
+
+# iOS
+flutter build ios --release
+# 然后用 Xcode 归档上传 App Store
+
+# 性能分析
+flutter run --profile
+# 打开 DevTools
+flutter pub global activate devtools
+dart devtools</code></pre>
+          </div>
+        </div>
+
+        <div class="chapter">
+          <h4><span class="category-label flutter">Flutter</span>第 25 章 Flutter 面试题库</h5>
+          <div class="interview-q">
+            <div class="q">说一下 Flutter 的三棵树和渲染流程。</div>
+            <div class="a">Widget 树（不可变配置）→ Element 树（Widget 实例，持有 BuildContext）→ RenderObject 树（布局绘制）。流程：Widget build → inflateWidget 创建 Element → Element 创建/更新 RenderObject → RenderObject 执行 layout（约束传递）→ paint（绘制到 Layer）→ composite（合成）→ 上屏。setState 标记 Element dirty，下一帧重建 Widget，diff 后更新 RenderObject。</div>
+          </div>
+          <div class="interview-q">
+            <div class="q">StatefulWidget 的生命周期？</div>
+            <div class="a">createState → initState（一次，可访问 context 但不能用 async gap）→ didChangeDependencies（依赖变化时）→ build → didUpdateWidget（父 Widget 重建时）→ setState → deactivate（暂时移除）→ dispose（永久移除）。build 可能多次调用，initState/dispose 只调用一次。</div>
+          </div>
+          <div class="interview-q">
+            <div class="q">Flutter 为什么性能好？和 React Native 有什么区别？</div>
+            <div class="a">Flutter 自绘引擎（Skia/Impeller），不依赖原生控件，直接渲染到 GPU，避免 JS Bridge 通信开销。React Native 通过 JS Bridge 调用原生控件，有通信开销。Flutter 是 AOT 编译为原生代码，RN 是 JIT（开发）/AOT（发布）。Flutter 一致性更好（各平台 UI 一致），RN 更接近原生体验。</div>
+          </div>
+          <div class="interview-q">
+            <div class="q">怎么优化 Flutter 列表性能？</div>
+            <div class="a">①用 ListView.builder/SliverList 懒加载 ②itemExtent 固定行高避免动态计算 ③const 构造函数减少重建 ④图片用 cached_network_image + cacheWidth ⑤避免在 itemBuilder 中做重计算（提前算好）⑥RepaintBoundary 隔离 ⑦大列表用 CustomScrollView + Slivers。</div>
+          </div>
+          <div class="interview-q">
+            <div class="q">BuildContext 是什么？为什么不能跨异步使用？</div>
+            <div class="a">BuildContext 是 Element 的抽象，代表 Widget 在树中的位置。异步操作后 Element 可能已被移除（页面销毁），此时使用 context 会访问已失效的 Element，导致崩溃。Flutter 3.7+ 有 lint 警告。解决：异步前判断 <code>if (!mounted) return;</code>，或在异步前获取需要的值（如 Navigator）。</div>
+          </div>
+        </div>
+
+      </div></div>
+    </div>
+
+    <!-- ========== 分类四：后端开发 ========== -->
+    <div class="volume" id="cat4">
+      <div class="volume-header" onclick="toggleVolume(this)">
+        <div class="volume-num backend">后端</div>
+        <div class="volume-info">
+          <h3>分类四 · 后端开发（Node.js + PostgreSQL + 腾讯 CloudBase）</h3>
+          <div class="chapters-preview">Node.js核心 ｜ Express/Koa ｜ PostgreSQL ｜ 腾讯CloudBase ｜ API设计与安全 ｜ 部署运维 ｜ 面试题库</div>
+        </div>
+        <div class="volume-toggle">▼</div>
+      </div>
+      <div class="volume-body"><div class="volume-content">
+
+        <div class="chapter">
+          <h4><span class="category-label backend">Node.js</span>第 26 章 Node.js 核心</h4>
+          <div class="subsection">
+            <h5>26.1 事件循环</h5>
+            <div class="ascii-art">Node.js 事件循环（libuv）6 个阶段：
+  timers → pending callbacks → idle/prepare
+  → poll（I/O回调，最核心）→ check（setImmediate）→ close callbacks
+
+  process.nextTick 和 Promise（microtask）在每个阶段切换时执行
+  优先级：nextTick > Promise > setTimeout > setImmediate</div>
+            <pre><code>// 执行顺序测试
+setTimeout(() => console.log('timeout'), 0);
+setImmediate(() => console.log('immediate'));
+Promise.resolve().then(() => console.log('promise'));
+process.nextTick(() => console.log('nextTick'));
+// 输出：nextTick → promise → timeout → immediate
+// （timeout 和 immediate 顺序在 I/O 周期内确定）</code></pre>
+          </div>
+          <div class="subsection">
+            <h5>26.2 模块系统</h5>
+            <table>
+              <tr><th>维度</th><th>CommonJS（CJS）</th><th>ES Modules（ESM）</th></tr>
+              <tr><td>语法</td><td>require/module.exports</td><td>import/export</td></tr>
+              <tr><td>加载</td><td>同步运行时加载</td><td>异步静态分析（可 Tree-shaking）</td></tr>
+              <tr><td>导出</td><td>值拷贝（基本类型）/ 引用（对象）</td><td>实时绑定（引用）</td></tr>
+              <tr><td>this</td><td>指向 module.exports</td><td>undefined</td></tr>
+              <tr><td>__dirname</td><td>可用</td><td>不可用（用 import.meta.url）</td></tr>
+            </table>
+          </div>
+          <div class="subsection">
+            <h5>26.3 Stream 与 Buffer</h5>
+            <pre><code>// 四种 Stream：Readable、Writable、Duplex、Transform
+const fs = require('fs');
+// 管道：读文件 → gzip 压缩 → 写文件
+fs.createReadStream('input.txt')
+  .pipe(require('zlib').createGzip())
+  .pipe(fs.createWriteStream('input.txt.gz'));
+
+// Buffer：二进制数据处理
+const buf = Buffer.from('Hello', 'utf8');
+console.log(buf.toString('hex')); // 48656c6c6f
+console.log(buf.length); // 5</code></pre>
+          </div>
+          <div class="subsection">
+            <h5>26.4 错误处理</h5>
+            <pre><code>// 全局错误捕获
+process.on('uncaughtException', (err) => {
+  console.error('未捕获异常:', err);
+  process.exit(1); // 必须退出，状态已不可靠
+});
+process.on('unhandledRejection', (reason) => {
+  console.error('未处理的 Promise 拒绝:', reason);
+});
+
+// Express 错误处理中间件
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ error: 'Internal Server Error' });
+});</code></pre>
+          </div>
+        </div>
+
+        <div class="chapter">
+          <h4><span class="category-label backend">Node.js</span>第 27 章 Express / Koa 框架</h4>
+          <div class="subsection">
+            <h5>27.1 Express 核心</h5>
+            <pre><code>const express = require('express');
+const app = express();
+
+// 中间件
+app.use(express.json()); // 解析 JSON body
+app.use(express.urlencoded({ extended: true }));
+app.use(cors()); // 跨域
+app.use(helmet()); // 安全头
+
+// 路由
+app.get('/api/users/:id', async (req, res, next) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) return res.status(404).json({ error: 'Not found' });
+    res.json(user);
+  } catch (err) {
+    next(err); // 交给错误处理中间件
+  }
+});
+
+// 路由模块化
+const userRouter = require('./routes/users');
+app.use('/api/users', userRouter);
+
+app.listen(3000, () => console.log('Server running on port 3000'));</code></pre>
+          </div>
+          <div class="subsection">
+            <h5>27.2 Koa 洋葱模型</h5>
+            <pre><code>const Koa = require('koa');
+const app = new Koa();
+
+// 洋葱模型：请求从外到内，响应从内到外
+app.use(async (ctx, next) => {
+  const start = Date.now();
+  await next(); // 进入下一个中间件
+  const ms = Date.now() - start;
+  ctx.set('X-Response-Time', `${ms}ms`);
+});
+
+app.use(async (ctx) => {
+  ctx.body = { message: 'Hello Koa' };
+});
+
+app.listen(3000);</code></pre>
+            <div class="callout info"><strong>Express vs Koa</strong>Express 是线性中间件（req→res），内置路由和静态文件。Koa 是洋葱模型（async/await），更轻量，无内置路由（需 koa-router），错误处理用 try/catch 更优雅。</div>
+          </div>
+          <div class="subsection">
+            <h5>27.3 中间件分类</h5>
+            <ul>
+              <li><strong>应用级</strong>：app.use，全局生效</li>
+              <li><strong>路由级</strong>：router.use，特定路由生效</li>
+              <li><strong>错误处理</strong>：4 个参数 (err, req, res, next)</li>
+              <li><strong>内置</strong>：express.json、express.static</li>
+              <li><strong>第三方</strong>：cors、helmet、morgan、compression</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="chapter">
+          <h4><span class="category-label backend">PostgreSQL</span>第 28 章 PostgreSQL</h4>
+          <div class="subsection">
+            <h5>28.1 基础 SQL</h5>
+            <pre><code>-- 建表
+CREATE TABLE users (
+  id SERIAL PRIMARY KEY,
+  username VARCHAR(50) UNIQUE NOT NULL,
+  email VARCHAR(100) UNIQUE NOT NULL,
+  password_hash VARCHAR(255) NOT NULL,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- 索引
+CREATE INDEX idx_users_email ON users(email);
+CREATE INDEX idx_users_created ON users(created_at DESC);
+CREATE UNIQUE INDEX idx_users_lower_email ON users(LOWER(email));
+
+-- 常用查询
+SELECT u.id, u.username, COUNT(p.id) as post_count
+FROM users u
+LEFT JOIN posts p ON p.user_id = u.id
+WHERE u.created_at > NOW() - INTERVAL '30 days'
+GROUP BY u.id, u.username
+HAVING COUNT(p.id) > 5
+ORDER BY post_count DESC
+LIMIT 20 OFFSET 0;
+
+-- 事务
+BEGIN;
+UPDATE accounts SET balance = balance - 100 WHERE id = 1;
+UPDATE accounts SET balance = balance + 100 WHERE id = 2;
+COMMIT; -- 或 ROLLBACK;</code></pre>
+          </div>
+          <div class="subsection">
+            <h5>28.2 索引原理与优化</h5>
+            <table>
+              <tr><th>索引类型</th><th>适用场景</th></tr>
+              <tr><td>B-tree（默认）</td><td>等值查询、范围查询、排序</td></tr>
+              <tr><td>Hash</td><td>仅等值查询，不支持范围/排序</td></tr>
+              <tr><td>GIN</td><td>数组、JSONB、全文搜索</td></tr>
+              <tr><td>GiST</td><td>地理空间、全文搜索、范围类型</td></tr>
+              <tr><td>BRIN</td><td>超大表、物理顺序与逻辑顺序一致</td></tr>
+            </table>
+            <ul>
+              <li><strong>EXPLAIN ANALYZE</strong>：查看执行计划，确认是否走索引</li>
+              <li><strong>复合索引最左前缀</strong>：INDEX(a,b,c) 支持 a、a+b、a+b+c 查询</li>
+              <li><strong>避免索引失效</strong>：函数包裹列（LOWER(col)）、隐式类型转换、OR 连接非索引列、LIKE '%xxx'</li>
+              <li><strong>覆盖索引</strong>：查询列都在索引中，避免回表</li>
+            </ul>
+          </div>
+          <div class="subsection">
+            <h5>28.3 事务隔离级别</h5>
+            <table>
+              <tr><th>隔离级别</th><th>脏读</th><th>不可重复读</th><th>幻读</th></tr>
+              <tr><td>Read Uncommitted</td><td>可能</td><td>可能</td><td>可能</td></tr>
+              <tr><td>Read Committed（PG默认）</td><td>不会</td><td>可能</td><td>可能</td></tr>
+              <tr><td>Repeatable Read</td><td>不会</td><td>不会</td><td>可能（PG中实际不会）</td></tr>
+              <tr><td>Serializable</td><td>不会</td><td>不会</td><td>不会</td></tr>
+            </table>
+            <p>PostgreSQL 的 Repeatable Read 实际已防止幻读（基于快照隔离 SI），Serializable 是真正的可串行化（SSI），有性能开销。</p>
+          </div>
+          <div class="subsection">
+            <h5>28.4 Node.js 连接 PG</h5>
+            <pre><code>const { Pool } = require('pg');
+const pool = new Pool({
+  host: 'localhost',
+  port: 5432,
+  database: 'mydb',
+  user: 'user',
+  password: 'pass',
+  max: 20, // 连接池大小
+  idleTimeoutMillis: 30000,
+});
+
+// 参数化查询（防 SQL 注入）
+async function getUser(id) {
+  const result = await pool.query(
+    'SELECT * FROM users WHERE id = $1',
+    [id] // 参数数组，$1 对应第一个
+  );
+  return result.rows[0];
+}
+
+// 事务
+async function transfer(from, to, amount) {
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+    await client.query('UPDATE accounts SET balance = balance - $1 WHERE id = $2', [amount, from]);
+    await client.query('UPDATE accounts SET balance = balance + $1 WHERE id = $2', [amount, to]);
+    await client.query('COMMIT');
+  } catch (err) {
+    await client.query('ROLLBACK');
+    throw err;
+  } finally {
+    client.release();
+  }
+}</code></pre>
+          </div>
+        </div>
+
+        <div class="chapter">
+          <h4><span class="category-label backend">CloudBase</span>第 29 章 腾讯 CloudBase</h4>
+          <div class="subsection">
+            <h5>29.1 核心能力</h5>
+            <table>
+              <tr><th>服务</th><th>说明</th></tr>
+              <tr><td>云函数（SCF）</td><td>事件驱动的无服务器函数，Node.js/Python/Go 等</td></tr>
+              <tr><td>云数据库</td><td>MongoDB 兼容的文档型数据库（也支持 PostgreSQL）</td></tr>
+              <tr><td>云存储</td><td>对象存储，文件上传/下载/CDN</td></tr>
+              <tr><td>云托管</td><td>容器化部署，支持任意语言和框架</td></tr>
+              <tr><td>静态网站托管</td><td>前端静态资源托管 + CDN</td></tr>
+              <tr><td>用户认证</td><td>微信/手机号/邮箱/自定义登录</td></tr>
+            </table>
+          </div>
+          <div class="subsection">
+            <h5>29.2 云函数开发</h5>
+            <pre><code>// 云函数入口（Node.js）
+const cloud = require('wx-server-sdk');
+cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV });
+const db = cloud.database();
+
+exports.main = async (event, context) => {
+  const { action, data } = event;
+  switch (action) {
+    case 'getUser':
+      return await db.collection('users').doc(data.id).get();
+    case 'createUser':
+      return await db.collection('users').add({
+        data: { ...data, createdAt: db.serverDate() }
+      });
+    default:
+      return { error: 'Unknown action' };
+  }
+};
+
+// 客户端调用
+const res = await wx.cloud.callFunction({
+  name: 'userService',
+  data: { action: 'getUser', data: { id: 'xxx' } }
+});</code></pre>
+          </div>
+          <div class="subsection">
+            <h5>29.3 云数据库操作</h5>
+            <pre><code>const _ = db.command;
+
+// 查询
+const result = await db.collection('posts')
+  .where({
+    status: 'published',
+    createdAt: _.gt(new Date('2024-01-01'))
+  })
+  .orderBy('createdAt', 'desc')
+  .skip(0).limit(20)
+  .get();
+
+// 聚合
+const stats = await db.collection('orders')
+  .aggregate()
+  .match({ status: 'paid' })
+  .group({ _id: '$userId', total: _.sum('$amount') })
+  .end();
+
+// 事务
+const transaction = await db.startTransaction();
+try {
+  await transaction.collection('accounts').doc(id1)
+    .update({ data: { balance: _.inc(-100) } });
+  await transaction.collection('accounts').doc(id2)
+    .update({ data: { balance: _.inc(100) } });
+  await transaction.commit();
+} catch (e) {
+  await transaction.rollback();
+}</code></pre>
+          </div>
+          <div class="subsection">
+            <h5>29.4 云托管（容器化）</h5>
+            <p>云托管支持 Docker 容器部署，适合需要长连接、WebSocket、自定义运行时的场景。与云函数相比：无冷启动、支持常驻进程、可运行任意框架。</p>
+            <pre><code># Dockerfile
+FROM node:18-alpine
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci --production
+COPY . .
+EXPOSE 3000
+CMD ["node", "server.js"]</code></pre>
+          </div>
+        </div>
+
+        <div class="chapter">
+          <h4><span class="category-label backend">后端</span>第 30 章 API 设计与安全</h5>
+          <div class="subsection">
+            <h5>30.1 RESTful API 设计</h5>
+            <table>
+              <tr><th>方法</th><th>用途</th><th>幂等</th></tr>
+              <tr><td>GET</td><td>查询资源</td><td>是</td></tr>
+              <tr><td>POST</td><td>创建资源</td><td>否</td></tr>
+              <tr><td>PUT</td><td>全量更新</td><td>是</td></tr>
+              <tr><td>PATCH</td><td>部分更新</td><td>否</td></tr>
+              <tr><td>DELETE</td><td>删除资源</td><td>是</td></tr>
+            </table>
+            <pre><code>// 规范的 API 路径设计
+GET    /api/users              # 用户列表
+GET    /api/users/:id          # 用户详情
+POST   /api/users              # 创建用户
+PUT    /api/users/:id          # 更新用户
+DELETE /api/users/:id          # 删除用户
+GET    /api/users/:id/posts    # 用户的文章
+POST   /api/users/:id/follow   # 关注用户（动作用 POST）
+
+// 统一响应格式
+{
+  "code": 0,           // 0 成功，非 0 错误码
+  "message": "success",
+  "data": { ... },
+  "timestamp": 1234567890
+}
+
+// 分页
+GET /api/users?page=1&pageSize=20
+// 响应
+{ "data": { "list": [...], "total": 100, "page": 1, "pageSize": 20 } }</code></pre>
+          </div>
+          <div class="subsection">
+            <h5>30.2 JWT 认证</h5>
+            <pre><code>const jwt = require('jsonwebtoken');
+
+// 登录签发 token
+app.post('/api/login', async (req, res) => {
+  const { email, password } = req.body;
+  const user = await User.findByEmail(email);
+  if (!user || !await bcrypt.compare(password, user.passwordHash)) {
+    return res.status(401).json({ error: 'Invalid credentials' });
+  }
+  const token = jwt.sign(
+    { userId: user.id, role: user.role },
+    process.env.JWT_SECRET,
+    { expiresIn: '7d' }
+  );
+  res.json({ token, user: { id: user.id, email: user.email } });
+});
+
+// 认证中间件
+function auth(req, res, next) {
+  const token = req.headers.authorization?.replace('Bearer ', '');
+  if (!token) return res.status(401).json({ error: 'No token' });
+  try {
+    req.user = jwt.verify(token, process.env.JWT_SECRET);
+    next();
+  } catch {
+    res.status(401).json({ error: 'Invalid token' });
+  }
+}</code></pre>
+          </div>
+          <div class="subsection">
+            <h5>30.3 安全防护</h5>
+            <ul>
+              <li><strong>SQL 注入</strong>：参数化查询（$1 占位符），禁止字符串拼接 SQL</li>
+              <li><strong>XSS</strong>：输出转义、CSP 头、HttpOnly Cookie</li>
+              <li><strong>CSRF</strong>：SameSite Cookie、CSRF Token、验证 Referer</li>
+              <li><strong>密码安全</strong>：bcrypt/argon2 哈希（cost factor ≥ 12），绝不明文存储</li>
+              <li><strong>限流</strong>：express-rate-limit，防暴力破解和 DDoS</li>
+              <li><strong>输入校验</strong>：Joi/Zod 校验所有入参，拒绝非法数据</li>
+              <li><strong>HTTPS</strong>：强制 TLS，HSTS 头</li>
+              <li><strong>敏感信息</strong>：日志中不打印密码/token，环境变量管理密钥</li>
+            </ul>
+            <pre><code>// helmet 安全头
+const helmet = require('helmet');
+app.use(helmet());
+
+// 限流
+const rateLimit = require('express-rate-limit');
+app.use('/api/login', rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 分钟
+  max: 5, // 最多 5 次
+  message: { error: 'Too many login attempts' }
+}));
+
+// 输入校验（Zod）
+const userSchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(8).max(100),
+});
+const result = userSchema.safeParse(req.body);
+if (!result.success) return res.status(400).json({ error: result.error.issues });</code></pre>
+          </div>
+        </div>
+
+        <div class="chapter">
+          <h4><span class="category-label backend">后端</span>第 31 章 部署运维</h4>
+          <div class="subsection">
+            <h5>31.1 Docker 部署</h5>
+            <pre><code># Dockerfile
+FROM node:18-alpine AS builder
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci
+COPY . .
+RUN npm run build
+
+FROM node:18-alpine
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci --production
+COPY --from=builder /app/dist ./dist
+EXPOSE 3000
+HEALTHCHECK --interval=30s --timeout=3s \
+  CMD wget -qO- http://localhost:3000/health || exit 1
+CMD ["node", "dist/server.js"]
+
+# docker-compose.yml
+version: '3.8'
+services:
+  api:
+    build: .
+    ports: ["3000:3000"]
+    environment:
+      - DATABASE_URL=postgresql://user:pass@db:5432/mydb
+      - NODE_ENV=production
+    depends_on: [db]
+    restart: always
+  db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: mydb
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+volumes:
+  pgdata:</code></pre>
+          </div>
+          <div class="subsection">
+            <h5>31.2 PM2 进程管理</h5>
+            <pre><code># ecosystem.config.js
+module.exports = {
+  apps: [{
+    name: 'api',
+    script: 'dist/server.js',
+    instances: 'max', // 多核
+    exec_mode: 'cluster', // 集群模式
+    env: { NODE_ENV: 'production' },
+    error_file: './logs/err.log',
+    out_file: './logs/out.log',
+    max_memory_restart: '500M',
+  }]
+};
+# 命令
+pm2 start ecosystem.config.js
+pm2 logs api
+pm2 monit
+pm2 reload api  # 零停机重载</code></pre>
+          </div>
+          <div class="subsection">
+            <h5>31.3 CI/CD（GitHub Actions）</h5>
+            <pre><code># .github/workflows/deploy.yml
+name: Deploy
+on:
+  push:
+    branches: [main]
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '18' }
+      - run: npm ci
+      - run: npm test
+      - run: npm run build
+      - name: Deploy to server
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            cd /var/www/api
+            git pull
+            npm ci --production
+            pm2 reload api</code></pre>
+          </div>
+          <div class="subsection">
+            <h5>31.4 日志与监控</h5>
+            <ul>
+              <li><strong>结构化日志</strong>：pino/winston，JSON 格式，含 requestId、timestamp、level</li>
+              <li><strong>APM</strong>：Sentry（错误追踪）、Prometheus + Grafana（指标监控）</li>
+              <li><strong>健康检查</strong>：/health 端点，检查 DB/缓存连接</li>
+              <li><strong>告警</strong>：错误率 > 阈值、响应时间 > 阈值时通知</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="chapter">
+          <h4><span class="category-label backend">后端</span>第 32 章 后端面试题库</h4>
+          <div class="interview-q">
+            <div class="q">Node.js 事件循环机制？setTimeout、setImmediate、process.nextTick、Promise 的执行顺序？</div>
+            <div class="a">Node 事件循环基于 libuv，6 个阶段：timers → pending → idle/prepare → poll → check → close。microtask（nextTick + Promise）在每个阶段切换时执行。优先级：process.nextTick > Promise.then > setTimeout(0) > setImmediate。nextTick 在当前操作完成后立即执行，Promise 在 nextTick 之后，setTimeout 进入 timers 阶段，setImmediate 进入 check 阶段。</div>
+          </div>
+          <div class="interview-q">
+            <div class="q">CommonJS 和 ES Module 的区别？</div>
+            <div class="a">CJS 是同步运行时加载，值拷贝（基本类型）/引用（对象），require 动态执行，有 __dirname。ESM 是异步静态分析加载，实时绑定（引用），import 静态声明（也支持动态 import()），支持 Tree-shaking，无 __dirname（用 import.meta.url）。CJS 的 this 指向 module.exports，ESM 中 this 为 undefined。Node.js 中 .cjs 用 CJS，.mjs 用 ESM，package.json 的 type 字段决定默认。</div>
+          </div>
+          <div class="interview-q">
+            <div class="q">PostgreSQL 索引有哪些类型？怎么优化慢查询？</div>
+            <div class="a">索引类型：B-tree（默认，等值/范围/排序）、Hash（仅等值）、GIN（数组/JSONB/全文）、GiST（地理空间/全文）、BRIN（超大表）。优化慢查询：①EXPLAIN ANALYZE 看执行计划 ②确保查询条件走索引 ③避免函数包裹索引列、隐式类型转换、LIKE '%xxx' ④复合索引遵循最左前缀 ⑤覆盖索引避免回表 ⑥大表分页用游标替代 OFFSET ⑦定期 ANALYZE 更新统计信息。</div>
+          </div>
+          <div class="interview-q">
+            <div class="q">怎么防止 SQL 注入？</div>
+            <div class="a">①参数化查询（$1 占位符，驱动自动转义）②禁止字符串拼接 SQL ③ORM（Prisma/Sequelize）默认参数化 ④输入校验和白名单 ⑤最小权限原则（数据库账号只给必要权限）⑥WAF 拦截。永远不要信任用户输入，即使是内部系统。</div>
+          </div>
+          <div class="interview-q">
+            <div class="q">JWT 的原理和优缺点？怎么处理登出？</div>
+            <div class="a">JWT 由 header.payload.signature 三部分组成，服务端用密钥签名，客户端存储，请求时带在 Authorization 头。优点：无状态、服务端不需存 session、跨服务共享。缺点：无法主动失效、payload 不能存敏感信息（base64 非加密）、token 泄露风险。登出方案：①短期 access token + 长期 refresh token（refresh 存数据库可撤销）②黑名单（Redis 存已失效 token，过期自动清除）③版本号（用户表 token_version，JWT 中携带，修改密码时版本+1）。</div>
+          </div>
+          <div class="interview-q">
+            <div class="q">云函数和云托管的区别？怎么选？</div>
+            <div class="a">云函数（SCF）是事件驱动的无服务器函数，按需计费，有冷启动，适合短任务、事件触发、定时任务。云托管是容器化部署，常驻进程，无冷启动，支持长连接/WebSocket/任意框架，适合需要持续运行的服务。选择：简单 API/定时任务/微信小程序后端用云函数；复杂业务/长连接/需要自定义运行时用云托管。冷启动优化：预置并发、减少依赖体积、保持函数轻量。</div>
+          </div>
+          <div class="interview-q">
+            <div class="q">怎么设计一个高并发的秒杀系统？</div>
+            <div class="a">①前端限流（按钮置灰、验证码）②CDN 静态化页面③Nginx 限流（limit_req）④Redis 预减库存（原子操作 DECR，避免超卖）⑤消息队列削峰（Kafka/RabbitMQ，异步下单）⑥数据库乐观锁/悲观锁防超卖⑦分布式锁（Redis SETNX）⑧分库分表⑨兜底：降级、熔断、限流。核心思路：将请求挡在前面，异步处理，最终一致性。</div>
+          </div>
+        </div>
+
+      </div></div>
+    </div>
+
+    <!-- 附录 -->
+    <div class="volume" id="appendix">
+      <div class="volume-header" onclick="toggleVolume(this)">
+        <div class="volume-num appendix">附</div>
+        <div class="volume-info">
+          <h3>附录 · 速查资源</h3>
+          <div class="chapters-preview">常用命令速查 ｜ SQL 速查 ｜ 学习资源推荐</div>
+        </div>
+        <div class="volume-toggle">▼</div>
+      </div>
+      <div class="volume-body"><div class="volume-content">
+
+        <div class="chapter">
+          <h4>附录 A：常用命令速查</h4>
+          <h6>Git</h6>
+          <pre><code>git checkout -b feature/xxx    # 新建分支
+git add . && git commit -m "msg"
+git push origin feature/xxx
+git rebase main                 # 变基
+git stash / git stash pop       # 暂存
+git log --oneline --graph       # 查看提交图</code></pre>
+          <h6>npm / yarn</h6>
+          <pre><code>npm install package --save
+npm install package --save-dev
+npm run dev / build / test
+npm outdated                    # 检查过期包
+npx package                     # 临时运行</code></pre>
+          <h6>Docker</h6>
+          <pre><code>docker build -t app .
+docker run -d -p 3000:3000 app
+docker-compose up -d
+docker logs -f container_id
+docker exec -it container_id sh</code></pre>
+          <h6>Flutter</h6>
+          <pre><code>flutter create project
+flutter run
+flutter build apk --release
+flutter pub get
+flutter doctor</code></pre>
+        </div>
+
+        <div class="chapter">
+          <h4>附录 B：SQL 速查</h4>
+          <pre><code>-- 查询
+SELECT DISTINCT col FROM table WHERE condition
+ORDER BY col DESC LIMIT 10 OFFSET 0;
+
+-- 聚合
+SELECT category, COUNT(*), AVG(price), SUM(amount)
+FROM table GROUP BY category HAVING COUNT(*) > 5;
+
+-- 连接
+SELECT * FROM a JOIN b ON a.id = b.a_id;
+SELECT * FROM a LEFT JOIN b ON a.id = b.a_id;
+
+-- 子查询
+SELECT * FROM users WHERE id IN (SELECT user_id FROM orders);
+
+-- 窗口函数
+SELECT *, ROW_NUMBER() OVER (PARTITION BY dept ORDER BY salary DESC) as rank
+FROM employees;
+
+-- 常用函数
+COALESCE(col, default)    -- 空值替换
+NULLIF(col, value)        -- 相等返回 NULL
+EXTRACT(YEAR FROM date)   -- 提取日期部分
+CASE WHEN ... THEN ... END -- 条件</code></pre>
+        </div>
+
+        <div class="chapter">
+          <h4>附录 C：学习资源</h4>
+          <h6>Objective-C / iOS</h6>
+          <ul>
+            <li>《Objective-C 高级编程》（iOS 与 OS X 多线程和内存管理）</li>
+            <li>《Effective Objective-C 2.0》52 个有效方法</li>
+            <li>iOS 核心动画（iOS Core Animation）</li>
+            <li>Apple 官方文档：developer.apple.com</li>
+          </ul>
+          <h6>Swift / SwiftUI</h6>
+          <ul>
+            <li>《The Swift Programming Language》官方手册</li>
+            <li>Swift by Sundell（swiftbysundell.com）</li>
+            <li>SwiftUI 官方教程（developer.apple.com/tutorials/swiftui）</li>
+            <li>WWDC 视频（每年必看）</li>
+          </ul>
+          <h6>Flutter</h6>
+          <ul>
+            <li>Flutter 官方文档（docs.flutter.dev）</li>
+            <li>《Flutter 实战》（掘金）</li>
+            <li>Flutter 中文网（flutterchina.club）</li>
+          </ul>
+          <h6>后端 / Node.js / PG</h6>
+          <ul>
+            <li>《Node.js 设计模式》</li>
+            <li>《PostgreSQL 技术内幕》</li>
+            <li>MDN Web Docs（JavaScript 参考）</li>
+            <li>腾讯 CloudBase 官方文档（docs.cloudbase.net）</li>
+          </ul>
+        </div>
+
+      </div></div>
+    </div>
+
+  </main>
+</div>
+
+<button class="back-top" id="backTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<script>
+function toggleVolume(header) {
+  header.parentElement.classList.toggle('open');
+}
+function toggleNav(titleEl) {
+  const section = titleEl.parentElement;
+  section.classList.toggle('collapsed');
+  const items = section.querySelector('.nav-items');
+  items.style.maxHeight = section.classList.contains('collapsed') ? '0px' : items.scrollHeight + 'px';
+}
+function scrollToVolume(id) {
+  const el = document.getElementById(id);
+  if (el) {
+    if (!el.classList.contains('open')) el.classList.add('open');
+    setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+  }
+}
+let allOpen = false;
+function toggleAll() {
+  allOpen = !allOpen;
+  document.querySelectorAll('.volume').forEach(v => v.classList.toggle('open', allOpen));
+}
+function toggleTheme() {
+  const html = document.documentElement;
+  const isLight = html.getAttribute('data-theme') === 'light';
+  html.setAttribute('data-theme', isLight ? 'dark' : 'light');
+  document.getElementById('themeBtn').textContent = isLight ? '🌙 暗色' : '☀️ 亮色';
+  localStorage.setItem('ios-theme', isLight ? 'dark' : 'light');
+}
+const savedTheme = localStorage.getItem('ios-theme');
+if (savedTheme === 'light') {
+  document.documentElement.setAttribute('data-theme', 'light');
+  document.getElementById('themeBtn').textContent = '☀️ 亮色';
+}
+const searchInput = document.getElementById('searchInput');
+searchInput.addEventListener('input', function() {
+  const query = this.value.trim().toLowerCase();
+  document.querySelectorAll('mark').forEach(m => m.replaceWith(m.textContent));
+  if (!query) return;
+  document.querySelectorAll('.volume').forEach(v => {
+    if (v.textContent.toLowerCase().includes(query)) v.classList.add('open');
+  });
+  const walker = document.createTreeWalker(document.querySelector('.main'), NodeFilter.SHOW_TEXT, null);
+  const nodes = [];
+  while (walker.nextNode()) {
+    if (walker.currentNode.textContent.toLowerCase().includes(query) &&
+        walker.currentNode.parentElement.tagName !== 'SCRIPT' &&
+        walker.currentNode.parentElement.tagName !== 'MARK') {
+      nodes.push(walker.currentNode);
+    }
+  }
+  nodes.forEach(node => {
+    const regex = new RegExp('(' + query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'gi');
+    const span = document.createElement('span');
+    span.innerHTML = node.textContent.replace(regex, '<mark>$1</mark>');
+    node.replaceWith(span);
+  });
+  const firstMark = document.querySelector('mark');
+  if (firstMark) firstMark.scrollIntoView({ behavior: 'smooth', block: 'center' });
+});
+const backTop = document.getElementById('backTop');
+window.addEventListener('scroll', () => {
+  backTop.classList.toggle('show', window.scrollY > 400);
+  const progress = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
+  document.getElementById('progressBar').style.width = progress + '%';
+});
+document.querySelectorAll('.nav-items').forEach(items => { items.style.maxHeight = items.scrollHeight + 'px'; });
+</script>
+
+</body>
+</html>

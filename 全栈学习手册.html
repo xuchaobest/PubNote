@@ -1,0 +1,2675 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>全栈学习手册 V3 · 详细知识版（移动开发 + 全栈 + AI）</title>
+<link rel="stylesheet" href="https://miaoda.feishu.cn/fonts/css2?family=Noto+Sans+SC:wght@400;500;600;700;800;900&display=swap">
+<style>
+/* ============================================================
+   设计令牌 · 三主题（浅色 / 深色 / 护眼）
+============================================================ */
+:root{
+  --bg:#eef2f7; --surface:#ffffff; --surface-2:#f6f8fc; --surface-3:#eaf0f8;
+  --text:#182336; --text-2:#5a6577; --text-3:#8a94a6;
+  --border:#e2e8f2; --border-2:#cfd9e6;
+  --accent:#2b6df6; --accent-2:#0ea5e9; --accent-soft:rgba(43,109,246,.08);
+  --green:#16a34a; --green-soft:rgba(22,163,74,.10);
+  --amber:#d97706; --amber-soft:rgba(217,119,6,.10);
+  --red:#dc2626; --red-soft:rgba(220,38,38,.08);
+  --teal:#0d9488; --teal-soft:rgba(13,148,136,.10);
+  --purple:#7c3aed; --purple-soft:rgba(124,58,237,.08);
+  --slate:#475569; --slate-soft:rgba(71,85,105,.12);
+  --sidebar:#0f172a; --sidebar-2:#151f38; --sidebar-text:#cbd5e1; --sidebar-muted:#8494ab;
+  --shadow-sm:0 1px 2px rgba(16,24,40,.06);
+  --shadow-md:0 8px 28px rgba(16,24,40,.12);
+  --radius:12px;
+  --hl-bg:#fff3bf; --hl-border:#f59e0b;
+  --code-bg:#0f172a; --code-text:#e2e8f0;
+}
+[data-theme="dark"]{
+  --bg:#0b1322; --surface:#111b2e; --surface-2:#0e1729; --surface-3:#182542;
+  --text:#e6ecf5; --text-2:#9aa9bf; --text-3:#6b7a93;
+  --border:#1e2b44; --border-2:#2b3c5e;
+  --accent:#4d8dff; --accent-2:#38bdf8; --accent-soft:rgba(77,141,255,.14);
+  --green:#34d399; --green-soft:rgba(52,211,153,.12);
+  --amber:#fbbf24; --amber-soft:rgba(251,191,36,.12);
+  --red:#f87171; --red-soft:rgba(248,113,113,.12);
+  --teal:#2dd4bf; --teal-soft:rgba(45,212,191,.12);
+  --purple:#a78bfa; --purple-soft:rgba(167,139,250,.14);
+  --slate:#94a3b8; --slate-soft:rgba(148,163,184,.14);
+  --sidebar:#0a1120; --sidebar-2:#101c33; --sidebar-text:#c7d2e0; --sidebar-muted:#7186a3;
+  --shadow-sm:0 1px 2px rgba(0,0,0,.35);
+  --shadow-md:0 10px 32px rgba(0,0,0,.5);
+  --hl-bg:#3b3410; --hl-border:#d4a017;
+  --code-bg:#0a1120; --code-text:#dbe4f0;
+}
+[data-theme="sepia"]{
+  --bg:#f5efe0; --surface:#fdfaf3; --surface-2:#f7f1e2; --surface-3:#efe6d0;
+  --text:#3d3224; --text-2:#6b5d48; --text-3:#99896f;
+  --border:#e4d9c2; --border-2:#d6c8aa;
+  --accent:#8a5a16; --accent-2:#b07d2a; --accent-soft:rgba(138,90,22,.10);
+  --green:#5c7a2e; --green-soft:rgba(92,122,46,.12);
+  --amber:#a16207; --amber-soft:rgba(161,98,7,.12);
+  --red:#a33a2a; --red-soft:rgba(163,58,42,.10);
+  --teal:#4d7c6f; --teal-soft:rgba(77,124,111,.12);
+  --purple:#7c5a9e; --purple-soft:rgba(124,90,158,.12);
+  --slate:#6b5d48; --slate-soft:rgba(107,93,72,.12);
+  --sidebar:#2e2516; --sidebar-2:#3a2f1c; --sidebar-text:#d8cba8; --sidebar-muted:#9c8b68;
+  --shadow-sm:0 1px 2px rgba(60,45,10,.08);
+  --shadow-md:0 8px 26px rgba(60,45,10,.14);
+  --hl-bg:#f6e6b0; --hl-border:#c89b3c;
+  --code-bg:#2e2516; --code-text:#e8dcc0;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{
+  font-family:"Noto Sans SC",-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+  background:var(--bg); color:var(--text); line-height:1.75; font-size:15px;
+  -webkit-font-smoothing:antialiased;
+}
+::selection{background:rgba(43,109,246,.22)}
+a{color:var(--accent)}
+svg{display:block}
+
+/* ===== 阅读进度条 ===== */
+.progress{position:fixed;top:0;left:0;height:3px;width:0;background:linear-gradient(90deg,var(--accent),var(--accent-2));z-index:200;border-radius:0 2px 2px 0}
+
+/* ===== 布局 ===== */
+.layout{display:flex;align-items:flex-start;max-width:1560px;margin:0 auto}
+main{flex:1;min-width:0;padding:20px 38px 100px;transition:padding .25s}
+body.focus-mode main{padding:20px clamp(20px,8vw,120px) 100px}
+
+/* ===== 侧边栏 ===== */
+.sidebar{
+  width:300px;flex-shrink:0;position:sticky;top:0;height:100vh;
+  background:var(--sidebar);color:var(--sidebar-text);
+  display:flex;flex-direction:column;overflow:hidden;z-index:60;
+}
+.side-brand{padding:20px 20px 12px;border-bottom:1px solid rgba(255,255,255,.08)}
+.side-brand .logo{display:flex;align-items:center;gap:10px;color:#fff;font-size:16px;font-weight:800}
+.side-brand .logo .logo-mark{
+  width:32px;height:32px;border-radius:9px;flex-shrink:0;display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff;
+}
+.side-brand .sub{font-size:11.5px;color:var(--sidebar-muted);margin-top:3px;padding-left:42px}
+.side-progress{margin:10px 16px;background:rgba(255,255,255,.08);border-radius:6px;height:6px;overflow:hidden}
+.side-progress i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent-2));transition:width .3s}
+.side-progress-txt{font-size:10.5px;color:var(--sidebar-muted);text-align:center;padding:2px 0 4px}
+
+/* 搜索 */
+.search-wrap{padding:10px 16px 4px;position:relative}
+.search-box{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:9px;padding:8px 10px;transition:border-color .2s}
+.search-box:focus-within{border-color:rgba(77,141,255,.7);background:rgba(255,255,255,.10)}
+.search-box svg{color:var(--sidebar-muted);flex-shrink:0}
+.search-box input{flex:1;min-width:0;background:none;border:none;outline:none;color:#fff;font-size:13px;font-family:inherit}
+.search-box input::placeholder{color:var(--sidebar-muted)}
+.search-clear{display:none;background:none;border:none;color:var(--sidebar-muted);cursor:pointer;padding:2px;border-radius:4px;flex-shrink:0}
+.search-clear:hover{color:#fff;background:rgba(255,255,255,.12)}
+.search-results{display:none;position:absolute;left:16px;right:16px;top:calc(100% - 2px);z-index:90;background:var(--surface);border:1px solid var(--border-2);border-radius:10px;box-shadow:var(--shadow-md);max-height:380px;overflow:auto;color:var(--text)}
+.search-results.show{display:block}
+.res-head{position:sticky;top:0;background:var(--surface);padding:8px 12px;font-size:11.5px;color:var(--text-2);border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.res-filter{display:flex;gap:4px;flex-wrap:wrap}
+.res-filter button{font-size:10.5px;border:1px solid var(--border);background:var(--surface-2);color:var(--text-2);border-radius:12px;padding:1px 8px;cursor:pointer;font-family:inherit}
+.res-filter button.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.res-item{display:block;width:100%;text-align:left;background:none;border:none;border-bottom:1px solid var(--border);padding:9px 12px;cursor:pointer;font-family:inherit}
+.res-item:last-child{border-bottom:none}
+.res-item:hover{background:var(--accent-soft)}
+.res-title{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:13px;font-weight:600;color:var(--text)}
+.res-meta{font-size:10.5px;color:var(--accent);background:var(--accent-soft);border-radius:20px;padding:0 8px;white-space:nowrap}
+.res-snippet{display:block;font-size:12px;color:var(--text-2);margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.res-empty{padding:14px 12px;font-size:13px;color:var(--text-2)}
+mark.hl{background:var(--hl-bg);color:inherit;border-radius:3px;padding:0 1px;box-shadow:0 0 0 1px var(--hl-border)}
+.hlq{color:var(--accent);font-weight:700}
+
+/* 导航（三级） */
+.nav{flex:1;min-height:0;overflow-y:auto;padding:8px 0 14px;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.18) transparent}
+.nav::-webkit-scrollbar{width:6px}
+.nav::-webkit-scrollbar-thumb{background:rgba(255,255,255,.16);border-radius:3px}
+.nav-group-title{font-size:10.5px;letter-spacing:1px;color:var(--sidebar-muted);padding:12px 20px 5px;font-weight:700}
+.nav-link{display:flex;align-items:center;gap:8px;position:relative;color:var(--sidebar-text);text-decoration:none;font-size:13px;padding:7px 20px;font-weight:600;transition:background .15s,color .15s;cursor:pointer}
+.nav-link .idx{width:20px;height:20px;border-radius:6px;background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;transition:background .15s}
+.nav-link:hover,.nav-link.active{background:rgba(255,255,255,.07);color:#fff}
+.nav-link.active{box-shadow:inset 3px 0 0 var(--accent-2)}
+.nav-link.active .idx{background:var(--accent-2);color:#fff}
+.nav-link .pct{margin-left:auto;font-size:10px;color:var(--sidebar-muted);font-weight:500}
+.nav-link .done{display:none;color:var(--green)}
+.nav-sub-wrap{display:none;padding-bottom:4px}
+.nav-sub-wrap.open{display:block}
+.nav-sub{display:flex;align-items:center;gap:6px;color:var(--sidebar-muted);text-decoration:none;font-size:12px;padding:5px 20px 5px 50px;cursor:pointer;transition:background .15s,color .15s;position:relative}
+.nav-sub:hover{color:#fff;background:rgba(255,255,255,.05)}
+.nav-sub .bk{width:12px;height:12px;border-radius:3px;border:1px solid rgba(255,255,255,.25);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9px;color:#fff;background:none;cursor:pointer}
+.nav-sub .bk.on{background:var(--amber);border-color:var(--amber)}
+.side-foot{padding:10px 18px;border-top:1px solid rgba(255,255,255,.08);font-size:10.5px;color:var(--sidebar-muted);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.side-foot .row{display:flex;align-items:center;gap:6px;width:100%}
+
+/* ===== 顶栏（面包屑 + 工具） ===== */
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:16px}
+.crumbs{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--text-3);flex-wrap:wrap}
+.crumbs b{color:var(--text-2);font-weight:600}
+.crumbs .sep{opacity:.5}
+.toolbar{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.tbtn{
+  display:inline-flex;align-items:center;gap:6px;border:1px solid var(--border-2);background:var(--surface-2);
+  color:var(--text-2);font-size:12px;font-family:inherit;padding:6px 11px;border-radius:8px;cursor:pointer;transition:all .15s;white-space:nowrap;
+}
+.tbtn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
+.tbtn.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.tbtn svg{width:14px;height:14px}
+.tbtn.danger:hover{border-color:var(--red);color:var(--red);background:var(--red-soft)}
+.menu-btn{display:none}
+@media (max-width:960px){.menu-btn{display:inline-flex}}
+
+/* ===== Hero ===== */
+.hero{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:26px 30px;margin-bottom:20px;box-shadow:var(--shadow-sm)}
+.hero-top{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.hero h1{font-size:25px;font-weight:900;letter-spacing:.4px}
+.hero h1 .accent{color:var(--accent)}
+.hero .desc{color:var(--text-2);font-size:13.5px;margin-top:6px;max-width:800px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.chip{font-size:12px;color:var(--text-2);background:var(--surface-3);border:1px solid var(--border);padding:3px 10px;border-radius:20px;display:flex;align-items:center;gap:6px}
+.chip b{color:var(--accent);font-weight:700}
+
+/* ===== 学习路线总览 ===== */
+.route-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:22px 26px;margin-bottom:22px;box-shadow:var(--shadow-sm)}
+.route-card h2{font-size:18px;font-weight:800;margin-bottom:4px}
+.route-card .rt-sub{color:var(--text-2);font-size:12.5px;margin-bottom:14px}
+.route-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.route-tab{border:1px solid var(--border-2);background:var(--surface-2);color:var(--text-2);font-size:13px;font-weight:600;padding:8px 16px;border-radius:9px;cursor:pointer;font-family:inherit;transition:all .15s;display:flex;align-items:center;gap:8px}
+.route-tab .rt-dot{width:8px;height:8px;border-radius:50%}
+.route-tab:hover{border-color:var(--accent);color:var(--accent)}
+.route-tab.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.route-panel{display:none}
+.route-panel.on{display:block}
+/* 时间轴：grid 三列（时间 / 轴线 / 内容） */
+.rt-timeline{display:grid;grid-template-columns:92px 26px 1fr;gap:0;margin-top:6px}
+.rt-col-time{text-align:right;padding:6px 8px 0 0}
+.rt-col-time .rt-time{font-size:12px;font-weight:700;color:var(--accent);background:var(--accent-soft);border-radius:20px;padding:3px 10px;text-align:center;display:inline-block;min-width:76px}
+.rt-axis{display:flex;flex-direction:column;align-items:center;position:relative}
+.rt-axis::after{content:"";position:absolute;top:24px;bottom:0;width:2px;background:var(--border-2)}
+.rt-axis:last-child::after{display:none}
+.rt-dot{width:13px;height:13px;border-radius:50%;background:var(--surface);border:3px solid var(--accent);z-index:1;margin-top:8px;flex-shrink:0}
+.rt-col-main{padding:0 0 28px 16px}
+.rt-item{background:var(--surface-2);border:1px solid var(--border);border-radius:10px;padding:12px 16px}
+.rt-item h4{font-size:14px;font-weight:700;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.rt-item .rt-tag{font-size:10.5px;background:var(--accent-soft);color:var(--accent);border-radius:12px;padding:1px 8px;font-weight:600}
+.rt-item .rt-tag.g{background:var(--green-soft);color:var(--green)}
+.rt-item .rt-tag.a{background:var(--amber-soft);color:var(--amber)}
+.rt-item p{font-size:12.5px;color:var(--text-2);margin-top:5px}
+.rt-item ul{margin:6px 0 0 18px;font-size:12.5px;color:var(--text-2)}
+.rt-item li{margin-bottom:3px}
+@media (max-width:640px){.rt-timeline{grid-template-columns:66px 22px 1fr}.rt-col-time{padding-right:6px}}
+
+/* ===== 章节卡片 ===== */
+section.sec-card{scroll-margin-top:16px}
+.sec-head{display:flex;align-items:center;gap:14px;margin:28px 0 12px;padding-bottom:10px;border-bottom:2px solid var(--border)}
+.sec-num{
+  width:38px;height:38px;border-radius:10px;flex-shrink:0;display:flex;align-items:center;justify-content:center;
+  color:#fff;font-weight:800;font-size:16px;background:linear-gradient(135deg,var(--accent),var(--accent-2));
+  box-shadow:0 4px 10px rgba(43,109,246,.25);
+}
+.sec-head h2{font-size:20px;font-weight:800}
+.sec-head .sec-tag{font-size:11.5px;color:var(--text-2);margin-top:2px}
+.sec-intro{color:var(--text-2);font-size:13px;margin:-4px 0 12px;padding-left:52px}
+.sec-tools{display:flex;gap:6px;margin-left:auto;flex-shrink:0}
+@media (max-width:960px){.sec-intro{padding-left:0}}
+
+/* 折叠块 */
+details.collapse{border:1px solid var(--border);border-radius:11px;background:var(--surface);margin:13px 0;overflow:hidden;box-shadow:var(--shadow-sm)}
+details.collapse>summary{
+  list-style:none;cursor:pointer;display:flex;align-items:center;gap:10px;
+  padding:13px 18px;font-weight:700;font-size:15px;color:var(--text);
+  background:var(--surface);user-select:none;transition:background .15s;
+}
+details.collapse>summary::-webkit-details-marker{display:none}
+details.collapse>summary:hover{background:var(--surface-2)}
+details.collapse>summary .sum-num{font-size:11.5px;color:var(--accent);background:var(--accent-soft);border-radius:6px;padding:1px 8px;font-weight:700;flex-shrink:0}
+details.collapse>summary .sum-time{font-size:11px;color:var(--text-3);font-weight:500;flex-shrink:0}
+details.collapse>summary .sum-check{
+  margin-left:auto;flex-shrink:0;display:inline-flex;align-items:center;gap:5px;
+  font-size:11px;color:var(--text-3);font-weight:500;cursor:pointer;border:none;background:none;font-family:inherit;padding:3px 8px;border-radius:6px;
+}
+details.collapse>summary .sum-check:hover{background:var(--green-soft);color:var(--green)}
+details.collapse>summary .sum-check.done{color:var(--green);background:var(--green-soft)}
+details.collapse>summary .chev{margin-left:auto;color:var(--text-3);flex-shrink:0;transition:transform .25s}
+details.collapse>summary .sum-check + .chev{margin-left:0}
+details.collapse[open]>summary .chev{transform:rotate(90deg)}
+details.collapse .body{padding:6px 20px 20px;border-top:1px dashed var(--border)}
+
+/* 知识块 */
+.k-block{border:1px solid var(--border);border-left:3px solid var(--accent-2);border-radius:9px;background:var(--surface-2);padding:13px 16px;margin:12px 0}
+.k-block h4{font-size:14px;font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.k-block h4 .k-tag{font-size:10.5px;font-weight:600;border-radius:12px;padding:1px 8px}
+.k-block h4 .k-tag.core{background:var(--green-soft);color:var(--green)}
+.k-block h4 .k-tag.mid{background:var(--amber-soft);color:var(--amber)}
+.k-block h4 .k-tag.tip{background:var(--accent-soft);color:var(--accent)}
+.k-block p{color:var(--text-2);font-size:13px;margin:5px 0}
+.k-block p b,.k-block ul b,.k-block ol b{color:var(--text)}
+.k-block ul,.k-block ol{margin:6px 0 6px 20px;font-size:13px;color:var(--text-2)}
+.k-block li{margin-bottom:4px}
+.k-block .k-why{margin-top:8px;padding:8px 12px;background:var(--purple-soft);border-left:3px solid var(--purple);border-radius:0 6px 6px 0;font-size:12.5px;color:var(--text)}
+.k-block .k-why b{color:var(--purple)}
+.d-goal{margin-top:10px;padding:10px 15px;background:var(--green-soft);border-left:4px solid var(--green);border-radius:0 8px 8px 0;font-size:13px;color:var(--text)}
+.d-goal b{color:var(--green)}
+.d-note{margin-top:10px;padding:10px 15px;background:var(--accent-soft);border-left:4px solid var(--accent);border-radius:0 8px 8px 0;font-size:13px;color:var(--text)}
+.d-note b{color:var(--accent)}
+.d-warn{margin-top:10px;padding:10px 15px;background:var(--amber-soft);border-left:4px solid var(--amber);border-radius:0 8px 8px 0;font-size:13px;color:var(--text)}
+.d-warn b{color:var(--amber)}
+
+/* 代码块 */
+pre.code{background:var(--code-bg);color:var(--code-text);border-radius:8px;padding:12px 14px;font-size:12.5px;overflow-x:auto;line-height:1.6;margin:8px 0;font-family:"SF Mono",Consolas,Menlo,monospace}
+pre.code .c{color:#64748b}
+pre.code .k{color:#93c5fd}
+pre.code .s{color:#a7f3d0}
+pre.code .n{color:#fde68a}
+
+/* 卡片网格 */
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:13px;margin:13px 0}
+.gcard{border:1px solid var(--border);border-radius:10px;background:var(--surface-2);padding:13px 15px}
+.gcard h5{font-size:13px;font-weight:700;margin-bottom:7px;display:flex;align-items:center;gap:8px}
+.gcard h5 .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.gcard ul{margin:0 0 5px 17px;font-size:12.6px}
+.gcard li{margin-bottom:4px}
+.gcard .g-tag{font-size:11px;color:var(--text-3);margin-bottom:5px}
+
+/* 表格 */
+table{width:100%;border-collapse:collapse;margin:12px 0;font-size:12.8px}
+th,td{border:1px solid var(--border);padding:8px 11px;text-align:left;vertical-align:top}
+th{background:var(--surface-3);font-weight:700;white-space:nowrap}
+tbody tr:nth-child(even){background:var(--surface-2)}
+.tbl-scroll{overflow-x:auto}
+
+/* 流程图 */
+.flow{background:var(--surface-2);border:1px solid var(--border);border-radius:11px;padding:20px 14px;margin:13px 0}
+.frow{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;margin:9px 0}
+.fdown{text-align:center;color:var(--text-3);font-size:14px;line-height:1;margin:2px 0;font-weight:700}
+.farr{color:var(--text-3);font-weight:800;font-size:16px;flex-shrink:0}
+.fbox{
+  background:var(--accent);color:#fff;padding:8px 14px;border-radius:8px;text-align:center;
+  font-size:12.5px;font-weight:600;min-width:108px;box-shadow:0 2px 6px rgba(43,109,246,.22);line-height:1.45;
+}
+.fbox.green{background:var(--green);box-shadow:0 2px 6px rgba(22,163,74,.22)}
+.fbox.amber{background:var(--amber);box-shadow:0 2px 6px rgba(217,119,6,.22)}
+.fbox.teal{background:var(--teal);box-shadow:0 2px 6px rgba(13,148,136,.22)}
+.fbox.slate{background:var(--slate);box-shadow:0 2px 6px rgba(71,85,105,.22)}
+.fbox.purple{background:var(--purple);box-shadow:0 2px 6px rgba(124,58,237,.22)}
+.fbox.red{background:var(--red);box-shadow:0 2px 6px rgba(220,38,38,.22)}
+
+/* 关联链路图 */
+.link-map{background:var(--surface-2);border:1px solid var(--border);border-radius:11px;padding:24px 14px;margin:13px 0}
+.link-layer{margin:13px 0}
+.link-layer h4{font-size:12px;font-weight:700;color:var(--text-2);text-align:center;margin-bottom:9px;letter-spacing:2px}
+.link-nodes{display:flex;justify-content:center;gap:11px;flex-wrap:wrap}
+.lnode{color:#fff;font-size:12.5px;font-weight:600;padding:7px 15px;border-radius:22px;box-shadow:var(--shadow-sm);cursor:default}
+.lnode.front{background:var(--accent)}
+.lnode.api{background:var(--teal)}
+.lnode.backend{background:var(--amber)}
+.lnode.ai{background:var(--purple)}
+.lnode.db{background:var(--green)}
+.lnode.ops{background:var(--slate)}
+.link-line{width:2px;height:16px;background:repeating-linear-gradient(to bottom,var(--text-3) 0 4px,transparent 4px 8px);margin:0 auto}
+
+/* 面试题 */
+.qa{border-left:3px solid var(--accent);background:var(--surface-2);border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0}
+.qa .q{font-weight:700;font-size:13.8px;margin-bottom:5px;display:flex;align-items:flex-start;gap:8px}
+.qa .q .tag{font-size:10.5px;color:var(--accent);background:var(--accent-soft);border-radius:4px;padding:1px 7px;margin-right:2px;font-weight:600;flex-shrink:0}
+.qa .q .lvl{margin-left:auto;font-size:10px;font-weight:600;flex-shrink:0;border-radius:10px;padding:1px 7px}
+.lvl.easy{background:var(--green-soft);color:var(--green)}
+.lvl.mid{background:var(--amber-soft);color:var(--amber)}
+.lvl.hard{background:var(--red-soft);color:var(--red)}
+.qa .a{color:var(--text-2);font-size:12.8px}
+.qa .a b,.qa .a strong{color:var(--text)}
+.qa .a ul{margin:5px 0 5px 18px}
+.qa .a li{margin-bottom:3px}
+
+/* 阶段规划 */
+.steps{list-style:none;margin:12px 0;counter-reset:step}
+.steps li{counter-increment:step;position:relative;padding:0 0 15px 42px;font-size:13px}
+.steps li::before{
+  content:counter(step);position:absolute;left:0;top:0;width:27px;height:27px;border-radius:50%;
+  background:var(--accent-soft);color:var(--accent);font-weight:800;font-size:12.5px;
+  display:flex;align-items:center;justify-content:center;border:1px solid var(--accent);
+}
+.steps li::after{content:"";position:absolute;left:13px;top:29px;bottom:2px;width:1px;background:var(--border-2)}
+.steps li:last-child::after{display:none}
+.steps li strong{display:block;font-size:13.5px}
+
+/* 自测题 */
+.quiz{border:1px solid var(--border);border-left:4px solid var(--purple);border-radius:9px;background:var(--surface);padding:14px 16px;margin:14px 0}
+.quiz-head{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:var(--purple);margin-bottom:10px}
+.quiz-q{font-size:13.5px;font-weight:600;margin-bottom:8px;color:var(--text)}
+.quiz-opts{display:grid;gap:6px;margin-bottom:10px}
+.quiz-opt{display:flex;align-items:center;gap:8px;font-size:13px;padding:7px 10px;border:1px solid var(--border);border-radius:7px;cursor:pointer;transition:all .15s;background:var(--surface-2);color:var(--text)}
+.quiz-opt:hover{border-color:var(--accent)}
+.quiz-opt input{accent-color:var(--accent)}
+.quiz-opt.right{border-color:var(--green);background:var(--green-soft)}
+.quiz-opt.wrong{border-color:var(--red);background:var(--red-soft)}
+.quiz-btn{border:none;background:var(--purple);color:#fff;font-size:12.5px;font-weight:600;padding:7px 16px;border-radius:7px;cursor:pointer;font-family:inherit;transition:opacity .15s}
+.quiz-btn:hover{opacity:.88}
+.quiz-btn:disabled{opacity:.4;cursor:default}
+.quiz-fb{display:none;margin-top:9px;padding:9px 13px;border-radius:7px;font-size:12.8px}
+.quiz-fb.ok{display:block;background:var(--green-soft);color:var(--green);border:1px solid rgba(22,163,74,.3)}
+.quiz-fb.no{display:block;background:var(--red-soft);color:var(--red);border:1px solid rgba(220,38,38,.3)}
+.quiz-fb .explain{color:var(--text-2);margin-top:4px}
+
+/* 笔记 */
+.note-box{margin-top:10px}
+.note-toggle{font-size:11.5px;color:var(--text-3);background:none;border:1px dashed var(--border-2);border-radius:6px;padding:4px 10px;cursor:pointer;font-family:inherit;transition:all .15s}
+.note-toggle:hover{color:var(--amber);border-color:var(--amber)}
+.note-toggle.on{color:var(--amber);border-color:var(--amber);background:var(--amber-soft)}
+.note-textarea{display:none;width:100%;min-height:64px;margin-top:7px;border:1px solid var(--border-2);border-radius:7px;background:var(--surface);color:var(--text);font-family:inherit;font-size:12.8px;padding:9px 11px;resize:vertical;line-height:1.6}
+.note-textarea.show{display:block}
+.note-save{margin-top:6px;font-size:11.5px;border:none;background:var(--amber);color:#fff;border-radius:6px;padding:4px 12px;cursor:pointer;font-family:inherit;display:none}
+.note-save.show{display:inline-block}
+.note-has{display:none;font-size:11px;color:var(--amber);margin-left:6px}
+
+/* 术语弹层 */
+.term-pop{
+  position:fixed;z-index:300;max-width:330px;background:var(--surface);border:1px solid var(--border-2);
+  border-radius:10px;box-shadow:var(--shadow-md);padding:12px 15px;display:none;font-size:12.8px;color:var(--text);
+}
+.term-pop.show{display:block}
+.term-pop b{display:block;font-size:13px;color:var(--accent);margin-bottom:4px}
+.term-pop p{color:var(--text-2);line-height:1.6}
+.term{color:var(--accent);border-bottom:1px dashed var(--accent-2);cursor:help;font-weight:600}
+
+/* 高亮闪烁 */
+.flash{animation:flashbg 1.6s ease}
+@keyframes flashbg{0%,60%{background:var(--hl-bg)}100%{background:transparent}}
+
+/* 返回顶部 */
+.to-top{
+  position:fixed;right:22px;bottom:26px;width:42px;height:42px;border-radius:50%;cursor:pointer;
+  background:var(--surface);border:1px solid var(--border-2);color:var(--accent);
+  display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow-md);
+  opacity:0;pointer-events:none;transform:translateY(10px);transition:all .25s;z-index:90;
+}
+.to-top.show{opacity:1;pointer-events:auto;transform:none}
+.to-top:hover{background:var(--accent);color:#fff}
+
+/* 遮罩 */
+.overlay{position:fixed;inset:0;background:rgba(8,12,24,.55);opacity:0;pointer-events:none;transition:opacity .25s;z-index:55}
+.overlay.show{opacity:1;pointer-events:auto}
+
+/* ===== 响应式 ===== */
+@media (max-width:960px){
+  .layout{display:block}
+  .sidebar{position:fixed;left:0;top:0;bottom:0;z-index:60;transform:translateX(-100%);visibility:hidden;transition:transform .28s ease,visibility 0s linear .28s;box-shadow:none}
+  .sidebar.open{visibility:visible;transform:none;transition:transform .28s ease,visibility 0s;box-shadow:var(--shadow-md)}
+  main{padding:16px 14px 80px}
+  .hero{padding:18px 16px}
+  .hero h1{font-size:20px}
+  .sec-head h2{font-size:17px}
+  .sec-num{width:32px;height:32px;font-size:14px;border-radius:8px}
+  .toolbar{flex-wrap:wrap;justify-content:flex-end}
+  .tbtn{padding:6px 9px}
+}
+@media (max-width:640px){
+  .search-box input{font-size:16px}
+  .route-card{padding:16px}
+  .rt-timeline{grid-template-columns:64px 1fr;gap:0 12px}
+}
+
+/* ===== 打印 ===== */
+@media print{
+  .sidebar,.progress,.to-top,.toolbar,.search-wrap,.overlay,.sec-tools,.note-box,.quiz,.term-pop,.menu-btn{display:none!important}
+  body{background:#fff}
+  main{padding:0}
+  details.collapse{border:none;box-shadow:none;margin:8px 0;break-inside:avoid}
+  details.collapse>summary .chev{display:none}
+  details.collapse .body{display:block!important}
+  .flow,.link-map,.k-block{break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<div class="progress" id="progress"></div>
+<div class="overlay" id="overlay"></div>
+
+<div class="layout">
+
+  <!-- ===== 侧边栏 ===== -->
+  <aside class="sidebar" id="sidebar">
+    <div class="side-brand">
+      <div class="logo">
+        <span class="logo-mark">
+          <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M19 15l.9 2.6L22.5 18l-2.6.9L19 21.5l-.9-2.6-2.6-.9 2.6-.9z"/></svg>
+        </span>
+        全栈学习手册
+      </div>
+      <div class="sub">V3 详细知识版 · 移动开发 + 全栈 + AI</div>
+    </div>
+    <div class="side-progress"><i id="sideProgressBar"></i></div>
+    <div class="side-progress-txt">学习进度 <b id="sideProgressTxt" style="color:var(--accent-2)">0%</b></div>
+
+    <div class="search-wrap">
+      <div class="search-box">
+        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+        <input type="text" id="searchInput" placeholder="搜索知识点 / 面试题 / 术语…" autocomplete="off">
+        <button class="search-clear" id="searchClear" aria-label="清除搜索">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="search-results" id="searchResults"></div>
+    </div>
+
+    <nav class="nav" id="nav">
+      <div class="nav-group-title">学习路线</div>
+      <a class="nav-link" href="#route" data-target="route"><span class="idx">0</span>学习路线总览</a>
+
+      <div class="nav-group-title">一 · 后端开发</div>
+      <a class="nav-link" href="#sec-backend" data-target="sec-backend"><span class="idx">1</span>后端知识体系<span class="pct" id="pct-backend"></span></a>
+      <div class="nav-sub-wrap" id="sub-backend">
+        <a class="nav-sub" href="#b1" data-book="b1"><span class="bk" data-bk="b1"></span>1.1 基础筑基</a>
+        <a class="nav-sub" href="#b2" data-book="b2"><span class="bk" data-bk="b2"></span>1.2 技术进阶</a>
+        <a class="nav-sub" href="#b3" data-book="b3"><span class="bk" data-bk="b3"></span>1.3 中级实战</a>
+        <a class="nav-sub" href="#b4" data-book="b4"><span class="bk" data-bk="b4"></span>1.4 高级架构</a>
+        <a class="nav-sub" href="#b5" data-book="b5"><span class="bk" data-bk="b5"></span>1.5 学习路径</a>
+      </div>
+
+      <div class="nav-group-title">二 · Android 开发</div>
+      <a class="nav-link" href="#sec-android" data-target="sec-android"><span class="idx">2</span>Android 从入门到精通<span class="pct" id="pct-android"></span></a>
+      <div class="nav-sub-wrap" id="sub-android">
+        <a class="nav-sub" href="#a1" data-book="a1"><span class="bk" data-bk="a1"></span>2.1 入门篇</a>
+        <a class="nav-sub" href="#a2" data-book="a2"><span class="bk" data-bk="a2"></span>2.2 进阶篇</a>
+        <a class="nav-sub" href="#a3" data-book="a3"><span class="bk" data-bk="a3"></span>2.3 精通篇</a>
+        <a class="nav-sub" href="#a4" data-book="a4"><span class="bk" data-bk="a4"></span>2.4 学习路线</a>
+      </div>
+
+      <div class="nav-group-title">三 · 面试总结</div>
+      <a class="nav-link" href="#sec-interview" data-target="sec-interview"><span class="idx">3</span>Android 中级面试<span class="pct" id="pct-interview"></span></a>
+      <div class="nav-sub-wrap" id="sub-interview">
+        <a class="nav-sub" href="#i1" data-book="i1"><span class="bk" data-bk="i1"></span>3.1 基础必考</a>
+        <a class="nav-sub" href="#i2" data-book="i2"><span class="bk" data-bk="i2"></span>3.2 进阶高频</a>
+        <a class="nav-sub" href="#i3" data-book="i3"><span class="bk" data-bk="i3"></span>3.3 项目场景</a>
+        <a class="nav-sub" href="#i4" data-book="i4"><span class="bk" data-bk="i4"></span>3.4 HR 面</a>
+      </div>
+
+      <div class="nav-group-title">四 · 上架 / 适配 / 运维</div>
+      <a class="nav-link" href="#sec-store" data-target="sec-store"><span class="idx">4</span>上架 · 适配 · 运维<span class="pct" id="pct-store"></span></a>
+      <div class="nav-sub-wrap" id="sub-store">
+        <a class="nav-sub" href="#s1" data-book="s1"><span class="bk" data-bk="s1"></span>4.1 打包与上架</a>
+        <a class="nav-sub" href="#s2" data-book="s2"><span class="bk" data-bk="s2"></span>4.2 多机型适配</a>
+        <a class="nav-sub" href="#s3" data-book="s3"><span class="bk" data-bk="s3"></span>4.3 版本与运维</a>
+      </div>
+
+      <div class="nav-group-title">五 · 全栈 + AI 链路</div>
+      <a class="nav-link" href="#sec-stack" data-target="sec-stack"><span class="idx">5</span>uni-app + PHP + Python AI + MySQL<span class="pct" id="pct-stack"></span></a>
+      <div class="nav-sub-wrap" id="sub-stack">
+        <a class="nav-sub" href="#t1" data-book="t1"><span class="bk" data-bk="t1"></span>5.1 技术分层职责</a>
+        <a class="nav-sub" href="#t2" data-book="t2"><span class="bk" data-bk="t2"></span>5.2 请求链路流转</a>
+        <a class="nav-sub" href="#t3" data-book="t3"><span class="bk" data-bk="t3"></span>5.3 学习路径规划</a>
+        <a class="nav-sub" href="#t4" data-book="t4"><span class="bk" data-bk="t4"></span>5.4 典型表结构</a>
+        <a class="nav-sub" href="#t5" data-book="t5"><span class="bk" data-bk="t5"></span>5.5 AI 服务实战</a>
+      </div>
+
+      <div class="nav-group-title">六 · 知识关联</div>
+      <a class="nav-link" href="#sec-links" data-target="sec-links"><span class="idx">6</span>全技术体系关联链路图</a>
+      <div class="nav-group-title">我的学习</div>
+      <a class="nav-link" href="#" data-target="my-bookmarks"><span class="idx">★</span>我的书签</a>
+      <a class="nav-link" href="#" data-target="my-wrong"><span class="idx">!</span>错题本</a>
+    </nav>
+
+    <div class="side-foot">
+      <div class="row">
+        <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        <span id="bookmarkCount">书签 0</span>
+        <span style="margin-left:auto" id="wrongCount">错题 0</span>
+      </div>
+      <div class="row">单击标题折叠 / 展开 · 右键章节标记完成</div>
+    </div>
+  </aside>
+
+  <!-- ===== 主内容 ===== -->
+  <main id="mainContent">
+
+    <!-- 面包屑 + 工具栏 -->
+    <div class="topbar">
+      <div class="crumbs" id="crumbs">
+        <span>全栈学习手册</span><span class="sep">/</span><b id="crumbNow">学习路线总览</b>
+      </div>
+      <div class="toolbar">
+        <button class="menu-btn tbtn" id="menuBtn" aria-label="打开目录">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+          目录
+        </button>
+        <button class="tbtn" id="expandAll" aria-label="展开全部">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+          展开
+        </button>
+        <button class="tbtn" id="collapseAll" aria-label="收起全部">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"/></svg>
+          收起
+        </button>
+        <button class="tbtn" id="focusBtn" aria-label="专注模式">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M8 21H5a2 2 0 0 1-2-2v-3M16 21h3a2 2 0 0 0 2-2v-3"/></svg>
+          专注
+        </button>
+        <button class="tbtn" id="fontDown" aria-label="减小字号">A-</button>
+        <button class="tbtn" id="fontUp" aria-label="增大字号">A+</button>
+        <button class="tbtn" id="exportBtn" aria-label="打印导出">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V3h12v6M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 14h12v7H6z"/></svg>
+          导出
+        </button>
+        <button class="tbtn theme-toggle" id="themeBtn" aria-label="切换主题">
+          <svg class="ic-sun" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.5M12 19.5V22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M2 12h2.5M19.5 12H22M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></svg>
+          主题
+        </button>
+      </div>
+    </div>
+
+    <header class="hero">
+      <div class="hero-top">
+        <div>
+          <h1>移动开发 + 全栈 + AI <span class="accent">完整学习手册 V3</span></h1>
+          <p class="desc">面向初学者的进阶路径：细化后端开发四阶段体系，Android 从入门到精通全链路、中级面试总结、市场上架 / 适配 / 运维实战，以及 uni-app + PHP + Python AI + MySQL 全链路知识体系；每层级配有<strong>详细知识内容、达标标准与随堂自测</strong>，配套流程图与知识关联图，按学习规律分阶段推进。</p>
+          <div class="chips">
+            <span class="chip">知识领域 <b>6</b></span>
+            <span class="chip">详细知识块 <b id="chipKp">0</b></span>
+            <span class="chip">面试题 <b id="chipQa">0</b></span>
+            <span class="chip">随堂自测 <b id="chipQuiz">0</b></span>
+            <span class="chip">学习周期约 <b>14–16 个月</b></span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+<!-- ==================== 0、学习路线总览 ==================== -->
+    <div class="route-card" id="route">
+      <h2>学习路线总览</h2>
+      <div class="rt-sub">三条主线可选：<b>后端全栈线</b>（PHP + MySQL，最快上岗）、<b>Android 移动开发线</b>（Kotlin + Jetpack，岗位最多）、<b>全栈 AI 线</b>（uni-app + PHP + Python AI + MySQL，能力最全）。建议主线为主、其余为辅，12–16 个月完成。</div>
+      <div class="route-tabs" id="routeTabs">
+        <button class="route-tab on" data-route="r-backend"><span class="rt-dot" style="background:#d97706"></span>后端全栈线</button>
+        <button class="route-tab" data-route="r-android"><span class="rt-dot" style="background:#16a34a"></span>Android 移动开发线</button>
+        <button class="route-tab" data-route="r-stack"><span class="rt-dot" style="background:#7c3aed"></span>全栈 AI 线</button>
+      </div>
+
+      <!-- 后端路线 -->
+      <div class="route-panel on" id="r-backend">
+        <div class="rt-timeline">
+          <div class="rt-col-time"><span class="rt-time">第 1–2 月</span></div>
+          <div class="rt-axis"><span class="rt-dot"></span></div>
+          <div class="rt-col-main">
+            <div class="rt-item"><h4>L1 语言基础 <span class="rt-tag">必修</span></h4>
+              <p>PHP 语法、数组/字符串、函数、面向对象、Composer 依赖管理、PDO 数据库操作</p>
+              <ul><li>产出：CLI 小工具 + 控制台增删改查</li><li>达标：脱离教程独立写 200 行模块</li></ul>
+            </div>
+          </div>
+          <div class="rt-col-time"><span class="rt-time">第 3–4 月</span></div>
+          <div class="rt-axis"><span class="rt-dot"></span></div>
+          <div class="rt-col-main">
+            <div class="rt-item"><h4>L2 Web 开发 <span class="rt-tag">必修</span></h4>
+              <p>HTTP 协议、MVC 思想、路由、中间件、模板引擎、RESTful API 规范</p>
+              <ul><li>产出：博客/笔记 Web 应用</li><li>达标：独立设计表结构并完成 CRUD 接口</li></ul>
+            </div>
+          </div>
+          <div class="rt-col-time"><span class="rt-time">第 5–6 月</span></div>
+          <div class="rt-axis"><span class="rt-dot"></span></div>
+          <div class="rt-col-main">
+            <div class="rt-item"><h4>L3 进阶能力 <span class="rt-tag">核心</span></h4>
+              <p>JWT 鉴权、Redis 缓存、队列异步、单元测试、性能优化（SQL/缓存/并发）</p>
+              <ul><li>产出：带登录/缓存的商城 API</li><li>达标：能解释缓存穿透/击穿/雪崩并给出方案</li></ul>
+            </div>
+          </div>
+          <div class="rt-col-time"><span class="rt-time">第 7–9 月</span></div>
+          <div class="rt-axis"><span class="rt-dot"></span></div>
+          <div class="rt-col-main">
+            <div class="rt-item"><h4>L4 高级架构 <span class="rt-tag">进阶</span></h4>
+              <p>高并发设计、读写分离/分库分表思想、消息队列、Docker、Nginx 负载均衡、设计模式</p>
+              <ul><li>产出：高可用架构方案文档 + Docker 部署</li><li>达标：能画出系统架构图并说明取舍</li></ul>
+            </div>
+          </div>
+          <div class="rt-col-time"><span class="rt-time">第 10–12 月</span></div>
+          <div class="rt-axis"><span class="rt-dot"></span></div>
+          <div class="rt-col-main">
+            <div class="rt-item"><h4>L5 实战打磨 <span class="rt-tag g">产出</span></h4>
+              <p>完整项目开发：需求拆解 → 设计 → 开发 → 测试 → 部署 → 复盘</p>
+              <ul><li>产出：可上线的全栈项目 + 简历项目描述</li><li>达标：能独立承接中小型项目开发</li></ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Android 路线 -->
+      <div class="route-panel" id="r-android">
+        <div class="rt-timeline">
+          <div class="rt-col-time"><span class="rt-time">第 1–2 月</span></div>
+          <div class="rt-axis"><span class="rt-dot"></span></div>
+          <div class="rt-col-main">
+            <div class="rt-item"><h4>L1 Kotlin 基础 <span class="rt-tag">必修</span></h4>
+              <p>变量/类型、空安全、函数、集合、面向对象、Lambda、协程入门</p>
+              <ul><li>产出：Kotlin 控制台程序</li><li>达标：掌握空安全与集合高阶函数</li></ul>
+            </div>
+          </div>
+          <div class="rt-col-time"><span class="rt-time">第 3–4 月</span></div>
+          <div class="rt-axis"><span class="rt-dot"></span></div>
+          <div class="rt-col-main">
+            <div class="rt-item"><h4>L2 界面与组件 <span class="rt-tag">必修</span></h4>
+              <p>Activity/Fragment 生命周期、布局与控件、RecyclerView、四大组件、数据存储</p>
+              <ul><li>产出：记事本 App</li><li>达标：讲清生命周期与启动模式</li></ul>
+            </div>
+          </div>
+          <div class="rt-col-time"><span class="rt-time">第 5–6 月</span></div>
+          <div class="rt-axis"><span class="rt-dot"></span></div>
+          <div class="rt-col-main">
+            <div class="rt-item"><h4>L3 数据与网络 <span class="rt-tag">核心</span></h4>
+              <p>Room 数据库、Retrofit/OkHttp、协程网络请求、JSON 解析、图片加载 Glide</p>
+              <ul><li>产出：天气/新闻类 App</li><li>达标：掌握协程 + 网络 + 数据库闭环</li></ul>
+            </div>
+          </div>
+          <div class="rt-col-time"><span class="rt-time">第 7–9 月</span></div>
+          <div class="rt-axis"><span class="rt-dot"></span></div>
+          <div class="rt-col-main">
+            <div class="rt-item"><h4>L4 Jetpack 与架构 <span class="rt-tag">核心</span></h4>
+              <p>ViewModel、LiveData、Navigation、WorkManager、MVVM 架构、Hilt 依赖注入</p>
+              <ul><li>产出：MVVM 架构的完整 App</li><li>达标：能解释 LiveData 生命周期感知原理</li></ul>
+            </div>
+          </div>
+          <div class="rt-col-time"><span class="rt-time">第 10–11 月</span></div>
+          <div class="rt-axis"><span class="rt-dot"></span></div>
+          <div class="rt-col-main">
+            <div class="rt-item"><h4>L5 性能与进阶 <span class="rt-tag">进阶</span></h4>
+              <p>启动优化、内存优化（LeakCanary）、自定义 View、事件分发、Compose 入门</p>
+              <ul><li>产出：性能优化报告 + 优化后 App</li><li>达标：能定位并解决常见卡顿/泄漏</li></ul>
+            </div>
+          </div>
+          <div class="rt-col-time"><span class="rt-time">第 12–14 月</span></div>
+          <div class="rt-axis"><span class="rt-dot"></span></div>
+          <div class="rt-col-main">
+            <div class="rt-item"><h4>L6 面试与上架 <span class="rt-tag g">产出</span></h4>
+              <p>面试题整理、项目打磨、打包签名、多机型适配、商店上架、崩溃监控</p>
+              <ul><li>产出：上架作品 + 完整面试准备</li><li>达标：可应对中级 Android 岗位面试</li></ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 全栈 AI 路线 -->
+      <div class="route-panel" id="r-stack">
+        <div class="rt-timeline">
+          <div class="rt-col-time"><span class="rt-time">第 1–2 月</span></div>
+          <div class="rt-axis"><span class="rt-dot"></span></div>
+          <div class="rt-col-main">
+            <div class="rt-item"><h4>L1 前端基础 <span class="rt-tag">必修</span></h4>
+              <p>HTML/CSS/JS 基础、Vue 3 核心（响应式、组件、路由、状态管理）、uni-app 多端编译</p>
+              <ul><li>产出：uni-app 多端页面</li><li>达标：掌握组件通信与生命周期</li></ul>
+            </div>
+          </div>
+          <div class="rt-col-time"><span class="rt-time">第 3–4 月</span></div>
+          <div class="rt-axis"><span class="rt-dot"></span></div>
+          <div class="rt-col-main">
+            <div class="rt-item"><h4>L2 后端接口 <span class="rt-tag">必修</span></h4>
+              <p>PHP 语法、MVC 框架、RESTful API、JWT 鉴权、统一响应</p>
+              <ul><li>产出：注册登录 + 列表查询接口</li><li>达标：独立完成接口联调</li></ul>
+            </div>
+          </div>
+          <div class="rt-col-time"><span class="rt-time">第 5 月</span></div>
+          <div class="rt-axis"><span class="rt-dot"></span></div>
+          <div class="rt-col-main">
+            <div class="rt-item"><h4>L3 数据存储 <span class="rt-tag">必修</span></h4>
+              <p>MySQL 表设计、索引、SQL 优化、Redis 缓存</p>
+              <ul><li>产出：业务表结构 + 缓存方案</li><li>达标：能解释执行计划</li></ul>
+            </div>
+          </div>
+          <div class="rt-col-time"><span class="rt-time">第 6–8 月</span></div>
+          <div class="rt-axis"><span class="rt-dot"></span></div>
+          <div class="rt-col-main">
+            <div class="rt-item"><h4>L4 AI 能力 <span class="rt-tag">核心</span></h4>
+              <p>Python 基础、FastAPI、调用大模型 API、流式输出（SSE）、异步任务</p>
+              <ul><li>产出：AI 对话/内容生成服务</li><li>达标：实现流式对话接口</li></ul>
+            </div>
+          </div>
+          <div class="rt-col-time"><span class="rt-time">第 9–11 月</span></div>
+          <div class="rt-axis"><span class="rt-dot"></span></div>
+          <div class="rt-col-main">
+            <div class="rt-item"><h4>L5 全链路打通 <span class="rt-tag g">产出</span></h4>
+              <p>「uni-app → PHP → Python AI → MySQL」完整项目：需求 → 设计 → 开发 → 测试 → 部署</p>
+              <ul><li>产出：AI 应用完整项目（如 AI 问答助手）</li><li>达标：能讲解全链路请求流转与故障排查</li></ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== 一、后端开发知识体系 ==================== -->
+    <section class="sec-card searchable" id="sec-backend">
+      <div class="sec-head">
+        <div class="sec-num">1</div>
+        <div>
+          <h2>后端开发知识体系（入门 → 高级 详细版）</h2>
+          <div class="sec-tag">四阶段递进：基础筑基 → 技术进阶 → 中级实战 → 高级架构，每级含「学什么 / 知识点详解 / 达标标准」</div>
+        </div>
+      </div>
+
+      <details class="collapse" id="b1" open>
+        <summary>
+          <span class="sum-num">1.1</span>基础筑基（第 1–2 月）
+          <span class="sum-time">语言 + 数据库操作</span>
+          <button class="sum-check" data-chapter="b1">✓ 标记完成</button>
+          <span class="chev">▶</span>
+        </summary>
+        <div class="body">
+          <div class="k-block">
+            <h4>PHP 语法与数据类型 <span class="k-tag core">核心</span></h4>
+            <p><b>是什么：</b>PHP 是弱类型服务端语言，变量以 <code>$</code> 开头，无需声明类型。核心数据类型：标量（int/float/string/bool）、复合（array/object）、特殊（null/resource）。</p>
+            <ul>
+              <li><b>变量与超全局：</b><code>$_GET/$_POST/$_REQUEST/$_SESSION/$_COOKIE/$_SERVER/$_FILES</code> 是框架底层常用的输入来源，务必先了解。</li>
+              <li><b>字符串处理：</b>单引号不解析变量、双引号解析；常用函数 <code>strlen/substr/str_replace/explode/implode/trim</code>；中文处理用 <code>mb_strlen/mb_substr</code>。</li>
+              <li><b>数组：</b>PHP 数组同时支持索引与关联键，常用 <code>array_map/array_filter/array_reduce/array_merge/usort</code> 等高阶函数。</li>
+              <li><b>严格模式：</b>文件开头 <code>declare(strict_types=1)</code> 可开启严格类型约束，减少隐式转换 Bug。</li>
+            </ul>
+            <div class="k-why"><b>为什么重要：</b>所有框架（ThinkPHP/Laravel）都是基于这些语法特性封装，底层扎实才能读懂框架源码、排查线上问题。</div>
+            <div class="d-note"><b>注意：</b>PHP 8+ 起强类型能力增强（联合类型、构造器属性提升、match 表达式），学习时以 PHP 8.x 为准。</div>
+          </div>
+
+          <div class="k-block">
+            <h4>面向对象（OOP）<span class="k-tag core">核心</span></h4>
+            <p><b>是什么：</b>以对象为核心组织代码。三大特性：封装（可见性 public/protected/private）、继承（extends）、多态（接口/抽象类实现同一行为）。</p>
+            <ul>
+              <li><b>接口与抽象类：</b>接口约行为（implements），抽象类供复用（extends）；一个类可实现多接口、只可继承一个类。</li>
+              <li><b>Trait：</b>代码复用片段，解决 PHP 单继承限制，用 <code>use TraitName</code> 引入。</li>
+              <li><b>命名空间：</b><code>namespace App\Service</code> 组织代码，配合 <code>use</code> 引入，与目录结构一一对应。</li>
+              <li><b>自动加载：</b>Composer 的 PSR-4 自动加载把「命名空间 → 文件路径」映射，无需手动 require。</li>
+            </ul>
+            <div class="k-why"><b>为什么重要：</b>框架的 IoC 容器、依赖注入、门面（Facade）全部建立在 OOP 之上；面试必问「三大特性 + 设计原则」。</div>
+          </div>
+
+          <div class="k-block">
+            <h4>Composer 依赖管理 <span class="k-tag tip">工程</span></h4>
+            <p><b>是什么：</b>PHP 的依赖管理工具（类似 npm/pip），通过 <code>composer.json</code> 声明依赖，<code>composer install</code> 安装到 <code>vendor/</code>。</p>
+            <ul>
+              <li><b>常用命令：</b><code>composer require 包名</code>、<code>composer install</code>（按锁文件）、<code>composer update</code>、<code>composer dump-autoload</code>。</li>
+              <li><b>锁文件：</b><code>composer.lock</code> 固定精确版本，保证团队/生产环境一致，必须提交到版本库。</li>
+              <li><b>语义化版本：</b><code>^2.0</code> 表示 >=2.0.0 &lt;3.0.0；<code>~2.1</code> 表示 >=2.1.0 &lt;2.2.0。</li>
+            </ul>
+          </div>
+
+          <div class="k-block">
+            <h4>PDO 与 MySQL 基础操作 <span class="k-tag core">核心</span></h4>
+            <p><b>是什么：</b>PDO（PHP Data Objects）是统一数据库抽象层，支持预处理语句，是防 SQL 注入的标准方案。</p>
+            <pre class="code"><span class="c">// 连接 + 预处理 + 绑定参数（推荐写法）</span>
+$pdo = new PDO(<span class="s">'mysql:host=127.0.0.1;dbname=test;charset=utf8mb4'</span>, <span class="s">'root'</span>, <span class="s">'pass'</span>);
+$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+$stmt = $pdo-&gt;prepare(<span class="s">'SELECT * FROM users WHERE email = ?'</span>);
+$stmt-&gt;execute([$email]);
+$user = $stmt-&gt;fetch(PDO::FETCH_ASSOC);</pre>
+            <ul>
+              <li><b>为什么用预处理：</b>SQL 模板先编译、参数后绑定，用户输入永远不可能成为 SQL 代码 → 从机制上杜绝注入。</li>
+              <li><b>事务：</b><code>beginTransaction() → 操作 → commit()/rollBack()</code>，保证多条写操作原子性。</li>
+              <li><b>字符集：</b>统一 utf8mb4（支持 emoji 与生僻字），连接与表、字段三处一致。</li>
+            </ul>
+            <div class="d-warn"><b>常见坑：</b>不要用 <code>mysql_query</code>（已移除）；不要把用户输入直接拼进 SQL；字段值一律参数化。</div>
+          </div>
+
+          <div class="quiz" data-quiz="b1-q1" data-title="PDO 预处理的主要作用是？">
+            <div class="quiz-head">随堂自测 · 1.1</div>
+            <div class="quiz-q">PDO 预处理语句（Prepared Statement）最核心的价值是？</div>
+            <div class="quiz-opts">
+              <label class="quiz-opt"><input type="radio" name="b1-q1" value="0">提升代码可读性</label>
+              <label class="quiz-opt"><input type="radio" name="b1-q1" value="1">从机制上防止 SQL 注入</label>
+              <label class="quiz-opt"><input type="radio" name="b1-q1" value="2">自动建立数据库连接池</label>
+              <label class="quiz-opt"><input type="radio" name="b1-q1" value="3">自动优化查询计划</label>
+            </div>
+            <button class="quiz-btn">提交答案</button>
+            <div class="quiz-fb"><b>答案：从机制上防止 SQL 注入。</b><span class="explain">SQL 模板先编译、参数后绑定，用户输入被当作数据而非代码处理。</span></div>
+          </div>
+
+          <div class="quiz" data-quiz="b1-q2" data-title="PHP 弱类型判断">
+            <div class="quiz-head">随堂自测 · 1.1</div>
+            <div class="quiz-q">关于 PHP 的 <code>==</code> 与 <code>===</code>，正确的是？</div>
+            <div class="quiz-opts">
+              <label class="quiz-opt"><input type="radio" name="b1-q2" value="0"><code>==</code> 比较值和类型，<code>===</code> 只比较值</label>
+              <label class="quiz-opt"><input type="radio" name="b1-q2" value="1"><code>==</code> 只比较值，<code>===</code> 同时比较类型</label>
+              <label class="quiz-opt"><input type="radio" name="b1-q2" value="2">两者完全相同</label>
+              <label class="quiz-opt"><input type="radio" name="b1-q2" value="3"><code>==</code> 用于字符串，<code>===</code> 用于数字</label>
+            </div>
+            <button class="quiz-btn">提交答案</button>
+            <div class="quiz-fb"><b>答案：<code>==</code> 只比较值（会做类型转换），<code>===</code> 同时比较类型。</b><span class="explain">例如 <code>"1" == 1</code> 为 true，而 <code>"1" === 1</code> 为 false；业务判断建议用 <code>===</code>。</span></div>
+          </div>
+
+          <div class="d-goal"><b>达标标准：</b>能脱离教程写出：用户注册登录的表结构 + PDO 预处理 CRUD + 一个面向对象封装的工具类；讲清 OOP 三大特性。</div>
+        </div>
+      </details>
+
+      <details class="collapse" id="b2">
+        <summary>
+          <span class="sum-num">1.2</span>技术进阶（第 3–4 月）
+          <span class="sum-time">框架 + API + 鉴权</span>
+          <button class="sum-check" data-chapter="b2">✓ 标记完成</button>
+          <span class="chev">▶</span>
+        </summary>
+        <div class="body">
+          <div class="k-block">
+            <h4>HTTP 协议与请求响应模型 <span class="k-tag core">核心</span></h4>
+            <p><b>是什么：</b>HTTP 是无状态请求-响应协议。一次请求 = 请求行（方法+路径+版本）+ 请求头 + 请求体；响应 = 状态行 + 响应头 + 响应体。</p>
+            <ul>
+              <li><b>常见方法：</b>GET（读，无副作用）、POST（新建）、PUT（整体更新）、PATCH（部分更新）、DELETE（删除）。</li>
+              <li><b>状态码：</b>2xx 成功 / 3xx 重定向 / 4xx 客户端错误（400 参数错、401 未认证、403 无权限、404 不存在、429 限流）/ 5xx 服务端错误（500、502 网关错、503 不可用、504 超时）。</li>
+              <li><b>无状态：</b>服务器不记会话 → 需 Cookie/Session 或 Token 方案维持登录态。</li>
+              <li><b>常见请求头：</b><code>Content-Type</code>（application/json 等）、<code>Authorization</code>（Bearer Token）、<code>Accept</code>、<code>User-Agent</code>。</li>
+            </ul>
+          </div>
+
+          <div class="k-block">
+            <h4>MVC 与主流框架（ThinkPHP / Laravel）<span class="k-tag core">核心</span></h4>
+            <p><b>是什么：</b>MVC 将代码分为 Model（数据）、View（展示）、Controller（业务编排）。框架在 MVC 之上提供路由、容器、ORM、中间件等能力。</p>
+            <ul>
+              <li><b>ThinkPHP 8：</b>国内常用，中文文档友好，适合快速开发与中小项目。</li>
+              <li><b>Laravel 11：</b>生态最全（Eloquent ORM、Blade 模板、Artisan CLI、队列、事件），适合中大型与长期维护项目。</li>
+              <li><b>生命周期：</b>请求 → 入口 index.php → 框架引导（加载配置、注册服务）→ 路由匹配 → 中间件 → 控制器 → 模型/ORM 读写 → 响应返回。</li>
+              <li><b>核心概念：</b>路由定义、控制器方法、服务容器（IoC）、依赖注入、门面（Facade）、ORM（对象关系映射）。</li>
+            </ul>
+            <div class="k-why"><b>为什么重要：</b>「框架是工具，原理是内功」。面试官更看重你是否理解框架做了什么，而不只是会用。</div>
+          </div>
+
+          <div class="k-block">
+            <h4>路由与中间件 <span class="k-tag core">核心</span></h4>
+            <p><b>是什么：</b>路由把 URL 映射到控制器方法；中间件在请求进入控制器前后做统一处理（鉴权、日志、CORS、限流）。</p>
+            <pre class="code"><span class="c">// Laravel 路由 + 中间件示例</span>
+Route::middleware(<span class="s">'auth:api'</span>)-&gt;group(<span class="k">function</span> () {
+    Route::get(<span class="s">'/user/profile'</span>, [UserController::class, <span class="s">'profile'</span>]);
+    Route::post(<span class="s">'/order'</span>, [OrderController::class, <span class="s">'create'</span>]);
+});</pre>
+            <ul>
+              <li><b>中间件执行顺序：</b>按注册顺序「洋葱模型」进入，响应再逆序返回。</li>
+              <li><b>典型中间件：</b>认证、CORS、请求日志、限流、参数校验、敏感操作审计。</li>
+            </ul>
+          </div>
+
+          <div class="k-block">
+            <h4>RESTful API 设计规范 <span class="k-tag core">核心</span></h4>
+            <p><b>是什么：</b>以资源为中心设计接口：URL 表示资源，HTTP 方法表示动作，返回 JSON，无状态。</p>
+            <ul>
+              <li><b>URL 设计：</b>名词复数 + 层级：<code>GET /api/users</code>（列表）、<code>POST /api/users</code>（新建）、<code>GET /api/users/1</code>（详情）、<code>PUT /api/users/1</code>（更新）、<code>DELETE /api/users/1</code>（删除）。</li>
+              <li><b>统一响应：</b><code>{code:0, message:"ok", data:{...}}</code>，前端按 code 判断业务成败。</li>
+              <li><b>分页规范：</b><code>?page=1&amp;page_size=20</code>，返回 total/items。</li>
+              <li><b>错误语义：</b>参数错误 400、未认证 401、无权限 403、不存在 404、限流 429。</li>
+              <li><b>版本控制：</b><code>/api/v1/...</code> 便于演进。</li>
+            </ul>
+            <div class="d-note"><b>提示：</b>幂等性：GET/DELETE/PUT 应幂等（重复执行结果一致）；POST 不保证。</div>
+          </div>
+
+          <div class="k-block">
+            <h4>用户认证与 JWT <span class="k-tag core">核心</span></h4>
+            <p><b>是什么：</b>JWT（JSON Web Token）无状态鉴权：登录成功后服务端签发令牌，客户端请求携带，服务端验签即信任。</p>
+            <ul>
+              <li><b>结构：</b><code>Header.Payload.Signature</code>，三段 Base64Url；Signature 用服务端密钥 HMAC-SHA256 计算。</li>
+              <li><b>流程：</b>登录 → 校验账号密码 → 签发 token（含 uid、过期时间 exp）→ 客户端存 token → 每次请求带 <code>Authorization: Bearer &lt;token&gt;</code> → 服务端验签解析。</li>
+              <li><b>与 Session 对比：</b>Session 存服务端（可主动失效、占用内存），JWT 存客户端（无状态、跨域友好、不可主动失效）。</li>
+              <li><b>注意：</b>token 放 localStorage 有 XSS 风险；敏感信息不要放 payload；过期时间不宜过长，配合刷新令牌。</li>
+            </ul>
+          </div>
+
+          <div class="k-block">
+            <h4>参数校验与统一异常处理 <span class="k-tag tip">规范</span></h4>
+            <ul>
+              <li>入参校验：必填、类型、长度、枚举范围、邮箱/手机号格式；框架的 FormRequest / Validate 类集中管理。</li>
+              <li>统一异常：全局捕获业务异常 → 返回统一 JSON；未捕获异常 → 记录日志 + 返回 500。</li>
+              <li>日志分级：debug/info/warning/error，关键操作与异常必须留痕。</li>
+            </ul>
+          </div>
+
+          <div class="quiz" data-quiz="b2-q1" data-title="HTTP 状态码语义">
+            <div class="quiz-head">随堂自测 · 1.2</div>
+            <div class="quiz-q">用户未登录访问需认证接口，服务端应返回？</div>
+            <div class="quiz-opts">
+              <label class="quiz-opt"><input type="radio" name="b2-q1" value="0">200</label>
+              <label class="quiz-opt"><input type="radio" name="b2-q1" value="1">400</label>
+              <label class="quiz-opt"><input type="radio" name="b2-q1" value="2">401 Unauthorized</label>
+              <label class="quiz-opt"><input type="radio" name="b2-q1" value="3">403 Forbidden</label>
+            </div>
+            <button class="quiz-btn">提交答案</button>
+            <div class="quiz-fb"><b>答案：401 Unauthorized。</b><span class="explain">401 表示未认证（不知道你是谁）；403 表示已认证但无权限（不允许你做）。</span></div>
+          </div>
+
+          <div class="quiz" data-quiz="b2-q2" data-title="RESTful 设计">
+            <div class="quiz-head">随堂自测 · 1.2</div>
+            <div class="quiz-q">「更新用户 id=5 的邮箱」最符合 RESTful 风格的是？</div>
+            <div class="quiz-opts">
+              <label class="quiz-opt"><input type="radio" name="b2-q2" value="0">POST /updateUserEmail?id=5</label>
+              <label class="quiz-opt"><input type="radio" name="b2-q2" value="1">PATCH /api/users/5（body 含 email）</label>
+              <label class="quiz-opt"><input type="radio" name="b2-q2" value="2">GET /api/users/5/update?email=x</label>
+              <label class="quiz-opt"><input type="radio" name="b2-q2" value="3">DELETE /api/users/5/email</label>
+            </div>
+            <button class="quiz-btn">提交答案</button>
+            <div class="quiz-fb"><b>答案：PATCH /api/users/5（body 含 email）。</b><span class="explain">部分更新用 PATCH，资源在 URL、动作由方法表达，不用动词进 URL。</span></div>
+          </div>
+
+          <div class="d-goal"><b>达标标准：</b>能独立搭建 ThinkPHP/Laravel 项目，完成注册登录（JWT）+ 用户 CRUD + 中间件鉴权 + 统一响应；能画出请求生命周期图。</div>
+        </div>
+      </details>
+
+      <details class="collapse" id="b3">
+        <summary>
+          <span class="sum-num">1.3</span>中级实战（第 5–6 月）
+          <span class="sum-time">缓存 + 队列 + 性能 + 安全</span>
+          <button class="sum-check" data-chapter="b3">✓ 标记完成</button>
+          <span class="chev">▶</span>
+        </summary>
+        <div class="body">
+          <div class="k-block">
+            <h4>Redis 缓存实战 <span class="k-tag core">核心</span></h4>
+            <p><b>是什么：</b>Redis 是内存键值数据库，5 大数据类型：String、Hash、List、Set、ZSet（有序集合）。</p>
+            <ul>
+              <li><b>常用场景：</b>热点数据缓存、Session 共享、分布式锁（SETNX + 过期）、计数器、排行榜（ZSet）、限流、消息队列（List/Stream）。</li>
+              <li><b>缓存策略：</b>读多写少 + 数据可容忍短暂不一致才缓存；key 命名规范 <code>业务:模块:id</code>。</li>
+              <li><b>缓存穿透：</b>查询不存在的数据 → 缓存与 DB 都无 → 恶意流量打穿。解决：缓存空值 + 布隆过滤器。</li>
+              <li><b>缓存击穿：</b>热点 key 过期瞬间大量请求打到 DB。解决：互斥锁重建缓存 + 逻辑过期。</li>
+              <li><b>缓存雪崩：</b>大量 key 同时过期 → 流量打垮 DB。解决：过期时间加随机值 + 多级缓存 + 限流降级。</li>
+              <li><b>缓存与 DB 一致性：</b>常用「先更新 DB 再删缓存」（Cache Aside）；极端一致性用延迟双删或 binlog 订阅。</li>
+            </ul>
+            <div class="k-why"><b>为什么重要：</b>「缓存三兄弟」（穿透/击穿/雪崩）是面试高频题，也是线上性能问题的三大根源。</div>
+          </div>
+
+          <div class="k-block">
+            <h4>数据库设计、索引与 SQL 优化 <span class="k-tag core">核心</span></h4>
+            <p><b>是什么：</b>表结构设计决定系统天花板；索引加速查询；SQL 优化是后端基本功。</p>
+            <ul>
+              <li><b>设计原则：</b>三范式（避免冗余）与反范式（读多冗余列）平衡；字段类型选小不选大（int 优于 varchar）；主键用自增或雪花 ID。</li>
+              <li><b>索引原理：</b>InnoDB 用 B+ 树；聚簇索引（主键）叶子存整行，二级索引叶子存主键 → 回表概念由此而来。</li>
+              <li><b>索引设计：</b>where 条件列 + 排序列建索引；联合索引遵循最左前缀；区分度低的列（性别）不建单列索引。</li>
+              <li><b>explain 解读：</b>重点看 type（ALL=全表扫描要优化）、key（实际用到的索引）、rows（扫描行数）、Extra（Using filesort/temporary 要优化）。</li>
+              <li><b>常见优化：</b>避免 <code>SELECT *</code>、避免函数包裹索引列、避免隐式类型转换、深分页用游标/子查询优化、N+1 查询改 JOIN 或预加载。</li>
+            </ul>
+          </div>
+
+          <div class="k-block">
+            <h4>性能优化方法论 <span class="k-tag core">核心</span></h4>
+            <ul>
+              <li><b>指标：</b>QPS/TPS、响应时间（P50/P95/P99）、错误率、资源利用率（CPU/内存/IO）。</li>
+              <li><b>优化顺序：</b>先压测定位瓶颈（不是猜），再分层优化：应用代码 → 数据库 → 缓存 → 架构。</li>
+              <li><b>应用层：</b>慢查询日志、代码热点（Xdebug 分析）、减少重复计算、异步化耗时任务。</li>
+              <li><b>数据库层：</b>索引、分页、连接池、读写分离。</li>
+              <li><b>压测工具：</b>ab、wrk、JMeter；压测环境与生产配置尽量一致。</li>
+            </ul>
+            <div class="d-warn"><b>常见坑：</b>没有数据支撑的「优化」是玄学；优化后必须做对比验证（压测前后数据）。</div>
+          </div>
+
+          <div class="k-block">
+            <h4>Web 安全加固 <span class="k-tag core">核心</span></h4>
+            <ul>
+              <li><b>SQL 注入：</b>预处理参数化 + 最小权限数据库账号 + 严格过滤。</li>
+              <li><b>XSS：</b>输出转义（htmlspecialchars）、CSP 头、HttpOnly Cookie。</li>
+              <li><b>CSRF：</b>Token 校验（Laravel 自带）、SameSite Cookie、校验 Referer。</li>
+              <li><b>文件上传：</b>白名单校验类型/大小、重命名、禁止执行目录、用 OSS 存储。</li>
+              <li><b>其他：</b>SSRF（限制内网访问）、越权（垂直/水平，接口做资源属主校验）、敏感信息脱敏、HTTPS 强制。</li>
+            </ul>
+            <div class="k-why"><b>为什么重要：</b>安全是「1 和 0」——一个漏洞可能让整个系统归零；OWASP Top 10 是必读清单。</div>
+          </div>
+
+          <div class="k-block">
+            <h4>单元测试与接口测试 <span class="k-tag tip">质量</span></h4>
+            <ul>
+              <li>PHPUnit 基础：断言、数据提供者、测试前后置（setUp/tearDown）。</li>
+              <li>测试金字塔：单元测试（多）→ 接口测试（中）→ 端到端（少）。</li>
+              <li>接口测试工具：Postman 集合 + 自动化 Runner；或 PHPUnit + Laravel 测试客户端。</li>
+              <li>覆盖率目标：核心业务逻辑覆盖 70%+，不追求数字游戏。</li>
+            </ul>
+          </div>
+
+          <div class="quiz" data-quiz="b3-q1" data-title="缓存穿透的解决">
+            <div class="quiz-head">随堂自测 · 1.3</div>
+            <div class="quiz-q">大量请求查询「不存在的商品 ID」，每次都打到数据库，这属于？</div>
+            <div class="quiz-opts">
+              <label class="quiz-opt"><input type="radio" name="b3-q1" value="0">缓存击穿</label>
+              <label class="quiz-opt"><input type="radio" name="b3-q1" value="1">缓存穿透</label>
+              <label class="quiz-opt"><input type="radio" name="b3-q1" value="2">缓存雪崩</label>
+              <label class="quiz-opt"><input type="radio" name="b3-q1" value="3">缓存预热</label>
+            </div>
+            <button class="quiz-btn">提交答案</button>
+            <div class="quiz-fb"><b>答案：缓存穿透。</b><span class="explain">查询不存在数据导致缓存永远不命中；解决：缓存空值或布隆过滤器。</span></div>
+          </div>
+
+          <div class="quiz" data-quiz="b3-q2" data-title="explain type 优化">
+            <div class="quiz-head">随堂自测 · 1.3</div>
+            <div class="quiz-q">EXPLAIN 结果中 type 为下面哪项说明查询最需要优化？</div>
+            <div class="quiz-opts">
+              <label class="quiz-opt"><input type="radio" name="b3-q2" value="0">const</label>
+              <label class="quiz-opt"><input type="radio" name="b3-q2" value="1">ref</label>
+              <label class="quiz-opt"><input type="radio" name="b3-q2" value="2">range</label>
+              <label class="quiz-opt"><input type="radio" name="b3-q2" value="3">ALL（全表扫描）</label>
+            </div>
+            <button class="quiz-btn">提交答案</button>
+            <div class="quiz-fb"><b>答案：ALL（全表扫描）。</b><span class="explain">type 从好到差：system &gt; const &gt; eq_ref &gt; ref &gt; range &gt; index &gt; ALL；出现 ALL 通常要加索引。</span></div>
+          </div>
+
+          <div class="d-goal"><b>达标标准：</b>能独立完成一个带缓存、鉴权、安全加固的 API 项目；能定位并解决一个真实性能问题（用压测数据证明）；能讲清缓存三兄弟的成因与解法。</div>
+        </div>
+      </details>
+
+      <details class="collapse" id="b4">
+        <summary>
+          <span class="sum-num">1.4</span>高级架构（第 7–9 月）
+          <span class="sum-time">高并发 + 分布式 + 容器化</span>
+          <button class="sum-check" data-chapter="b4">✓ 标记完成</button>
+          <span class="chev">▶</span>
+        </summary>
+        <div class="body">
+          <div class="k-block">
+            <h4>高并发架构设计 <span class="k-tag core">核心</span></h4>
+            <p><b>是什么：</b>从单体 → 分层 → 集群 → 微服务的演进，本质是「分流、缓存、异步、限流」八字方针。</p>
+            <ul>
+              <li><b>分层分流：</b>Nginx 负载均衡（轮询/加权/IP Hash/一致性哈希）→ 应用集群无状态化 → 数据库读写分离。</li>
+              <li><b>缓存：</b>浏览器/CDN/Redis/本地缓存多级缓存，把热点请求挡在数据库之外。</li>
+              <li><b>异步：</b>消息队列削峰填谷（秒杀下单、短信、日志）；异步化不阻塞主流程。</li>
+              <li><b>限流降级熔断：</b>令牌桶/漏桶限流；非核心功能降级；下游异常熔断（Sentinel/自研）。</li>
+              <li><b>分布式理论：</b>CAP 定理（一致性/可用性/分区容错性三选二）、BASE 理论（最终一致）。</li>
+            </ul>
+            <div class="k-why"><b>为什么重要：</b>架构能力是区分中级与高级的分水岭，面试场景题（秒杀、热点）都考这些。</div>
+          </div>
+
+          <div class="k-block">
+            <h4>读写分离与分库分表 <span class="k-tag mid">进阶</span></h4>
+            <ul>
+              <li><b>读写分离：</b>主库写、从库读，主从复制（binlog）同步；注意主从延迟（读不到刚写的数据 → 关键读走主库/半同步）。</li>
+              <li><b>垂直拆分：</b>按业务域拆库（用户库/订单库/商品库），降低单库压力。</li>
+              <li><b>水平拆分：</b>按分片键（如 user_id）hash/range 分表；中间件 ShardingSphere/MyCat 透明路由。</li>
+              <li><b>拆分代价：</b>跨分片 JOIN 变难、分布式事务变复杂、全局唯一 ID 需要（雪花算法）。</li>
+            </ul>
+          </div>
+
+          <div class="k-block">
+            <h4>消息队列选型与应用 <span class="k-tag mid">进阶</span></h4>
+            <table>
+              <tr><th>维度</th><th>RabbitMQ</th><th>Kafka</th><th>Redis Stream</th></tr>
+              <tr><td>定位</td><td>通用消息中间件（AMQP）</td><td>分布式流平台，高吞吐</td><td>轻量队列</td></tr>
+              <tr><td>吞吐</td><td>中</td><td>极高（百万级/s）</td><td>中高</td></tr>
+              <tr><td>可靠性</td><td>高（confirm + 手动 ack）</td><td>高（副本机制）</td><td>中（依赖 Redis）</td></tr>
+              <tr><td>典型场景</td><td>业务解耦、任务分发</td><td>日志、大数据、事件流</td><td>轻量异步任务</td></tr>
+            </table>
+            <ul>
+              <li><b>核心概念：</b>生产者/消费者/队列；RabbitMQ 的交换机（direct/topic/fanout）决定消息路由。</li>
+              <li><b>可靠投递：</b>生产者确认 + 消费者手动 ack + 失败重试 + 死信队列。</li>
+              <li><b>幂等消费：</b>消费端要能处理重复消息（唯一业务号去重）。</li>
+            </ul>
+          </div>
+
+          <div class="k-block">
+            <h4>Docker 容器化部署 <span class="k-tag core">核心</span></h4>
+            <p><b>是什么：</b>把应用 + 运行环境打包成镜像，容器隔离运行，保证「本地跑通 = 服务器跑通」。</p>
+            <pre class="code"><span class="c"># 最小 PHP-FPM + Nginx 部署思路</span>
+<span class="c"># Dockerfile（应用镜像）</span>
+FROM php:8.2-fpm
+COPY . /var/www/app
+RUN docker-php-ext-install pdo_mysql
+<span class="c"># docker-compose.yml 编排 nginx + php + mysql + redis</span></pre>
+            <ul>
+              <li><b>核心命令：</b><code>docker build/run/ps/exec/logs</code>；<code>docker-compose up -d</code> 一键起全套。</li>
+              <li><b>镜像分层：</b>利用缓存层加速构建；多阶段构建减小体积。</li>
+              <li><b>最佳实践：</b>容器无状态、数据挂卷（volume）、健康检查、日志 stdout。</li>
+            </ul>
+          </div>
+
+          <div class="k-block">
+            <h4>Nginx 反向代理与负载均衡 <span class="k-tag core">核心</span></h4>
+            <ul>
+              <li>反向代理：客户端只访问 Nginx，由它转发到后端 PHP-FPM（fastcgi）或应用集群。</li>
+              <li>负载均衡：<code>upstream</code> + 策略（轮询/weight/ip_hash/least_conn）。</li>
+              <li>静态资源：直接由 Nginx 提供（图片/JS/CSS），配缓存头，减轻应用压力。</li>
+              <li>配置要点：gzip 压缩、连接超时、限流（limit_req）、HTTPS 证书。</li>
+            </ul>
+          </div>
+
+          <div class="k-block">
+            <h4>设计模式在 PHP 中的应用 <span class="k-tag tip">内功</span></h4>
+            <ul>
+              <li><b>单例：</b>数据库连接、配置对象（全局唯一）。</li>
+              <li><b>工厂：</b>根据参数创建不同支付渠道（Alipay/Wechat 适配器）。</li>
+              <li><b>策略：</b>多种营销规则/配送方式可替换算法。</li>
+              <li><b>观察者：</b>事件系统（Laravel Event）、订单状态变更通知。</li>
+              <li><b>责任链：</b>中间件链、多层校验器。</li>
+              <li><b>依赖注入容器：</b>Laravel 容器核心，接口绑定实现，解耦 + 可测试。</li>
+            </ul>
+            <div class="d-note"><b>提示：</b>设计模式是「沟通词汇」与「重构方向」，不要为了模式而模式——先有坏味道，再谈模式。</div>
+          </div>
+
+          <div class="quiz" data-quiz="b4-q1" data-title="CAP 理论">
+            <div class="quiz-head">随堂自测 · 1.4</div>
+            <div class="quiz-q">分布式系统发生网络分区时，根据 CAP 理论，系统通常需要？</div>
+            <div class="quiz-opts">
+              <label class="quiz-opt"><input type="radio" name="b4-q1" value="0">保证 C 和 A，放弃 P</label>
+              <label class="quiz-opt"><input type="radio" name="b4-q1" value="1">必须保证 P，在 C 和 A 之间取舍</label>
+              <label class="quiz-opt"><input type="radio" name="b4-q1" value="2">三者都能同时满足</label>
+              <label class="quiz-opt"><input type="radio" name="b4-q1" value="3">放弃 P，只保 C</label>
+            </div>
+            <button class="quiz-btn">提交答案</button>
+            <div class="quiz-fb"><b>答案：必须保证 P，在 C 和 A 之间取舍。</b><span class="explain">网络分区不可避免（P 必选），分区时只能选择「保一致性」或「保可用性」。</span></div>
+          </div>
+
+          <div class="quiz" data-quiz="b4-q2" data-title="消息队列削峰">
+            <div class="quiz-head">随堂自测 · 1.4</div>
+            <div class="quiz-q">秒杀场景中，消息队列最核心的作用是？</div>
+            <div class="quiz-opts">
+              <label class="quiz-opt"><input type="radio" name="b4-q2" value="0">提高数据库查询速度</label>
+              <label class="quiz-opt"><input type="radio" name="b4-q2" value="1">削峰填谷，异步消化瞬时流量</label>
+              <label class="quiz-opt"><input type="radio" name="b4-q2" value="2">加密传输数据</label>
+              <label class="quiz-opt"><input type="radio" name="b4-q2" value="3">替代数据库存储</label>
+            </div>
+            <button class="quiz-btn">提交答案</button>
+            <div class="quiz-fb"><b>答案：削峰填谷，异步消化瞬时流量。</b><span class="explain">队列把「瞬间洪峰」转为「平稳消费」，保护下游数据库不被击穿。</span></div>
+          </div>
+
+          <div class="d-goal"><b>达标标准：</b>能画出中小型系统架构图（Nginx + 集群 + Redis + MySQL 主从 + MQ）；能讲清一个高并发场景的完整方案与取舍；能用 Docker 部署完整应用。</div>
+        </div>
+      </details>
+
+      <details class="collapse" id="b5">
+        <summary>
+          <span class="sum-num">1.5</span>后端学习路径流程图
+          <span class="sum-time">12 个月路线</span>
+          <button class="sum-check" data-chapter="b5">✓ 标记完成</button>
+          <span class="chev">▶</span>
+        </summary>
+        <div class="body">
+          <div class="flow">
+            <div class="frow">
+              <div class="fbox">PHP 语法基础</div><span class="farr">→</span>
+              <div class="fbox">OOP + Composer</div><span class="farr">→</span>
+              <div class="fbox">PDO + MySQL</div><span class="farr">→</span>
+              <div class="fbox">HTTP + MVC</div>
+            </div>
+            <div class="fdown">▼</div>
+            <div class="frow">
+              <div class="fbox green">ThinkPHP/Laravel</div><span class="farr">→</span>
+              <div class="fbox green">RESTful API + JWT</div><span class="farr">→</span>
+              <div class="fbox green">Redis 缓存</div><span class="farr">→</span>
+              <div class="fbox green">队列异步</div>
+            </div>
+            <div class="fdown">▼</div>
+            <div class="frow">
+              <div class="fbox amber">SQL 优化 + 索引</div><span class="farr">→</span>
+              <div class="fbox amber">安全加固</div><span class="farr">→</span>
+              <div class="fbox amber">单元测试</div><span class="farr">→</span>
+              <div class="fbox amber">性能调优</div>
+            </div>
+            <div class="fdown">▼</div>
+            <div class="frow">
+              <div class="fbox slate">高并发架构</div><span class="farr">→</span>
+              <div class="fbox slate">读写分离/分库分表</div><span class="farr">→</span>
+              <div class="fbox slate">Docker + Nginx</div><span class="farr">→</span>
+              <div class="fbox teal">实战项目</div>
+            </div>
+          </div>
+          <div class="d-goal"><b>路径要点：</b>每阶段以「可运行的小项目」收尾；第 6 个月前不碰高级主题，先把基础写稳；面试前用 2 周刷题 + 复盘项目。</div>
+        </div>
+      </details>
+    </section>
+
+<!-- ==================== 二、Android 开发 ==================== -->
+    <section class="sec-card searchable" id="sec-android">
+      <div class="sec-head">
+        <div class="sec-num">2</div>
+        <div>
+          <h2>Android 开发：从入门到精通完整体系</h2>
+          <div class="sec-tag">入门（语言+组件）→ 进阶（Jetpack+网络+性能）→ 精通（架构+源码+跨端），每级含详细知识点</div>
+        </div>
+      </div>
+
+      <details class="collapse" id="a1" open>
+        <summary>
+          <span class="sum-num">2.1</span>入门篇（第 1–4 月）
+          <span class="sum-time">Kotlin + 组件 + UI</span>
+          <button class="sum-check" data-chapter="a1">✓ 标记完成</button>
+          <span class="chev">▶</span>
+        </summary>
+        <div class="body">
+          <div class="k-block">
+            <h4>Kotlin 语言核心 <span class="k-tag core">核心</span></h4>
+            <p><b>是什么：</b>Google 官方推荐语言，100% 兼容 Java，语法更简洁安全。与 Java 的最大区别：空安全、扩展函数、协程、数据类。</p>
+            <ul>
+              <li><b>空安全：</b>类型默认非空；可空类型用 <code>?</code>（<code>String?</code>），安全调用 <code>?. </code>、Elvis <code>?:</code>、非空断言 <code>!!</code>（慎用）。</li>
+              <li><b>集合高阶函数：</b><code>map/filter/fold/groupBy/sortedBy/forEach</code> 是日常主力，比 Java 循环更声明式。</li>
+              <li><b>数据类：</b><code>data class</code> 自动生成 equals/hashCode/toString/copy，适合做 Model。</li>
+              <li><b>扩展函数：</b>给已有类加方法（如 <code>fun String.isEmail()</code>），不改变原类。</li>
+              <li><b>协程入门：</b><code>GlobalScope.launch</code>（正式用 lifecycleScope/viewModelScope）+ <code>suspend</code> 挂起函数 + <code>withContext(Dispatchers.IO)</code> 切换线程。</li>
+              <li><b>委托：</b><code>by lazy</code> 懒加载、<code>by viewModels()</code> 获取 ViewModel。</li>
+            </ul>
+          </div>
+
+          <div class="k-block">
+            <h4>Activity 生命周期与启动模式 <span class="k-tag core">核心</span></h4>
+            <p><b>是什么：</b>Activity 是界面载体，生命周期是 Android 面试第一题，也是内存泄漏排查的基础。</p>
+            <ul>
+              <li><b>生命周期回调：</b>onCreate（创建）→ onStart（可见）→ onResume（可交互）→ onPause（部分不可见）→ onStop（完全不可见）→ onDestroy（销毁）；后台被系统回收前走 onSaveInstanceState。</li>
+              <li><b>四种启动模式：</b>standard（默认，每启动新建）、singleTop（栈顶复用）、singleTask（栈内唯一，清其上）、singleInstance（独立任务栈，全局唯一，适合来电界面）。</li>
+              <li><b>onNewIntent：</b>singleTop/singleTask 复用时会走此方法接收新 Intent。</li>
+              <li><b>场景题：</b>A 启动 B 时 A 走 onPause → B onCreate→onResume → A onStop；按返回键则 B onPause → A onRestart→onStart→onResume → B onStop→onDestroy。</li>
+            </ul>
+            <div class="d-warn"><b>常见坑：</b>不要在 onPause 做耗时操作；旋转屏幕 Activity 重建（配置变更），数据用 ViewModel 或 onSaveInstanceState 保存。</div>
+          </div>
+
+          <div class="k-block">
+            <h4>Fragment 与生命周期 <span class="k-tag core">核心</span></h4>
+            <ul>
+              <li>Fragment 是 Activity 内的模块化界面，便于平板适配与导航管理。</li>
+              <li>生命周期比 Activity 多 onAttach/onCreateView/onViewCreated/onDestroyView/onDetach；onViewCreated 后操作 view。</li>
+              <li>通信方式：接口回调、ViewModel 共享、Fragment Result API（setFragmentResult）。</li>
+              <li>add 与 replace 区别：replace 会销毁旧 Fragment 视图；add 保留，配合 hide/show 切换。</li>
+            </ul>
+          </div>
+
+          <div class="k-block">
+            <h4>布局与 UI 控件 <span class="k-tag core">核心</span></h4>
+            <ul>
+              <li><b>布局类型：</b>ConstraintLayout（首选，约束定位）、LinearLayout（线性）、FrameLayout（层叠）、RelativeLayout（相对，性能一般）。</li>
+              <li><b>常用控件：</b>TextView/EditText/Button/ImageView/RecyclerView/ScrollView/ViewPager2。</li>
+              <li><b>RecyclerView 三要素：</b>Adapter（数据→视图）、LayoutManager（线性/网格/瀑布流）、ItemDecoration（分割线/间距）；ViewHolder 缓存复用是高性能关键。</li>
+              <li><b>dimens：</b>dp（密度无关像素，布局）、sp（字号）、px（像素，不直接用）。</li>
+            </ul>
+          </div>
+
+          <div class="k-block">
+            <h4>四大组件与数据存储 <span class="k-tag mid">进阶</span></h4>
+            <ul>
+              <li><b>Service：</b>后台执行（播放音乐/下载）；startService 与 bindService 两种启动方式；前台服务需通知（Android 8+）。</li>
+              <li><b>BroadcastReceiver：</b>接收系统/应用广播（开机、网络变化）；静态注册（Manifest）与动态注册（registerReceiver，需注销）。</li>
+              <li><b>ContentProvider：</b>跨应用数据共享（联系人、相册）；Android 10+ 分区存储限制直接读公共目录。</li>
+              <li><b>存储方案：</b>SharedPreferences（轻量键值）、Room/SQLite（结构化）、文件（内部/外部）、DataStore（SP 替代方案）。</li>
+            </ul>
+          </div>
+
+          <div class="quiz" data-quiz="a1-q1" data-title="Activity 生命周期">
+            <div class="quiz-head">随堂自测 · 2.1</div>
+            <div class="quiz-q">Activity A 启动 B（非透明、全屏），A 会回调哪些方法？</div>
+            <div class="quiz-opts">
+              <label class="quiz-opt"><input type="radio" name="a1-q1" value="0">onPause → onStop → onDestroy</label>
+              <label class="quiz-opt"><input type="radio" name="a1-q1" value="1">onPause → onStop</label>
+              <label class="quiz-opt"><input type="radio" name="a1-q1" value="2">onStop → onPause</label>
+              <label class="quiz-opt"><input type="radio" name="a1-q1" value="3">onPause → onRestart</label>
+            </div>
+            <button class="quiz-btn">提交答案</button>
+            <div class="quiz-fb"><b>答案：onPause → onStop。</b><span class="explain">A 被完全遮挡后进入不可见状态 onStop；未被销毁，按返回时 onRestart → onStart → onResume。</span></div>
+          </div>
+
+          <div class="quiz" data-quiz="a1-q2" data-title="Kotlin 空安全">
+            <div class="quiz-head">随堂自测 · 2.1</div>
+            <div class="quiz-q">Kotlin 中 <code>val name: String? = null; println(name?.length)</code> 输出？</div>
+            <div class="quiz-opts">
+              <label class="quiz-opt"><input type="radio" name="a1-q2" value="0">null</label>
+              <label class="quiz-opt"><input type="radio" name="a1-q2" value="1">0</label>
+              <label class="quiz-opt"><input type="radio" name="a1-q2" value="2">空指针异常</label>
+              <label class="quiz-opt"><input type="radio" name="a1-q2" value="3">编译报错</label>
+            </div>
+            <button class="quiz-btn">提交答案</button>
+            <div class="quiz-fb"><b>答案：null。</b><span class="explain">安全调用 <code>?. </code> 在接收者为 null 时直接返回 null，不抛异常。</span></div>
+          </div>
+
+          <div class="d-goal"><b>达标标准：</b>能独立开发一个「记事本 App」：Kotlin + RecyclerView + Room 存储 + Activity/Fragment 跳转；能画出并讲解 Activity 生命周期。</div>
+        </div>
+      </details>
+
+      <details class="collapse" id="a2">
+        <summary>
+          <span class="sum-num">2.2</span>进阶篇（第 5–9 月）
+          <span class="sum-time">Jetpack + 网络 + 性能</span>
+          <button class="sum-check" data-chapter="a2">✓ 标记完成</button>
+          <span class="chev">▶</span>
+        </summary>
+        <div class="body">
+          <div class="k-block">
+            <h4>Jetpack 全家桶 <span class="k-tag core">核心</span></h4>
+            <ul>
+              <li><b>ViewModel：</b>持有 UI 数据，配置变更（旋转屏）后不销毁，通过 ViewModelStore 保存；绝不在 ViewModel 持有 Activity 引用（内存泄漏）。</li>
+              <li><b>LiveData：</b>可观察数据，感知生命周期——只在 STARTED/RESUMED 状态回调观察者，自动避免更新已销毁 UI；<code>observe</code> 在活跃状态自动恢复接收。</li>
+              <li><b>DataBinding/ViewBinding：</b>ViewBinding 编译期生成绑定类，替代 findViewById，空安全；DataBinding 支持 XML 绑定表达式（注意性能与可读性取舍）。</li>
+              <li><b>Navigation：</b>导航图可视化管理 Fragment 切换、传参、返回栈；<code>navController.navigate(R.id.action_a_to_b)</code>。</li>
+              <li><b>WorkManager：</b>保证式后台任务（上传/同步），兼容 Doze 模式；链式任务 <code>workA.then(workB)</code>。</li>
+              <li><b>Paging 3：</b>分页加载列表，配合 RecyclerView + Flow；处理加载状态、重试、占位。</li>
+            </ul>
+          </div>
+
+          <div class="k-block">
+            <h4>网络层：Retrofit + OkHttp + 协程 <span class="k-tag core">核心</span></h4>
+            <p><b>是什么：</b>Retrofit 是 REST 接口框架（注解声明接口），OkHttp 是底层 HTTP 客户端（连接池/拦截器），协程负责线程切换。</p>
+            <pre class="code"><span class="c">// Retrofit 接口 + 协程调用示例</span>
+<span class="k">interface</span> ApiService {
+    @GET(<span class="s">"user/{id}"</span>)
+    <span class="k">suspend fun</span> getUser(@Path(<span class="s">"id"</span>) id: Long): ApiResponse&lt;User&gt;
+}
+<span class="c">// 调用：viewModelScope.launch { val user = api.getUser(1) }</span></pre>
+            <ul>
+              <li><b>OkHttp 核心：</b>连接复用（ConnectionPool）、超时管理、拦截器链（日志/Header/缓存/重试）、支持 HTTP/2。</li>
+              <li><b>协程网络：</b>suspend 函数自动切换 IO 线程（Retrofit 内置），无需手动 enqueue 回调，代码像同步一样顺序。</li>
+              <li><b>错误处理：</b>统一 try-catch + 密封类封装成功/错误状态；HTTP 错误、业务 code、网络异常三分。</li>
+              <li><b>JSON：</b>Moshi/Gson/Kotlinx.serialization 反序列化，注意字段为 null 的兼容。</li>
+            </ul>
+          </div>
+
+          <div class="k-block">
+            <h4>图片加载：Glide 原理 <span class="k-tag core">核心</span></h4>
+            <ul>
+              <li><b>缓存三级：</b>内存缓存（LruCache）→ 磁盘缓存 → 网络。</li>
+              <li><b>生命周期感知：</b>自动绑定 Activity/Fragment 生命周期，不可见时暂停加载。</li>
+              <li><b>Bitmap 复用：</b>BitmapPool 复用内存，配合 <code>inSampleSize</code> 采样压缩，避免 OOM。</li>
+              <li><b>占位/错误：</b>placeholder / error / fallback；列表滚动中 <code>skipMemoryCache</code> 按需。</li>
+              <li><b>Coil：</b>Kotlin 协程实现的新库，更轻量，Compose 项目常用。</li>
+            </ul>
+          </div>
+
+          <div class="k-block">
+            <h4>线程与并发：Handler 与协程深入 <span class="k-tag core">核心</span></h4>
+            <p><b>Handler 机制（面试必问）：</b>Looper 负责从 MessageQueue 循环取消息，Handler 负责发送与处理消息，ThreadLocal 保证每个线程一个 Looper。</p>
+            <ul>
+              <li><b>主线程更新 UI：</b>子线程不能直接改 UI（ViewRootImpl 校验），通过 Handler.post / runOnUiThread / 协程切主线程。</li>
+              <li><b>内存泄漏：</b>非静态内部类 Handler 持有外部 Activity → 消息未处理完 Activity 无法回收 → 用静态 Handler + 弱引用或 Lifecycle 绑定。</li>
+              <li><b>协程深入：</b>CoroutineScope + Dispatchers（Main/IO/Default）+ Job/Deferred + 结构化并发（取消传播）；<code>withContext/async-await/coroutineScope</code>。</li>
+              <li><b>线程池：</b>Executors 四种线程池与适用场景；Android 推荐协程替代大部分线程池。</li>
+            </ul>
+          </div>
+
+          <div class="k-block">
+            <h4>依赖注入：Hilt <span class="k-tag mid">进阶</span></h4>
+            <ul>
+              <li>Hilt = Dagger 的 Android 封装：<code>@HiltAndroidApp</code> 应用类 + <code>@AndroidEntryPoint</code> 组件 + <code>@Inject constructor</code> 构造注入 + <code>@Module/@Provides</code> 提供第三方依赖。</li>
+              <li>好处：解耦、便于单元测试（Mock）、作用域管理（@Singleton/@ActivityScoped）。</li>
+            </ul>
+          </div>
+
+          <div class="quiz" data-quiz="a2-q1" data-title="LiveData 生命周期感知">
+            <div class="quiz-head">随堂自测 · 2.2</div>
+            <div class="quiz-q">LiveData 为什么不会在页面销毁后更新 UI？</div>
+            <div class="quiz-opts">
+              <label class="quiz-opt"><input type="radio" name="a2-q1" value="0">因为它只更新一次</label>
+              <label class="quiz-opt"><input type="radio" name="a2-q1" value="1">因为它感知生命周期，只在活跃状态回调观察者</label>
+              <label class="quiz-opt"><input type="radio" name="a2-q1" value="2">因为它是同步的</label>
+              <label class="quiz-opt"><input type="radio" name="a2-q1" value="3">因为它不能跨线程</label>
+            </div>
+            <button class="quiz-btn">提交答案</button>
+            <div class="quiz-fb"><b>答案：它感知生命周期，只在活跃状态回调观察者。</b><span class="explain">LifecycleBoundObserver 检查宿主状态，非活跃时挂起分发，销毁时自动移除，避免内存泄漏与崩溃。</span></div>
+          </div>
+
+          <div class="quiz" data-quiz="a2-q2" data-title="Handler 内存泄漏">
+            <div class="quiz-head">随堂自测 · 2.2</div>
+            <div class="quiz-q">非静态内部类 Handler 导致内存泄漏的根因是？</div>
+            <div class="quiz-opts">
+              <label class="quiz-opt"><input type="radio" name="a2-q2" value="0">Handler 太大</label>
+              <label class="quiz-opt"><input type="radio" name="a2-q2" value="1">MessageQueue 中的消息持有 Handler，Handler 隐式持有外部类（Activity）</label>
+              <label class="quiz-opt"><input type="radio" name="a2-q2" value="2">Looper 被回收</label>
+              <label class="quiz-opt"><input type="radio" name="a2-q2" value="3">消息发送太快</label>
+            </div>
+            <button class="quiz-btn">提交答案</button>
+            <div class="quiz-fb"><b>答案：MessageQueue 中的消息持有 Handler，Handler 隐式持有外部类（Activity）。</b><span class="explain">解决：静态 Handler + WeakReference，或 onDestroy 时 removeCallbacksAndMessages。</span></div>
+          </div>
+
+          <div class="d-goal"><b>达标标准：</b>能开发 MVVM + 协程 + Retrofit + Room 的完整 App；能讲解 Handler 机制、LiveData 原理、Glide 缓存三级；能定位并修复一个内存泄漏。</div>
+        </div>
+      </details>
+
+      <details class="collapse" id="a3">
+        <summary>
+          <span class="sum-num">2.3</span>精通篇（第 10–12 月）
+          <span class="sum-time">架构 + 源码 + 性能优化</span>
+          <button class="sum-check" data-chapter="a3">✓ 标记完成</button>
+          <span class="chev">▶</span>
+        </summary>
+        <div class="body">
+          <div class="k-block">
+            <h4>MVVM 架构实践 <span class="k-tag core">核心</span></h4>
+            <p><b>是什么：</b>MVVM = Model（数据/仓库）+ View（Activity/Fragment/XML）+ ViewModel（状态与业务逻辑，通过 LiveData/StateFlow 暴露）。</p>
+            <ul>
+              <li><b>单向数据流：</b>View 事件 → ViewModel 方法 → 更新 State → View 观察刷新，避免双向纠缠。</li>
+              <li><b>分层：</b>UI 层（Activity/Fragment/Adapter）→ ViewModel 层（状态+用例）→ Repository 层（数据源聚合）→ Data 层（本地/远程）。</li>
+              <li><b>Flow vs LiveData：</b>新项目推荐 StateFlow（协程友好、防抖），LiveData 用于 Java 或简单场景。</li>
+              <li><b>状态管理：</b>UI State 用 data class 封装（loading/data/error 三态），配合 sealed class 表达事件。</li>
+            </ul>
+          </div>
+
+          <div class="k-block">
+            <h4>性能优化体系 <span class="k-tag core">核心</span></h4>
+            <ul>
+              <li><b>启动优化：</b>冷启动时间 = Application 初始化 + 首帧；方案：异步初始化、延迟初始化（App Startup）、启动器 Splash 秒开、避免首屏过度绘制。</li>
+              <li><b>内存优化：</b>LeakCanary 检测泄漏；Bitmap 用采样/复用；大图用 Glide 缩放；避免静态持有 Activity/Context；Profile 查看内存抖动（频繁创建对象）。</li>
+              <li><b>卡顿优化：</b>掉帧（vsync 16.6ms）根因是主线程耗时；用 Systrace/Perfetto 定位；列表卡顿查 Adapter 复用、嵌套滑动、过度绘制。</li>
+              <li><b>APK 瘦身：</b>R8 压缩、资源混淆（AndResGuard）、按需拆分（App Bundle）、删除无用资源（lint 检查）。</li>
+              <li><b>网络优化：</b>缓存策略、图片 WebP、请求合并、DNS 优化、弱网重试。</li>
+            </ul>
+          </div>
+
+          <div class="k-block">
+            <h4>自定义 View 与事件分发 <span class="k-tag core">核心</span></h4>
+            <ul>
+              <li><b>自定义 View 三方法：</b>onMeasure（测量尺寸）→ onLayout（摆放子 View）→ onDraw（绘制）；自定义属性 attrs.xml。</li>
+              <li><b>事件分发：</b>dispatchTouchEvent → onInterceptTouchEvent（ViewGroup）→ onTouchEvent 三级流转；从 Activity 往下分发，未消费回传。</li>
+              <li><b>滑动冲突：</b>内外层同时消费滑动（如 ScrollView 嵌套 RecyclerView）→ 通过 onInterceptTouchEvent 或 requestDisallowInterceptTouchEvent 解决。</li>
+            </ul>
+          </div>
+
+          <div class="k-block">
+            <h4>组件化与模块化 <span class="k-tag mid">进阶</span></h4>
+            <ul>
+              <li>组件化：按业务拆模块（module），独立编译调试，通过路由（ARouter/自研）跨模块跳转。</li>
+              <li>模块通信：接口下沉到公共层 + 依赖注入/路由；避免模块间直接依赖。</li>
+              <li>插件化/热修复：原理是 ClassLoader 替换（dex 插桩），如 Tinker/RePlugin；了解原理即可，注意合规与稳定性。</li>
+            </ul>
+          </div>
+
+          <div class="k-block">
+            <h4>Compose 与跨端视野 <span class="k-tag tip">趋势</span></h4>
+            <ul>
+              <li><b>Compose：</b>声明式 UI，Kotlin 函数描述界面，状态驱动重组；与 View 系统互补（互操作）。</li>
+              <li><b>跨端：</b>Flutter（Dart，自绘引擎）、React Native（JS 桥接）；uni-app（Vue 语法，多端编译）适合快速多端。</li>
+              <li><b>取舍：</b>原生性能与生态最好；跨端省成本；按团队与业务选型。</li>
+            </ul>
+          </div>
+
+          <div class="quiz" data-quiz="a3-q1" data-title="事件分发">
+            <div class="quiz-head">随堂自测 · 2.3</div>
+            <div class="quiz-q">Android 触摸事件分发，正确的顺序是？</div>
+            <div class="quiz-opts">
+              <label class="quiz-opt"><input type="radio" name="a3-q1" value="0">Activity → ViewGroup → View</label>
+              <label class="quiz-opt"><input type="radio" name="a3-q1" value="1">View → ViewGroup → Activity</label>
+              <label class="quiz-opt"><input type="radio" name="a3-q1" value="2">ViewGroup → Activity → View</label>
+              <label class="quiz-opt"><input type="radio" name="a3-q1" value="3">随机分发</label>
+            </div>
+            <button class="quiz-btn">提交答案</button>
+            <div class="quiz-fb"><b>答案：Activity → ViewGroup → View。</b><span class="explain">dispatchTouchEvent 从 Activity 开始向下分发，ViewGroup 可拦截（onInterceptTouchEvent），子 View 未消费则向上回传。</span></div>
+          </div>
+
+          <div class="quiz" data-quiz="a3-q2" data-title="启动优化">
+            <div class="quiz-head">随堂自测 · 2.3</div>
+            <div class="quiz-q">以下哪项不是有效的启动优化手段？</div>
+            <div class="quiz-opts">
+              <label class="quiz-opt"><input type="radio" name="a3-q2" value="0">Application 中异步初始化 SDK</label>
+              <label class="quiz-opt"><input type="radio" name="a3-q2" value="1">首屏布局尽量扁平、减少层级</label>
+              <label class="quiz-opt"><input type="radio" name="a3-q2" value="2">把所有初始化都放到主线程串行执行</label>
+              <label class="quiz-opt"><input type="radio" name="a3-q2" value="3">使用启动器（App Startup）合理排序初始化</label>
+            </div>
+            <button class="quiz-btn">提交答案</button>
+            <div class="quiz-fb"><b>答案：把所有初始化都放到主线程串行执行。</b><span class="explain">主线程耗时是启动慢的根因，应异步化、延迟化、并行化初始化。</span></div>
+          </div>
+
+          <div class="d-goal"><b>达标标准：</b>能独立设计并落地一个组件化 + MVVM 项目；能使用 Perfetto/LeakCanary 定位真实性能问题并修复；能讲清事件分发与 Handler 源码流程。</div>
+        </div>
+      </details>
+
+      <details class="collapse" id="a4">
+        <summary>
+          <span class="sum-num">2.4</span>Android 学习路线流程图
+          <span class="sum-time">14 个月路线</span>
+          <button class="sum-check" data-chapter="a4">✓ 标记完成</button>
+          <span class="chev">▶</span>
+        </summary>
+        <div class="body">
+          <div class="flow">
+            <div class="frow">
+              <div class="fbox">Kotlin 基础</div><span class="farr">→</span>
+              <div class="fbox">四大组件 + UI</div><span class="farr">→</span>
+              <div class="fbox">数据存储</div><span class="farr">→</span>
+              <div class="fbox">网络请求</div>
+            </div>
+            <div class="fdown">▼</div>
+            <div class="frow">
+              <div class="fbox green">Jetpack 全家桶</div><span class="farr">→</span>
+              <div class="fbox green">MVVM 架构</div><span class="farr">→</span>
+              <div class="fbox green">协程深入</div><span class="farr">→</span>
+              <div class="fbox green">性能优化</div>
+            </div>
+            <div class="fdown">▼</div>
+            <div class="frow">
+              <div class="fbox amber">自定义 View</div><span class="farr">→</span>
+              <div class="fbox amber">事件分发源码</div><span class="farr">→</span>
+              <div class="fbox amber">组件化</div><span class="farr">→</span>
+              <div class="fbox amber">Compose 入门</div>
+            </div>
+            <div class="fdown">▼</div>
+            <div class="frow">
+              <div class="fbox slate">面试题整理</div><span class="farr">→</span>
+              <div class="fbox slate">项目打磨</div><span class="farr">→</span>
+              <div class="fbox slate">打包上架</div><span class="farr">→</span>
+              <div class="fbox teal">监控运维</div>
+            </div>
+          </div>
+          <div class="d-goal"><b>路径要点：</b>每个阶段产出一个可演示 App；第 8 个月前完成 2 个完整项目；面试前 1 个月集中刷题（本手册第三部分已整理高频题）。</div>
+        </div>
+      </details>
+    </section>
+
+<!-- ==================== 三、面试总结 ==================== -->
+    <section class="sec-card searchable" id="sec-interview">
+      <div class="sec-head">
+        <div class="sec-num">3</div>
+        <div>
+          <h2>Android 中级开发面试详细总结</h2>
+          <div class="sec-tag">基础必考 → 进阶高频 → 项目场景 → HR 面，每题含考察点与参考答案要点</div>
+        </div>
+      </div>
+
+      <details class="collapse" id="i1" open>
+        <summary>
+          <span class="sum-num">3.1</span>基础必考题
+          <span class="sum-time">生命周期 / Handler / 组件</span>
+          <button class="sum-check" data-chapter="i1">✓ 标记完成</button>
+          <span class="chev">▶</span>
+        </summary>
+        <div class="body">
+          <div class="qa">
+            <div class="q"><span class="tag">高频</span>Activity 的启动流程是怎样的？<span class="lvl easy">基础</span></div>
+            <div class="a"><b>考察点：</b>系统机制理解。<br><b>参考答案要点：</b>应用进程发起 startActivity → Instrumentation.execStartActivity → ActivityTaskManager（AMS 侧）校验并创建 ActivityRecord → 通知应用进程创建 Activity → 应用侧通过 ActivityThread 的 Handler（H.LAUNCH_ACTIVITY）→ Instrumentation.newActivity 反射创建 → Activity.attach → onCreate 等生命周期 → 添加到 DecorView 显示。</div>
+          </div>
+          <div class="qa">
+            <div class="q"><span class="tag">必考</span>Handler 机制的原理？为什么主线程 Looper 不会退出？<span class="lvl easy">基础</span></div>
+            <div class="a"><b>考察点：</b>消息循环模型。<br><b>参考答案要点：</b>Looper.loop() 死循环从 MessageQueue.next() 取消息（无消息时阻塞在 nativePollOnce 的 epoll，不耗 CPU），取到后交给 Handler.dispatchMessage 处理。<code>quitSafely</code> 会退出循环。主线程 Looper 由 ActivityThread.main 中 prepareMainLooper 创建，进程常驻需要持续处理消息；「死循环不卡死」的关键是 next() 在无消息时休眠等待（epoll 唤醒），而非空转。</div>
+          </div>
+          <div class="qa">
+            <div class="q"><span class="tag">必考</span>Service 的两种启动方式与区别？<span class="lvl easy">基础</span></div>
+            <div class="a"><b>考察点：</b>四大组件。<br><b>参考答案要点：</b>startService（独立启动，onStartCommand 处理任务，需 stopService 停止，与调用者无关）；bindService（绑定式，onBind 返回 Binder，可与调用者通信，调用者销毁自动解绑，解绑后销毁）；可先 start 再 bind，需同时 stop 与 unbind 才销毁。Android 8+ 后台启动 Service 受限，需前台服务。</div>
+          </div>
+          <div class="qa">
+            <div class="q"><span class="tag">高频</span>RecyclerView 为什么比 ListView 高效？缓存机制？<span class="lvl easy">基础</span></div>
+            <div class="a"><b>考察点：</b>列表性能。<br><b>参考答案要点：</b>ViewHolder 复用避免重复 findViewById；四级缓存：mAttachedScrap（屏幕内复用）→ mCachedViews（默认 2 个，无需重建）→ mRecyclerPool（跨 Adapter 复用，需重绑定）→ 创建新 ViewHolder；配合局部刷新（notifyItemChanged）与 DiffUtil 精准更新；LayoutManager 负责测量布局，支持预取（Prefetch）。</div>
+          </div>
+          <div class="qa">
+            <div class="q"><span class="tag">高频</span>如何避免 ANR？<span class="lvl easy">基础</span></div>
+            <div class="a"><b>考察点：</b>主线程治理。<br><b>参考答案要点：</b>触发条件：输入事件 5s、BroadcastReceiver 前台 10s/后台 60s、Service 前台 20s 未处理完。避免：耗时操作（网络/IO/大计算）全部移出主线程（协程/线程池）；避免主线程等待锁；广播中不做耗时；用 AsyncTask 已废弃，改协程；配合 StrictMode 检测主线程 IO。</div>
+          </div>
+          <div class="qa">
+            <div class="q"><span class="tag">高频</span>如何保证多线程安全地更新 UI？<span class="lvl easy">基础</span></div>
+            <div class="a"><b>考察点：</b>线程模型。<br><b>参考答案要点：</b>Android UI 非线程安全，只能主线程更新。方式：View.post()、runOnUiThread、Handler.post、协程 withContext(Dispatchers.Main)；子线程只做数据准备，通过 LiveData/Flow 把结果回传主线程观察更新。</div>
+          </div>
+        </div>
+      </details>
+
+      <details class="collapse" id="i2">
+        <summary>
+          <span class="sum-num">3.2</span>进阶高频题
+          <span class="sum-time">原理 / 优化 / 架构</span>
+          <button class="sum-check" data-chapter="i2">✓ 标记完成</button>
+          <span class="chev">▶</span>
+        </summary>
+        <div class="body">
+          <div class="qa">
+            <div class="q"><span class="tag">进阶</span>LiveData 的原理？与 StateFlow 的区别？<span class="lvl mid">进阶</span></div>
+            <div class="a"><b>考察点：</b>Jetpack 原理。<br><b>参考答案要点：</b>LiveData 内部用 LifecycleBoundObserver（实现 LifecycleEventObserver），根据宿主状态（STARTED/RESUMED）决定是否分发（shouldBeActive），销毁自动移除；setValue 必须在主线程，postValue 可子线程。StateFlow：基于协程 Flow 的状态容器，初始值必须有、支持防抖（distinctUntilChanged）、协程友好、不感知生命周期（需 repeatOnLifecycle）。LiveData 适合 Java 与简单场景，StateFlow 适合 Kotlin 新项目。</div>
+          </div>
+          <div class="qa">
+            <div class="q"><span class="tag">进阶</span>协程的原理？为什么「挂起」不阻塞线程？<span class="lvl mid">进阶</span></div>
+            <div class="a"><b>考察点：</b>并发机制。<br><b>参考答案要点：</b>Kotlin 协程基于状态机（CPS 变换），suspend 函数被编译为带有 Continuation 的状态机对象；挂起 = 当前协程让出线程并保存状态（Continuation 的 resumeWith 续接），线程可以去执行别的任务；恢复 = 在指定 Dispatcher 上继续执行。所以挂起不占线程，本质是「回调扁平化 + 线程调度封装」。</div>
+          </div>
+          <div class="qa">
+            <div class="q"><span class="tag">进阶</span>App 启动优化的完整方案？<span class="lvl mid">进阶</span></div>
+            <div class="a"><b>考察点：</b>性能优化。<br><b>参考答案要点：</b>（1）度量：adb 看 Displayed 时间 / 启动 trace；（2）Application 优化：异步初始化（线程池并行）、延迟初始化（首帧后）、App Startup 合并初始化器；（3）首屏优化：布局扁平化、减少过度绘制、用启动主题占位 + 冷启动秒开；（4）业务优化：首屏只加载必要数据、接口并行请求；（5）工具：Perfetto/Systrace 分析、字节码插桩统计初始化耗时。</div>
+          </div>
+          <div class="qa">
+            <div class="q"><span class="tag">进阶</span>内存泄漏的常见场景与排查方法？<span class="lvl mid">进阶</span></div>
+            <div class="a"><b>考察点：</b>内存治理。<br><b>参考答案要点：</b>常见：静态变量持有 Activity/View、Handler 延迟消息、匿名内部类持有外部类、单例持有 Context（应用 Context 可）、未注销监听器/广播、Bitmap 未回收（现代 GC 自动）、协程未取消。排查：LeakCanary 自动定位；Android Profiler 看内存曲线（只增不减 = 泄漏）；MAT 分析 hprof 找 GC Root 引用链；Fix：作用域化对象、lifecycle 绑定、弱引用、及时取消。</div>
+          </div>
+          <div class="qa">
+            <div class="q"><span class="tag">进阶</span>MVVM 相比 MVC/MVP 的优势？<span class="lvl mid">进阶</span></div>
+            <div class="a"><b>考察点：</b>架构认知。<br><b>参考答案要点：</b>MVC：View 与 Controller 耦合，Activity 又当 View 又当 Controller 易臃肿；MVP：Presenter 与 View 接口解耦，但接口爆炸、Presenter 持有 View 易泄漏；MVVM：ViewModel 不持有 View（通过 LiveData/Flow 观察），天然规避泄漏，数据驱动 UI，可测试性高（ViewModel 纯 Kotlin 可单测）；配合 Repository 层统一数据源。</div>
+          </div>
+          <div class="qa">
+            <div class="q"><span class="tag">进阶</span>如何设计一个图片加载库？<span class="lvl hard">深水区</span></div>
+            <div class="a"><b>考察点：</b>系统设计能力。<br><b>参考答案要点：</b>核心模块：请求管理（统一入口 load(url)）、内存缓存（LruCache，大小按可用内存 1/8）、磁盘缓存（DiskLruCache，按图片 key）、网络加载（OkHttp + 流式解码）、Bitmap 采样（inSampleSize 按 target 尺寸）、线程调度（加载线程池 + 主线程回调）、生命周期绑定（宿主销毁暂停/取消）、复用（BitmapPool）；进阶：预加载、优先级、进度回调、图片变换。</div>
+          </div>
+        </div>
+      </details>
+
+      <details class="collapse" id="i3">
+        <summary>
+          <span class="sum-num">3.3</span>项目与场景题
+          <span class="sum-time">考察实战思维</span>
+          <button class="sum-check" data-chapter="i3">✓ 标记完成</button>
+          <span class="chev">▶</span>
+        </summary>
+        <div class="body">
+          <div class="qa">
+            <div class="q"><span class="tag">场景</span>列表滑动卡顿，你会如何排查？<span class="lvl mid">项目</span></div>
+            <div class="a"><b>参考答案要点：</b>（1）确认是否主线程卡顿：用 Perfetto 看帧渲染，Main Thread 是否有长任务；（2）逐层排查：Adapter 是否做耗时（getView 内加载大图/解析 JSON）→ 复用是否生效 → 嵌套滑动/过度绘制 → 是否频繁 GC（内存抖动）→ 图片是否超采样；（3）修复：ViewHolder 复用 + DiffUtil 局部刷新 + 图片采样 + 列表项布局扁平 + 预加载；（4）验证：对比修复前后帧率/卡顿率。</div>
+          </div>
+          <div class="qa">
+            <div class="q"><span class="tag">场景</span>如果让你从零搭建一个 App 的基础架构，你会怎么做？<span class="lvl mid">项目</span></div>
+            <div class="a"><b>参考答案要点：</b>（1）技术选型：Kotlin + MVVM + 协程 + Retrofit/OkHttp + Room + Hilt + Navigation + Compose/XML；（2）分层：ui（Activity/Fragment/Adapter）→ viewmodel → repository → data（remote/local）；（3）公共能力：网络层（拦截器/错误码统一/Token 刷新）、缓存层、崩溃与日志（Bugly + Timber）、路由、主题/组件库；（4）工程化：多 module 分层、构建变体（环境切换）、CI 检查；（5）规范：命名/分支/Code Review 流程。</div>
+          </div>
+          <div class="qa">
+            <div class="q"><span class="tag">场景</span>如何实现消息推送的「在线实时 + 离线补推」？<span class="lvl hard">项目</span></div>
+            <div class="a"><b>参考答案要点：</b>在线：长连接（WebSocket/自研长连接）实时下发，心跳保活；离线：接入厂商推送（小米/华为/OPPO/vivo/FCM）+ 极光/个推聚合；兜底：App 启动/回到前台时拉取增量（服务端维护 msg_seq 游标）；幂等：客户端按消息 id 去重；必达：服务端记录 ack，未确认进入重推队列。</div>
+          </div>
+          <div class="qa">
+            <div class="q"><span class="tag">场景</span>秒杀/热点功能在客户端如何避免崩溃与卡死？<span class="lvl hard">项目</span></div>
+            <div class="a"><b>参考答案要点：</b>（1）列表分页 + 虚拟化（RecyclerView 复用）；（2）图片预加载与降级（低内存清缓存）；（3）接口防抖 + 限流提示（禁止连点）；（4）失败重试策略（指数退避）；（5）内存保护：检测到低内存（onTrimMemory）主动释放；（6）弱网模式：超时缩短 + 本地缓存兜底展示。</div>
+          </div>
+          <div class="qa">
+            <div class="q"><span class="tag">场景</span>线上崩溃率突然升高，如何快速定位？<span class="lvl mid">项目</span></div>
+            <div class="a"><b>参考答案要点：</b>（1）看崩溃平台（Bugly）趋势：按版本/机型/系统/时间切片；（2）按堆栈聚类 Top 崩溃；（3）关联灰度：是否新版本发布、新功能上线、新 SDK 接入；（4）看用户操作路径与日志（埋点回溯）；（5）修复：热修复紧急止血（合规评估后）或发版；（6）复盘：补充监控与回归用例。</div>
+          </div>
+        </div>
+      </details>
+
+      <details class="collapse" id="i4">
+        <summary>
+          <span class="sum-num">3.4</span>HR 面
+          <span class="sum-time">软技能与匹配度</span>
+          <button class="sum-check" data-chapter="i4">✓ 标记完成</button>
+          <span class="chev">▶</span>
+        </summary>
+        <div class="body">
+          <div class="qa">
+            <div class="q"><span class="tag">HR</span>请做一下自我介绍<span class="lvl easy">通用</span></div>
+            <div class="a"><b>参考答案要点：</b>结构：我是谁（年限/方向）→ 我做过什么（2 个重点项目 + 量化结果：性能提升 X%、崩溃率降到 X）→ 我擅长什么（技术栈/方法论）→ 我为什么适合（与岗位匹配点）。控制 1–2 分钟，避免背简历。</div>
+          </div>
+          <div class="qa">
+            <div class="q"><span class="tag">HR</span>你最大的优点和缺点？<span class="lvl easy">通用</span></div>
+            <div class="a"><b>参考答案要点：</b>优点给事实佐证（自驱：主动做了 XX 优化节省 XX）；缺点选「可改进且已在改进」的（如：之前喜欢追求完美导致交付慢，现在学会先跑通再迭代），不要说与岗位核心能力冲突的缺点。</div>
+          </div>
+          <div class="qa">
+            <div class="q"><span class="tag">HR</span>为什么从上家公司离职 / 为什么选择我们？<span class="lvl easy">通用</span></div>
+            <div class="a"><b>参考答案要点：</b>离职原因客观正面（职业成长、技术方向），不吐槽前司；选择理由结合公司业务/技术栈/发展，展示做过功课（了解产品、团队、技术栈）。</div>
+          </div>
+          <div class="qa">
+            <div class="q"><span class="tag">HR</span>你未来 3 年的职业规划？<span class="lvl easy">通用</span></div>
+            <div class="a"><b>参考答案要点：</b>短期（1 年）深耕岗位技术栈、融入团队；中期（2–3 年）成为独当一面的中级/高级工程师，主导模块或项目；长期保持学习（架构/跨端/AI），与公司共同成长。规划要具体但留弹性。</div>
+          </div>
+          <div class="qa">
+            <div class="q"><span class="tag">HR</span>你有什么想问我们的？<span class="lvl easy">通用</span></div>
+            <div class="a"><b>参考答案要点：</b>提问展示思考：团队技术栈与分工、项目当前阶段与挑战、对候选人的期望、成长路径与导师机制、团队氛围。避免直接问薪资福利（留到 offer 阶段）。</div>
+          </div>
+        </div>
+      </details>
+    </section>
+
+    <!-- ==================== 四、上架 / 适配 / 运维 ==================== -->
+    <section class="sec-card searchable" id="sec-store">
+      <div class="sec-head">
+        <div class="sec-num">4</div>
+        <div>
+          <h2>Android 市场上架、适配与运维实战手册</h2>
+          <div class="sec-tag">打包准备 → 主流商店对比 → 发布策略 → 线上监控与崩溃治理 → 日常运维</div>
+        </div>
+      </div>
+
+      <details class="collapse" id="s1" open>
+        <summary>
+          <span class="sum-num">4.1</span>打包与上架准备
+          <span class="sum-time">签名 / 混淆 / 渠道</span>
+          <button class="sum-check" data-chapter="s1">✓ 标记完成</button>
+          <span class="chev">▶</span>
+        </summary>
+        <div class="body">
+          <div class="k-block">
+            <h4>签名机制与打包 <span class="k-tag core">核心</span></h4>
+            <ul>
+              <li><b>为什么签名：</b>保证 APK 完整性 + 标识开发者身份；同包名不同签名无法覆盖安装/升级。</li>
+              <li><b>V1/V2/V3 签名：</b>V1 仅校验未修改文件（Android 7.0 以下）；V2 全文件校验（7.0+，快且安全）；V3 支持密钥轮换（9.0+）。新包建议 V2+V3。</li>
+              <li><b>签名工具：</b>Android Studio 可视化生成 keystore（JKS/PKCS12）；<code>apksigner verify</code> 校验签名；密钥必须安全备份（丢失=无法升级）。</li>
+              <li><b>构建变体：</b>debug/release + flavor（渠道包）；BuildConfig 区分环境地址。</li>
+            </ul>
+          </div>
+          <div class="k-block">
+            <h4>混淆与代码安全 <span class="k-tag core">核心</span></h4>
+            <ul>
+              <li><b>R8：</b>AGP 8+ 默认启用，集压缩、混淆、优化、脱糖于一体；<code>minifyEnabled true</code>。</li>
+              <li><b>规则文件：</b>keep 住被反射/注解/序列化使用的类（model、SDK 回调、WebView JS 接口）；第三方库自带 consumer proguard 规则。</li>
+              <li><b>资源压缩：</b><code>shrinkResources true</code> 删除无用资源；注意动态引用（getIdentifier）需 keep。</li>
+              <li><b>加固：</b>上架前可选第三方加固（爱加密/梆梆/360），防逆向；敏感字符串不硬编码（加密存储）。</li>
+            </ul>
+          </div>
+          <div class="k-block">
+            <h4>多渠道打包 <span class="k-tag mid">进阶</span></h4>
+            <ul>
+              <li>传统：gradle flavorDimensions 每渠道一个包（慢）。</li>
+              <li>高效：Gradle 动态配置 + 打包后批量改 <code>meta-data</code>（美团瓦力/Walle 方案），一套包多渠道。</li>
+              <li>渠道统计：SDK 读取 meta-data 上报，用于投放与运营分析。</li>
+            </ul>
+          </div>
+          <div class="quiz" data-quiz="s1-q1" data-title="签名升级">
+            <div class="quiz-head">随堂自测 · 4.1</div>
+            <div class="quiz-q">同一应用升级安装失败，最常见的原因是？</div>
+            <div class="quiz-opts">
+              <label class="quiz-opt"><input type="radio" name="s1-q1" value="0">包名不一致</label>
+              <label class="quiz-opt"><input type="radio" name="s1-q1" value="1">签名不一致</label>
+              <label class="quiz-opt"><input type="radio" name="s1-q1" value="2">图标变化</label>
+              <label class="quiz-opt"><input type="radio" name="s1-q1" value="3">版本号没升</label>
+            </div>
+            <button class="quiz-btn">提交答案</button>
+            <div class="quiz-fb"><b>答案：签名不一致。</b><span class="explain">同包名必须同签名才能覆盖升级；签名是升级安全的第一道防线。</span></div>
+          </div>
+        </div>
+      </details>
+
+      <details class="collapse" id="s2">
+        <summary>
+          <span class="sum-num">4.2</span>多机型与多系统适配
+          <span class="sum-time">屏幕 / 权限 / 厂商</span>
+          <button class="sum-check" data-chapter="s2">✓ 标记完成</button>
+          <span class="chev">▶</span>
+        </summary>
+        <div class="body">
+          <div class="k-block">
+            <h4>屏幕适配方案 <span class="k-tag core">核心</span></h4>
+            <ul>
+              <li><b>基础单位：</b>dp 密度无关像素；不同 dpi 下 1dp = 不同 px（ldpi 0.75/mdpi 1/hdpi 1.5/xhdpi 2/xxhdpi 3/xxxhdpi 4）。</li>
+              <li><b>限定符：</b>values-sw360dp / values-h600dp 按最小宽度适配不同屏幕；drawable 按 dpi 放多套切图。</li>
+              <li><b>今日实践：</b>ConstraintLayout 约束布局 + 百分比/权重；大图用 VectorDrawable；字号用 sp 且允许用户缩放。</li>
+              <li><b>刘海屏/挖孔屏：</b>WindowInsets 适配（cutout）、安全区避开摄像头区域。</li>
+              <li><b>折叠屏：</b>resizable Activity、按屏幕尺寸切换布局（values 大屏限定符）。</li>
+            </ul>
+          </div>
+          <div class="k-block">
+            <h4>系统版本适配 <span class="k-tag core">核心</span></h4>
+            <table>
+              <tr><th>版本</th><th>关键变更</th><th>适配要点</th></tr>
+              <tr><td>8.0 (API 26)</td><td>通知渠道、后台服务限制、自适应图标</td><td>通知必须建 Channel；前台服务</td></tr>
+              <tr><td>9.0 (API 28)</td><td>默认 HTTPS、后台限制</td><td>明文流量需配置</td></tr>
+              <tr><td>10 (API 29)</td><td>分区存储、深色模式</td><td>requestLegacyExternalStorage 过渡；values-night</td></tr>
+              <tr><td>11 (API 30)</td><td>分区存储强制、包可见性</td><td>MediaStore/SAF；queries 声明</td></tr>
+              <tr><td>12 (API 31)</td><td>SplashScreen、精确闹钟权限</td><td>迁移 Splash；后台位置限制</td></tr>
+              <tr><td>13 (API 33)</td><td>通知运行时权限、剪贴板提示</td><td>POST_NOTIFICATIONS 申请</td></tr>
+              <tr><td>14 (API 34)</td><td>前台服务类型、隐式 Intent 限制</td><td>声明 foregroundServiceType</td></tr>
+              <tr><td>15 (API 35)</td><td>16KB 页大小、边缘到边缘强制</td><td>so 对齐 16KB、edge-to-edge</td></tr>
+            </table>
+            <div class="d-note"><b>提示：</b>用 <code>Build.VERSION.SDK_INT</code> 分版本逻辑；核心功能做版本最低限制（minSdk）而非全兼容。</div>
+          </div>
+          <div class="k-block">
+            <h4>厂商差异与兼容性测试 <span class="k-tag mid">进阶</span></h4>
+            <ul>
+              <li>厂商 ROM 差异：后台清理策略（小米/华为/OPPO/vivo 各有白名单）、权限管理差异、通知默认关闭。</li>
+              <li>兼容性测试：云测平台（Testin/WeTest）+ 真机矩阵（主流品牌 × 系统版本）；Monkey 随机压力测试；Google Play 可看 Android Vitals。</li>
+              <li>崩溃率目标：核心版本崩溃率 &lt; 0.2%，ANR &lt; 0.1%。</li>
+            </ul>
+          </div>
+        </div>
+      </details>
+
+      <details class="collapse" id="s3">
+        <summary>
+          <span class="sum-num">4.3</span>版本发布与运维
+          <span class="sum-time">监控 / 灰度 / 热修复</span>
+          <button class="sum-check" data-chapter="s3">✓ 标记完成</button>
+          <span class="chev">▶</span>
+        </summary>
+        <div class="body">
+          <div class="k-block">
+            <h4>线上监控体系 <span class="k-tag core">核心</span></h4>
+            <ul>
+              <li><b>崩溃监控：</b>Bugly/友盟/Firebase Crashlytics；采集堆栈、机型、系统、版本、时间，聚类分析。</li>
+              <li><b>ANR 监控：</b>系统 ANR 日志 + 自研看门狗（主线程 Handler 超时检测 + 抓取主线程堆栈）。</li>
+              <li><b>性能监控：</b>启动耗时、帧率（掉帧率）、内存占用、流量耗电；卡顿监控（Choreographer 帧回调）。</li>
+              <li><b>业务监控：</b>埋点体系（页面访问、关键事件、漏斗转化），看数平台辅助决策。</li>
+            </ul>
+          </div>
+          <div class="k-block">
+            <h4>灰度发布与热修复 <span class="k-tag mid">进阶</span></h4>
+            <ul>
+              <li>灰度：按渠道/用户比例分阶段放量（10% → 50% → 100%），监控指标无恶化再放量。</li>
+              <li>热修复：Tinker/腾讯云修复，原理 dex 插桩替换；注意：系统限制（9.0 后限制非 SDK 接口）、合规（需用户同意）、只适合紧急 bug 止血。</li>
+              <li>回滚：上架版本保留，发现问题紧急下架旧版回退；服务端开关做功能降级。</li>
+            </ul>
+          </div>
+          <div class="k-block">
+            <h4>主流应用商店对比 <span class="k-tag mid">上架</span></h4>
+            <table>
+              <tr><th>商店</th><th>特点</th><th>上架要点</th></tr>
+              <tr><td>华为应用市场</td><td>国内装机量大</td><td>需软著；审核较严；支持 AAB</td></tr>
+              <tr><td>小米应用商店</td><td>MIUI 用户</td><td>需软著；更新频率要求</td></tr>
+              <tr><td>OPPO/vivo</td><td>线下渠道强</td><td>需软著与隐私合规</td></tr>
+              <tr><td>应用宝</td><td>腾讯系流量</td><td>需软著；支持一键登录 SDK</td></tr>
+              <tr><td>Google Play</td><td>海外必备</td><td>需开发者账号（$25）；AAB 强制；隐私政策</td></tr>
+            </table>
+          </div>
+          <div class="quiz" data-quiz="s3-q1" data-title="灰度发布">
+            <div class="quiz-head">随堂自测 · 4.3</div>
+            <div class="quiz-q">灰度发布的核心目的是？</div>
+            <div class="quiz-opts">
+              <label class="quiz-opt"><input type="radio" name="s3-q1" value="0">加快发布速度</label>
+              <label class="quiz-opt"><input type="radio" name="s3-q1" value="1">小范围验证，控制风险，指标无恶化再全量</label>
+              <label class="quiz-opt"><input type="radio" name="s3-q1" value="2">绕过应用商店审核</label>
+              <label class="quiz-opt"><input type="radio" name="s3-q1" value="3">减少安装包体积</label>
+            </div>
+            <button class="quiz-btn">提交答案</button>
+            <div class="quiz-fb"><b>答案：小范围验证，控制风险，指标无恶化再全量。</b><span class="explain">先让少量用户验证稳定性，避免全量事故。</span></div>
+          </div>
+        </div>
+      </details>
+    </section>
+
+<!-- ==================== 五、全栈 + AI 链路 ==================== -->
+    <section class="sec-card searchable" id="sec-stack">
+      <div class="sec-head">
+        <div class="sec-num">5</div>
+        <div>
+          <h2>uni-app(Vue) + PHP + Python AI + MySQL 知识体系</h2>
+          <div class="sec-tag">从「前端表现层」到「数据持久层」的全链路：分层职责、请求流转、表设计、AI 服务实战</div>
+        </div>
+      </div>
+
+      <details class="collapse" id="t1" open>
+        <summary>
+          <span class="sum-num">5.1</span>技术分层职责
+          <span class="sum-time">五层架构</span>
+          <button class="sum-check" data-chapter="t1">✓ 标记完成</button>
+          <span class="chev">▶</span>
+        </summary>
+        <div class="body">
+          <div class="link-map">
+            <div class="link-layer">
+              <h4>前端表现层</h4>
+              <div class="link-nodes">
+                <span class="lnode front">uni-app</span>
+                <span class="lnode front">Vue 3</span>
+                <span class="lnode front">小程序 / App / H5</span>
+                <span class="lnode front">Pinia 状态</span>
+              </div>
+            </div>
+            <div class="link-line"></div>
+            <div class="link-layer">
+              <h4>接口业务层</h4>
+              <div class="link-nodes">
+                <span class="lnode api">PHP + ThinkPHP/Laravel</span>
+                <span class="lnode api">RESTful API</span>
+                <span class="lnode api">JWT 鉴权</span>
+                <span class="lnode api">业务编排</span>
+              </div>
+            </div>
+            <div class="link-line"></div>
+            <div class="link-layer">
+              <h4>服务能力层</h4>
+              <div class="link-nodes">
+                <span class="lnode ai">Python + FastAPI</span>
+                <span class="lnode ai">大模型 API</span>
+                <span class="lnode ai">流式输出 SSE</span>
+                <span class="lnode ai">异步任务</span>
+              </div>
+            </div>
+            <div class="link-line"></div>
+            <div class="link-layer">
+              <h4>数据持久层</h4>
+              <div class="link-nodes">
+                <span class="lnode db">MySQL 业务库</span>
+                <span class="lnode db">Redis 缓存</span>
+                <span class="lnode db">索引与事务</span>
+              </div>
+            </div>
+            <div class="link-line"></div>
+            <div class="link-layer">
+              <h4>运维部署层</h4>
+              <div class="link-nodes">
+                <span class="lnode ops">Nginx 反向代理</span>
+                <span class="lnode ops">Docker</span>
+                <span class="lnode ops">日志监控</span>
+              </div>
+            </div>
+          </div>
+          <div class="k-block">
+            <h4>各层职责详解 <span class="k-tag core">核心</span></h4>
+            <ul>
+              <li><b>前端表现层：</b>只负责「展示 + 交互」，不直接操作数据库；统一通过 API 客户端（封装 request）与后端通信；状态管理用 Pinia（用户态、全局配置）。</li>
+              <li><b>接口业务层（PHP）：</b>校验参数、编排业务（如「下单 = 扣库存 + 建订单 + 发消息」）、调用 AI 服务或数据库；输出统一 JSON。</li>
+              <li><b>服务能力层（Python）：</b>承载 AI 能力：调用大模型、文本处理、内容生成；对外暴露独立 API，供 PHP 内网调用（服务间调用不要暴露公网）。</li>
+              <li><b>数据持久层：</b>MySQL 存结构化业务数据（用户/订单/内容），Redis 缓存热点与限流。</li>
+              <li><b>运维部署层：</b>Nginx 统一入口（HTTPS、静态资源、反向代理到 PHP/Python）、Docker 容器化、日志与监控。</li>
+            </ul>
+          </div>
+        </div>
+      </details>
+
+      <details class="collapse" id="t2">
+        <summary>
+          <span class="sum-num">5.2</span>完整请求链路流转
+          <span class="sum-time">一次 AI 对话请求</span>
+          <button class="sum-check" data-chapter="t2">✓ 标记完成</button>
+          <span class="chev">▶</span>
+        </summary>
+        <div class="body">
+          <div class="flow">
+            <div class="frow">
+              <div class="fbox">用户输入</div><span class="farr">→</span>
+              <div class="fbox green">uni-app 前端</div><span class="farr">→</span>
+              <div class="fbox green">封装 request（带 Token）</div>
+            </div>
+            <div class="fdown">▼</div>
+            <div class="frow">
+              <div class="fbox amber">Nginx</div><span class="farr">→</span>
+              <div class="fbox amber">PHP 接口层</div><span class="farr">→</span>
+              <div class="fbox amber">JWT 鉴权 + 参数校验</div>
+            </div>
+            <div class="fdown">▼</div>
+            <div class="frow">
+              <div class="fbox purple">调用 Python AI 服务</div><span class="farr">→</span>
+              <div class="fbox purple">FastAPI 接收</div><span class="farr">→</span>
+              <div class="fbox purple">调用大模型 API（流式）</div>
+            </div>
+            <div class="fdown">▼</div>
+            <div class="frow">
+              <div class="fbox teal">结果落库 MySQL + Redis 缓存</div><span class="farr">→</span>
+              <div class="fbox teal">SSE 流式返回前端</div><span class="farr">→</span>
+              <div class="fbox teal">前端流式渲染</div>
+            </div>
+          </div>
+          <div class="d-note"><b>链路要点：</b>AI 调用建议异步化（队列 + 回调 / 轮询），避免阻塞 PHP 接口；AI 结果可落库并缓存，降低重复调用成本与限流风险；长耗时请求用 WebSocket/SSE 推送进度。</div>
+        </div>
+      </details>
+
+      <details class="collapse" id="t3">
+        <summary>
+          <span class="sum-num">5.3</span>学习路径规划
+          <span class="sum-time">11 个月全栈 AI</span>
+          <button class="sum-check" data-chapter="t3">✓ 标记完成</button>
+          <span class="chev">▶</span>
+        </summary>
+        <div class="body">
+          <ol class="steps">
+            <li><strong>第一阶段：前端基础（第 1–2 月）</strong>HTML/CSS/JS 基础 → Vue 3 核心（响应式/组件/路由/Pinia）→ uni-app 多端编译与生命周期。</li>
+            <li><strong>第二阶段：后端接口（第 3–4 月）</strong>PHP 语法与 OOP → ThinkPHP/Laravel → RESTful API + JWT → 统一响应与异常处理。</li>
+            <li><strong>第三阶段：数据存储（第 5 月）</strong>MySQL 表设计 → 索引与 SQL 优化 → Redis 缓存接入。</li>
+            <li><strong>第四阶段：AI 能力（第 6–8 月）</strong>Python 基础 → FastAPI → 调用大模型 API → 流式输出（SSE）→ 异步任务。</li>
+            <li><strong>第五阶段：全链路打通（第 9–11 月）</strong>「前端 → PHP → Python AI → MySQL」完整项目：注册登录、AI 对话、内容管理；部署上线（Nginx + Docker）。</li>
+          </ol>
+          <div class="d-goal"><b>路径要点：</b>每阶段结束有可演示成果；AI 阶段从「调 API」开始，不陷进训练模型；最终项目要能讲清请求流转与故障排查。</div>
+        </div>
+      </details>
+
+      <details class="collapse" id="t4">
+        <summary>
+          <span class="sum-num">5.4</span>典型表结构设计
+          <span class="sum-time">用户 / 对话 / 内容</span>
+          <button class="sum-check" data-chapter="t4">✓ 标记完成</button>
+          <span class="chev">▶</span>
+        </summary>
+        <div class="body">
+          <pre class="code"><span class="c">-- 用户表</span>
+CREATE TABLE `users` (
+  `id`         BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  `phone`      VARCHAR(20)  NOT NULL UNIQUE COMMENT <span class="s">'手机号'</span>,
+  `nickname`   VARCHAR(50)  NOT NULL DEFAULT <span class="s">''</span>,
+  `password`   VARCHAR(255) NOT NULL COMMENT <span class="s">'bcrypt 哈希'</span>,
+  `avatar`     VARCHAR(255) DEFAULT <span class="s">''</span>,
+  `status`     TINYINT      NOT NULL DEFAULT 1 COMMENT <span class="s">'1正常 0禁用'</span>,
+  `created_at` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  KEY `idx_phone` (`phone`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT=<span class="s">'用户表'</span>;
+
+<span class="c">-- AI 对话记录表</span>
+CREATE TABLE `chat_sessions` (
+  `id`         BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  `user_id`    BIGINT UNSIGNED NOT NULL,
+  `title`      VARCHAR(100) NOT NULL DEFAULT <span class="s">'新对话'</span>,
+  `model`      VARCHAR(50)  NOT NULL DEFAULT <span class="s">'default'</span>,
+  `created_at` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  KEY `idx_user` (`user_id`, `created_at`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT=<span class="s">'对话会话'</span>;
+
+CREATE TABLE `chat_messages` (
+  `id`           BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  `session_id`   BIGINT UNSIGNED NOT NULL,
+  `role`         ENUM(<span class="s">'user'</span>,<span class="s">'assistant'</span>,<span class="s">'system'</span>) NOT NULL,
+  `content`      TEXT NOT NULL,
+  `tokens`       INT UNSIGNED DEFAULT 0,
+  `created_at`   DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  KEY `idx_session` (`session_id`, `id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT=<span class="s">'对话消息'</span>;</pre>
+          <div class="k-block">
+            <h4>设计要点 <span class="k-tag core">核心</span></h4>
+            <ul>
+              <li><b>范式与冗余：</b>核心表满足 3NF；读多场景允许冗余（如订单冗余商品名快照，防止商品改名影响历史订单）。</li>
+              <li><b>索引：</b>外键与高频查询列建索引；联合索引最左前缀；避免冗余索引。</li>
+              <li><b>软删除：</b>业务表加 deleted_at，避免物理删除丢失审计。</li>
+              <li><b>时间字段：</b>统一 DATETIME（UTC 存储、展示转本地）或时间戳；created_at/updated_at 自动维护。</li>
+              <li><b>金额：</b>用 DECIMAL(10,2) 或分存储（INT），禁用 float。</li>
+            </ul>
+          </div>
+        </div>
+      </details>
+
+      <details class="collapse" id="t5">
+        <summary>
+          <span class="sum-num">5.5</span>AI 服务实战（Python + FastAPI）
+          <span class="sum-time">搭建 / 流式 / 部署</span>
+          <button class="sum-check" data-chapter="t5">✓ 标记完成</button>
+          <span class="chev">▶</span>
+        </summary>
+        <div class="body">
+          <div class="k-block">
+            <h4>FastAPI 服务骨架 <span class="k-tag core">核心</span></h4>
+            <pre class="code"><span class="c"># main.py - FastAPI 流式 AI 接口</span>
+<span class="k">from</span> fastapi <span class="k">import</span> FastAPI
+<span class="k">from</span> fastapi.responses <span class="k">import</span> StreamingResponse
+<span class="k">import</span> httpx
+
+app = FastAPI()
+
+@app.post(<span class="s">"/v1/chat"</span>)
+<span class="k">async def</span> chat(req: dict):
+    messages = req[<span class="s">"messages"</span>]
+    <span class="k">async def</span> gen():
+        <span class="k">async with</span> httpx.AsyncClient(timeout=60) <span class="k">as</span> client:
+            <span class="k">async with</span> client.stream(<span class="s">"POST"</span>, <span class="s">"https://api.llm/v1/chat/completions"</span>,
+                json={<span class="s">"messages"</span>: messages, <span class="s">"stream"</span>: <span class="k">True</span>}) <span class="k">as</span> r:
+                <span class="k">async for</span> line <span class="k">in</span> r.aiter_lines():
+                    <span class="k">if</span> line.startswith(<span class="s">"data:"</span>):
+                        <span class="k">yield</span> line[5:] + <span class="s">"\n"</span>
+    <span class="k">return</span> StreamingResponse(gen(), media_type=<span class="s">"text/event-stream"</span>)</pre>
+            <ul>
+              <li><b>为什么 FastAPI：</b>原生 async 高并发、Pydantic 自动校验与文档、轻量易部署。</li>
+              <li><b>流式输出（SSE）：</b>大模型回复长，流式逐字返回让用户体验好；前端用 EventSource 或 fetch 流式读取。</li>
+              <li><b>安全：</b>AI 服务只允许内网调用（PHP 服务间调用），做来源白名单 + 简单鉴权；用户输入做长度限制与敏感词过滤。</li>
+              <li><b>部署：</b>Uvicorn 多进程 + Nginx 反代；Docker 打包；日志与监控接入。</li>
+            </ul>
+          </div>
+          <div class="k-block">
+            <h4>PHP 侧调用 AI 服务 <span class="k-tag mid">联调</span></h4>
+            <pre class="code"><span class="c">// PHP 内网调用 Python AI 服务（Guzzle）</span>
+$client = <span class="k">new</span> \GuzzleHttp\Client();
+$resp = $client-&gt;post(<span class="s">'http://ai-service:8000/v1/chat'</span>, [
+    <span class="s">'json'</span> =&gt; [<span class="s">'messages'</span> =&gt; $messages],
+    <span class="s">'timeout'</span> =&gt; 30,
+]);
+$result = json_decode($resp-&gt;getBody(), <span class="k">true</span>);</pre>
+            <ul>
+              <li>同步调用适合短任务；长任务（内容总结、批量生成）建议：PHP 入队（RabbitMQ/Redis List）→ Python 消费处理 → 写库 → 前端轮询/推送。</li>
+              <li>AI 结果落库 + 缓存（相同问题命中缓存），控制成本。</li>
+            </ul>
+          </div>
+          <div class="quiz" data-quiz="t5-q1" data-title="SSE 流式">
+            <div class="quiz-head">随堂自测 · 5.5</div>
+            <div class="quiz-q">大模型对话「打字机效果」通常使用哪种技术？</div>
+            <div class="quiz-opts">
+              <label class="quiz-opt"><input type="radio" name="t5-q1" value="0">WebSocket 全双工</label>
+              <label class="quiz-opt"><input type="radio" name="t5-q1" value="1">SSE（Server-Sent Events）服务端流式推送</label>
+              <label class="quiz-opt"><input type="radio" name="t5-q1" value="2">HTTP 轮询</label>
+              <label class="quiz-opt"><input type="radio" name="t5-q1" value="3">FTP 传输</label>
+            </div>
+            <button class="quiz-btn">提交答案</button>
+            <div class="quiz-fb"><b>答案：SSE（Server-Sent Events）服务端流式推送。</b><span class="explain">SSE 单向流式返回 token 序列，天然适合大模型流式输出；需要双向实时交互时才用 WebSocket。</span></div>
+          </div>
+        </div>
+      </details>
+    </section>
+
+    <!-- ==================== 六、关联链路图 ==================== -->
+    <section class="sec-card searchable" id="sec-links">
+      <div class="sec-head">
+        <div class="sec-num">6</div>
+        <div>
+          <h2>全技术体系知识关联链路图</h2>
+          <div class="sec-tag">一张图看懂：请求从客户端到数据库的完整路径，以及每层依赖的关键知识</div>
+        </div>
+      </div>
+      <div class="link-map">
+        <div class="link-layer">
+          <h4>客户端层（Android / uni-app）</h4>
+          <div class="link-nodes">
+            <span class="lnode front">Kotlin / Vue3</span>
+            <span class="lnode front">UI 组件</span>
+            <span class="lnode front">网络封装</span>
+            <span class="lnode front">状态管理</span>
+            <span class="lnode front">本地缓存</span>
+          </div>
+        </div>
+        <div class="link-line"></div>
+        <div class="link-layer">
+          <h4>接入层（Nginx）</h4>
+          <div class="link-nodes">
+            <span class="lnode api">HTTPS 证书</span>
+            <span class="lnode api">反向代理</span>
+            <span class="lnode api">静态资源</span>
+            <span class="lnode api">限流</span>
+          </div>
+        </div>
+        <div class="link-line"></div>
+        <div class="link-layer">
+          <h4>业务层（PHP）</h4>
+          <div class="link-nodes">
+            <span class="lnode backend">路由</span>
+            <span class="lnode backend">中间件</span>
+            <span class="lnode backend">JWT 鉴权</span>
+            <span class="lnode backend">业务编排</span>
+            <span class="lnode backend">队列</span>
+          </div>
+        </div>
+        <div class="link-line"></div>
+        <div class="link-layer">
+          <h4>能力层（Python AI）</h4>
+          <div class="link-nodes">
+            <span class="lnode ai">FastAPI</span>
+            <span class="lnode ai">大模型 API</span>
+            <span class="lnode ai">SSE 流式</span>
+            <span class="lnode ai">异步任务</span>
+          </div>
+        </div>
+        <div class="link-line"></div>
+        <div class="link-layer">
+          <h4>数据层（MySQL + Redis）</h4>
+          <div class="link-nodes">
+            <span class="lnode db">表设计</span>
+            <span class="lnode db">索引</span>
+            <span class="lnode db">事务</span>
+            <span class="lnode db">缓存</span>
+            <span class="lnode db">主从</span>
+          </div>
+        </div>
+        <div class="link-line"></div>
+        <div class="link-layer">
+          <h4>支撑能力（横切）</h4>
+          <div class="link-nodes">
+            <span class="lnode ops">Docker</span>
+            <span class="lnode ops">CI/CD</span>
+            <span class="lnode ops">日志监控</span>
+            <span class="lnode ops">安全加固</span>
+            <span class="lnode ops">性能优化</span>
+          </div>
+        </div>
+      </div>
+      <div class="k-block">
+        <h4>学习依赖关系（建议顺序）<span class="k-tag core">核心</span></h4>
+        <ul>
+          <li><b>先基础后框架：</b>语言语法/OOP → 框架 → 中间件；不要一上来啃源码。</li>
+          <li><b>先全栈后纵深：</b>先打通「前端→后端→数据库」最小闭环，再深入单点（源码/算法/架构）。</li>
+          <li><b>先原理后工具：</b>理解 HTTP/索引/缓存原理，再用框架/工具时才知道为什么。</li>
+          <li><b>项目驱动：</b>每个知识模块配一个 1–2 周小项目，闭环验证。</li>
+        </ul>
+      </div>
+    </section>
+
+<!--MORE_CONTENT-->
+  </main>
+</div>
+
+<div class="term-pop" id="termPop"></div>
+<button class="to-top" id="toTop" aria-label="返回顶部">
+  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+</button>
+
+<script>
+// ===== 工具函数 =====
+const $=(s,c=document)=>c.querySelector(s);
+const $$=(s,c=document)=>Array.from(c.querySelectorAll(s));
+const esc=s=>String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+const store={
+  get(k,d){try{const v=localStorage.getItem('fsv3_'+k);return v?JSON.parse(v):d}catch(e){return d}},
+  set(k,v){try{localStorage.setItem('fsv3_'+k,JSON.stringify(v))}catch(e){}}
+};
+
+// ===== 术语词典 =====
+const TERMS={
+  "PHP":"超文本预处理器，服务端脚本语言，与 HTML 混写，广泛用于动态网站与 API 开发。",
+  "Composer":"PHP 的依赖管理工具，类似 Node.js 的 npm，通过 composer.json 声明依赖并自动加载。",
+  "PDO":"PHP Data Objects，PHP 统一数据库访问抽象层，支持预处理语句，是防 SQL 注入的标准方案。",
+  "MVC":"Model-View-Controller 分层模式：Model 管数据、View 管展示、Controller 管业务编排，降低耦合。",
+  "RESTful":"一种 API 设计风格，以资源为中心，用 HTTP 方法（GET/POST/PUT/DELETE）表达操作，无状态、可缓存。",
+  "JWT":"JSON Web Token，无状态令牌，由 Header.Payload.Signature 三段组成，服务端不保存会话即可鉴权。",
+  "Redis":"内存键值数据库，支持字符串/哈希/列表/集合/有序集合，常用于缓存、分布式锁、计数器。",
+  "OOP":"面向对象编程，以对象为基本单元，三大特性：封装、继承、多态。",
+  "CAP":"分布式系统三选二理论：一致性、可用性、分区容错性，实际系统中 P 必须保证，C 与 A 权衡。",
+  "SQL注入":"攻击者把 SQL 代码拼入输入参数执行，绕过验证获取数据；预防核心是参数化查询。",
+  "XSS":"跨站脚本攻击，把恶意脚本注入页面执行；分存储型/反射型/DOM 型，预防靠转义与 CSP。",
+  "CSRF":"跨站请求伪造，诱导用户浏览器携带 Cookie 向目标站点发请求；预防靠 Token/同源校验。",
+  "N+1查询":"查一次主表再循环查 N 次关联表，典型性能问题；用 JOIN 或预加载解决。",
+  "Activity":"Android 四大组件之一，一个界面（屏幕）的载体，拥有独立生命周期。",
+  "Fragment":"Android 界面片段，可嵌入 Activity，用于适配平板与复用 UI 逻辑。",
+  "Handler":"Android 消息机制核心，Looper 循环取消息 + MessageQueue 队列 + Handler 分发处理。",
+  "ANR":"Application Not Responding，主线程超时无响应（输入 5s / 广播 10s），系统弹窗提示。",
+  "OOM":"Out Of Memory，内存溢出，App 分配内存超过系统限制导致崩溃。",
+  "RecyclerView":"Android 高效列表控件，通过 ViewHolder 复用 + LayoutManager 布局 + 局部刷新提升性能。",
+  "Jetpack":"Google 官方 Android 组件库集合，解决生命周期、导航、持久化等常见痛点。",
+  "ViewModel":"Jetpack 组件，在配置变更（旋转屏）后仍存活，按 ViewModelStore 作用域保存 UI 数据。",
+  "LiveData":"Jetpack 可观察数据持有者，感知生命周期，只在活跃状态回调，避免内存泄漏。",
+  "MVVM":"Model-View-ViewModel 架构，通过数据绑定/观察者实现 View 与数据解耦。",
+  "协程":"轻量级线程（Kotlin Coroutines），挂起而非阻塞，用挂起函数实现异步顺序化。",
+  "APK":"Android 应用安装包，实为 ZIP 格式，内含 dex 字节码、资源、清单文件等。",
+  "AAPT":"Android Asset Packaging Tool，编译期打包资源并生成 R.java 资源引用。",
+  "DEX":"Dalvik Executable，Android 的字节码文件格式，由 Java/Kotlin 编译后转换而来。",
+  "ART":"Android Runtime，Android 5.0+ 默认运行时，AOT+JIT 混合编译，替代 Dalvik。",
+  "Gradle":"Android 官方构建系统，基于 Groovy/Kotlin DSL 描述构建脚本，管理依赖与打包。",
+  "R8":"代码压缩/混淆/优化工具，AGP 8+ 默认，替代 ProGuard。",
+  "V1签名":"JAR 签名，只校验未修改的文件，Android 7.0 以下使用；对 APK 部分修改不敏感。",
+  "V2签名":"APK Signature Scheme v2，全文件校验，Android 7.0+ 支持，速度快更安全。",
+  "V3签名":"在 V2 基础上支持密钥轮换，Android 9.0+ 支持。",
+  "Scoped Storage":"分区存储，Android 10+ 限制 App 随意读写公共目录，改用 MediaStore/SAF。",
+  "Room":"Jetpack 数据库组件，SQLite 的 ORM 封装，编译期校验 SQL。",
+  "Retrofit":"OkHttp 之上的 REST API 库，注解声明接口，动态代理生成实现。",
+  "OkHttp":"高效 HTTP 客户端，连接池复用、透明压缩、请求/响应拦截器。",
+  "Glide":"Android 图片加载库，内存/磁盘两级缓存，生命周期感知，默认使用 Bitmap 池复用。",
+  "LeakCanary":"内存泄漏检测工具，弱引用监听 Activity/Fragment 回收，检测到即弹通知。",
+  "Dagger/Hilt":"依赖注入框架，Hilt 是 Google 基于 Dagger 封装的 Android DI 方案。",
+  "DataBinding":"Jetpack 数据绑定，XML 直接绑定数据与事件，减少 findViewById。",
+  "Navigation":"Jetpack 导航组件，可视化导航图管理 Fragment 跳转与参数传递。",
+  "WorkManager":"Jetpack 后台任务组件，保证任务执行，兼容各种 Android 版本。",
+  "Paging":"Jetpack 分页组件，按页加载列表数据，配合 RecyclerView 使用。",
+  "Kotlin":"Google 官方推荐的 Android 开发语言，100% 兼容 Java，空安全、扩展函数、协程。",
+  "Compose":"Jetpack 声明式 UI 工具包，用 Kotlin 函数描述界面，摒弃 XML 布局。",
+  "SSH":"Secure Shell，加密远程登录协议，也是 Git 与远程仓库通信的安全通道。",
+  "CI/CD":"持续集成/持续交付：代码提交后自动构建、测试、部署的工程实践。",
+  "DDD":"领域驱动设计，以业务领域为核心建模，拆分限界上下文与聚合。",
+  "高并发":"系统同时处理大量请求的能力，衡量指标：QPS/TPS、响应时间、吞吐量。",
+  "读写分离":"主库写、从库读，通过主从复制同步数据，分散数据库读压力。",
+  "分库分表":"数据量过大时按维度拆库拆表：垂直拆分按业务域，水平拆分按分片键。",
+  "微服务":"把单体应用拆分为独立部署的小服务，通过 API 通信，独立扩展与发布。",
+  "Docker":"容器化技术，把应用与依赖打包成镜像，一次构建到处运行。",
+  "Nginx":"高性能 Web 服务器/反向代理/负载均衡器，支持静态资源、反向代理、限流。",
+  "uni-app":"跨端框架，一套 Vue 代码可编译到小程序、App、H5 多端。",
+  "FastAPI":"Python 高性能 Web 框架，基于 Starlette + Pydantic，自动生成 OpenAPI 文档，原生支持异步。",
+  "Uvicorn":"FastAPI 官方推荐的 ASGI 服务器，基于 uvloop，高性能异步 Python Web 服务。",
+  "OpenAI API":"大模型开放接口，通过 HTTP 调用 GPT 系列模型，支持对话补全、流式输出。",
+  "SSE":"Server-Sent Events，服务端单向推送流式数据，配合大模型流式输出的标准方案。",
+  "队列":"异步解耦中间件，生产者入队、消费者出队处理，削峰填谷，如 RabbitMQ/Kafka。",
+  "索引":"数据库为加速查询建立的数据结构，InnoDB 使用 B+ 树，牺牲写性能换读性能。",
+  "事务":"一组要么全成功要么全失败的操作，ACID：原子性、一致性、隔离性、持久性。",
+  "MVCC":"多版本并发控制，InnoDB 通过 undo log 保存历史版本，实现非阻塞读与可重复读。",
+  "explain":"MySQL 执行计划分析命令，查看 SQL 的索引使用、扫描行数等关键信息。",
+  "PDO预处理":"预先把 SQL 模板发送给数据库编译，再绑定参数执行，从机制上杜绝 SQL 注入。",
+  "中间件":"框架中拦截请求/响应进行统一处理的组件，如鉴权、日志、CORS、限流。",
+  "依赖注入":"把对象所需的依赖由外部容器创建并传入，而非对象内部 new，降低耦合、便于测试。",
+  "AOP":"面向切面编程，把日志、事务、权限等横切逻辑从业务代码中抽离。",
+  "IoC":"控制反转，对象创建与依赖关系的控制权交给容器管理。",
+  "Swoole":"PHP 异步高性能网络通信框架，支持协程、常驻内存，用于构建高性能服务。",
+  "RabbitMQ":"基于 AMQP 的消息中间件，支持多种交换机类型与可靠投递。",
+  "Kafka":"分布式消息流平台，高吞吐、持久化、分区有序，适合大数据与日志场景。",
+  "Elasticsearch":"基于 Lucene 的分布式搜索引擎，倒排索引，支持全文检索与聚合分析。",
+  "WebSocket":"全双工通信协议，一次握手后双向实时收发，适合聊天/推送/协作场景。"
+};
+
+// ===== 术语弹层 =====
+const termPop=$('#termPop');
+document.addEventListener('click',e=>{
+  const t=e.target.closest('.term');
+  if(t){
+    e.preventDefault();
+    const def=TERMS[t.dataset.term]||TERMS[t.textContent.trim()];
+    if(!def)return;
+    termPop.innerHTML='<b>'+esc(t.textContent.trim())+'</b><p>'+esc(def)+'</p>';
+    termPop.classList.add('show');
+    const r=t.getBoundingClientRect();
+    let left=r.left, top=r.bottom+8;
+    if(left+330>innerWidth)left=innerWidth-340;
+    if(top+140>innerHeight)top=r.top-140;
+    termPop.style.left=left+'px';termPop.style.top=top+'px';
+  }else if(!e.target.closest('.term-pop')){
+    termPop.classList.remove('show');
+  }
+});
+</script>
+<script>
+// ===== 统计 =====
+function countStats(){
+  $('#chipKp').textContent = $$('.k-block').length;
+  $('#chipQa').textContent = $$('.qa').length;
+  $('#chipQuiz').textContent = $$('.quiz').length;
+}
+
+// ===== 主题切换 =====
+function applyTheme(t){
+  document.documentElement.setAttribute('data-theme',t);
+  store.set('theme',t);
+  $('#themeBtn').innerHTML = t==='dark'
+    ? '<svg class="ic-sun" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.5M12 19.5V22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M2 12h2.5M19.5 12H22M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></svg>主题'
+    : '<svg class="ic-moon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>主题';
+}
+$('#themeBtn').addEventListener('click',()=>{
+  const cur = document.documentElement.getAttribute('data-theme')||'light';
+  const next = cur==='light'?'dark':(cur==='dark'?'sepia':'light');
+  applyTheme(next);
+});
+
+// ===== 专注模式 =====
+$('#focusBtn').addEventListener('click',function(){
+  document.body.classList.toggle('focus-mode');
+  this.classList.toggle('on');
+  store.set('focus',document.body.classList.contains('focus-mode'));
+});
+
+// ===== 字号 =====
+function applyFontSize(){
+  const s = store.get('fontSize',100);
+  document.documentElement.style.fontSize = (s/100*16)+'px';
+}
+$('#fontUp').addEventListener('click',()=>{store.set('fontSize',Math.min(130,store.get('fontSize',100)+5));applyFontSize()});
+$('#fontDown').addEventListener('click',()=>{store.set('fontSize',Math.max(85,store.get('fontSize',100)-5));applyFontSize()});
+
+// ===== 折叠/展开 =====
+$('#expandAll') && $('#expandAll').addEventListener('click',()=>$$('details.collapse').forEach(d=>d.setAttribute('open','')));
+$('#collapseAll') && $('#collapseAll').addEventListener('click',()=>$$('details.collapse').forEach(d=>d.removeAttribute('open')));
+
+// ===== 阅读进度 =====
+const progressBar=$('#progress');
+$('#mainContent').addEventListener('scroll',()=>{
+  const el=$('#mainContent');
+  const max = el.scrollHeight - el.clientHeight;
+  const p = max>0 ? (el.scrollTop/max*100) : 0;
+  progressBar.style.width = p+'%';
+});
+
+// ===== 章节完成标记 =====
+function renderChapterState(){
+  const done = store.get('done',[]);
+  $$('.sum-check[data-chapter]').forEach(btn=>{
+    const id=btn.dataset.chapter;
+    btn.classList.toggle('done',done.includes(id));
+    btn.textContent = done.includes(id) ? '✓ 已完成' : '✓ 标记完成';
+  });
+  // 侧边栏进度百分比
+  const groups={'backend':['b1','b2','b3','b4','b5'],'android':['a1','a2','a3','a4'],'interview':['i1','i2','i3','i4'],'store':['s1','s2','s3'],'stack':['t1','t2','t3','t4','t5']};
+  let total=0, doneCount=0;
+  Object.keys(groups).forEach(key=>{
+    const ids=groups[key];
+    const cnt=ids.filter(id=>done.includes(id)).length;
+    const pct=Math.round(cnt/ids.length*100);
+    const el=$('#pct-'+key);
+    if(el) el.textContent = pct>0 ? (pct+'%') : '';
+    total+=ids.length; doneCount+=cnt;
+  });
+  const overall = total>0 ? Math.round(doneCount/total*100) : 0;
+  $('#sideProgressBar').style.width=overall+'%';
+  $('#sideProgressTxt').textContent=overall+'%';
+}
+$$('.sum-check').forEach(btn=>{
+  btn.addEventListener('click',e=>{
+    e.stopPropagation();
+    e.preventDefault();
+    const id=btn.dataset.chapter;
+    let done=store.get('done',[]);
+    if(done.includes(id)) done=done.filter(x=>x!==id); else done.push(id);
+    store.set('done',done);
+    renderChapterState();
+  });
+});
+
+// ===== 书签 =====
+function renderBookmarks(){
+  const bks=store.get('bookmarks',[]);
+  $$('.nav-sub .bk').forEach(b=>{
+    b.classList.toggle('on',bks.includes(b.dataset.bk));
+  });
+  $('#bookmarkCount').textContent='书签 '+bks.length;
+}
+$$('.nav-sub .bk').forEach(b=>{
+  b.addEventListener('click',e=>{
+    e.preventDefault();e.stopPropagation();
+    const id=b.dataset.bk;
+    let bks=store.get('bookmarks',[]);
+    if(bks.includes(id)) bks=bks.filter(x=>x!==id); else bks.push(id);
+    store.set('bookmarks',bks);
+    renderBookmarks();
+  });
+});
+
+// ===== 错题本 =====
+function renderWrong(){
+  const w=store.get('wrong',[]);
+  $('#wrongCount').textContent='错题 '+w.length;
+}
+
+// ===== 自测题 =====
+$$('.quiz').forEach(quiz=>{
+  const qid=quiz.dataset.quiz;
+  const btn=quiz.querySelector('.quiz-btn');
+  const opts=quiz.querySelectorAll('.quiz-opt input');
+  const fb=quiz.querySelector('.quiz-fb');
+  btn.addEventListener('click',()=>{
+    const checked=quiz.querySelector('input:checked');
+    if(!checked){fb.className='quiz-fb no';fb.innerHTML='<b>请先选择答案</b>';return;}
+    const correct=1; // 正确答案 value=1
+    const isRight = checked.value==String(correct);
+    opts.forEach(o=>{
+      o.disabled=true;
+      const label=o.closest('.quiz-opt');
+      if(o.value==String(correct)) label.classList.add('right');
+      else if(o.checked) label.classList.add('wrong');
+    });
+    btn.disabled=true;
+    if(isRight){fb.className='quiz-fb ok';fb.innerHTML=fb.dataset.okHtml||fb.innerHTML;}
+    else{
+      fb.className='quiz-fb no';
+      let w=store.get('wrong',[]);
+      if(!w.includes(qid)){w.push(qid);store.set('wrong',w);renderWrong();}
+    }
+    // 存储原始反馈内容
+    if(!fb.dataset.okHtml){fb.dataset.okHtml=fb.innerHTML;}
+    fb.classList.add('show');
+  });
+});
+renderWrong();
+
+// ===== 笔记（自动注入） =====
+function injectNotes(){
+  $$('.k-block').forEach((k,i)=>{
+    if(k.querySelector('.note-box'))return;
+    const id='k'+i;
+    k.dataset.noteId=id;
+    const box=document.createElement('div');
+    box.className='note-box';
+    box.innerHTML='<button class="note-toggle" data-note="'+id+'">✎ 记笔记</button>'+
+      '<textarea class="note-textarea" id="note-'+id+'" placeholder="记录你的理解、疑问或代码示例…"></textarea>'+
+      '<button class="note-save" id="noteSave-'+id+'">保存笔记</button>';
+    k.appendChild(box);
+  });
+  $$('.note-toggle').forEach(t=>{
+    const id=t.dataset.note;
+    const ta=document.getElementById('note-'+id);
+    const save=document.getElementById('noteSave-'+id);
+    if(!ta)return;
+    const saved=store.get('note_'+id,'');
+    if(saved){ta.value=saved;t.classList.add('on');t.textContent='✎ 已记笔记';}
+    t.addEventListener('click',()=>{
+      ta.classList.toggle('show');
+      save.classList.toggle('show',ta.classList.contains('show'));
+    });
+    save.addEventListener('click',()=>{
+      store.set('note_'+id,ta.value);
+      t.classList.add('on');t.textContent='✎ 已记笔记';
+      ta.classList.remove('show');save.classList.remove('show');
+    });
+  });
+}
+injectNotes();
+
+// ===== 搜索 =====
+const searchInput=$('#searchInput');
+const searchResults=$('#searchResults');
+const searchClear=$('#searchClear');
+let searchArea='all';
+const areaMap={'backend':'后端','android':'Android','interview':'面试','store':'上架','stack':'全栈AI','links':'关联'};
+
+function buildIndex(){
+  const items=[];
+  $$('section.sec-card').forEach(sec=>{
+    const secId=sec.id;
+    const secName=sec.querySelector('.sec-head h2')?.textContent.trim()||'';
+    // 知识块
+    sec.querySelectorAll('.k-block').forEach(k=>{
+      const h=k.querySelector('h4');
+      items.push({id:k.id||('k'+items.length),type:'知识',title:h?h.childNodes[0].textContent.trim():'',text:k.textContent.trim(),sec:secId,secName});
+    });
+    // QA
+    sec.querySelectorAll('.qa').forEach(q=>{
+      const qEl=q.querySelector('.q');
+      items.push({id:'qa'+items.length,type:'面试',title:qEl?qEl.childNodes[0].textContent.trim():'',text:q.textContent.trim(),sec:secId,secName});
+    });
+    // 摘要
+    sec.querySelectorAll('details.collapse').forEach(d=>{
+      const sum=d.querySelector('summary');
+      const title=sum?sum.childNodes[0].textContent.trim():'';
+      items.push({id:d.id,type:'章节',title,text:d.textContent.trim(),sec:secId,secName});
+    });
+  });
+  return items;
+}
+let INDEX=[];
+try{INDEX=buildIndex();}catch(e){}
+
+function doSearch(){
+  const kw=searchInput.value.trim().toLowerCase();
+  searchResults.innerHTML='';
+  if(!kw){searchResults.classList.remove('show');searchClear.style.display='none';return;}
+  searchClear.style.display='block';
+  const filterRow='<div class="res-filter">'+Object.keys(areaMap).map(k=>'<button data-area="'+k+'" class="'+(searchArea===k?'on':'')+'">'+areaMap[k]+'</button>').join('')+'<button data-area="all" class="'+(searchArea==='all'?'on':'')+'">全部</button></div>';
+  let hits=INDEX.filter(it=>{
+    if(searchArea!=='all'&&it.sec!==searchArea)return false;
+    return (it.title+' '+it.text).toLowerCase().includes(kw);
+  }).slice(0,40);
+  const head='<div class="res-head"><span>找到 '+hits.length+' 条</span>'+filterRow+'</div>';
+  searchResults.innerHTML=head+ (hits.length?hits.map(h=>{
+    const idx=(h.title+' '+h.text).toLowerCase().indexOf(kw);
+    const snip=(h.text.substring(Math.max(0,idx-20),idx+80)||h.text.substring(0,100));
+    return '<button class="res-item" data-target="'+h.id+'" data-sec="'+h.sec+'"><span class="res-title">'+esc(h.title||'')+'<span class="res-meta">'+h.type+'</span></span><span class="res-snippet">'+esc(snip)+'</span></button>';
+  }).join(''):'<div class="res-empty">未找到相关知识点</div>');
+  searchResults.classList.add('show');
+}
+searchInput.addEventListener('input',doSearch);
+searchResults.addEventListener('click',e=>{
+  const area=e.target.closest('[data-area]');
+  if(area){searchArea=area.dataset.area;doSearch();return;}
+  const item=e.target.closest('.res-item');
+  if(item){
+    const id=item.dataset.target;
+    const sec=item.dataset.sec;
+    let el=document.getElementById(id);
+    if(!el) el=document.querySelector('[id="'+id+'"]');
+    if(el){
+      // 打开所在 details
+      const det=el.closest('details.collapse');
+      if(det) det.setAttribute('open','');
+      el.scrollIntoView({behavior:'smooth',block:'center'});
+      el.classList.remove('flash');void el.offsetWidth;el.classList.add('flash');
+      // 更新面包屑
+      const secEl=document.getElementById(sec);
+      if(secEl){
+        const h=secEl.querySelector('.sec-head h2');
+        if(h)$('#crumbNow').textContent=h.textContent.trim();
+      }
+      searchResults.classList.remove('show');
+      searchInput.value='';
+      searchClear.style.display='none';
+    }
+  }
+});
+searchClear.addEventListener('click',()=>{searchInput.value='';doSearch();});
+
+// ===== 导航高亮与面包屑 =====
+const navLinks=$$('.nav-link[data-target]');
+function updateNav(){
+  const main=$('#mainContent');
+  const pos=main.scrollTop;
+  let current='route';
+  $$('section.sec-card').forEach(sec=>{
+    if(sec.offsetTop-120<=pos) current=sec.id;
+  });
+  navLinks.forEach(l=>{
+    const active=l.dataset.target===current;
+    l.classList.toggle('active',active);
+    if(active){
+      const h=document.querySelector('#sec-'+current+' .sec-head h2');
+      if(h && current!=='route') $('#crumbNow').textContent=h.textContent.trim();
+      if(current!=='route') $('#crumbNow').textContent=h?h.textContent.trim():$('#crumbNow').textContent;
+    }
+    // 展开所属子导航
+    const wrap=l.nextElementSibling;
+    if(wrap&&wrap.classList&&wrap.classList.contains('nav-sub-wrap')){
+      wrap.classList.toggle('open',active);
+    }
+  });
+}
+$('#mainContent').addEventListener('scroll',updateNav);
+navLinks.forEach(l=>{
+  l.addEventListener('click',e=>{
+    const t=l.dataset.target;
+    if(t==='my-bookmarks'){
+      e.preventDefault();
+      showBookmarks();
+      return;
+    }
+    if(t==='my-wrong'){
+      e.preventDefault();
+      showWrong();
+      return;
+    }
+    const el=document.getElementById(t);
+    if(el){$('#mainContent').scrollTo({top:el.offsetTop-10,behavior:'smooth'});}
+    // 移动端关闭抽屉
+    sidebar.classList.remove('open');overlay.classList.remove('show');
+  });
+});
+
+// ===== 书签面板 =====
+function showBookmarks(){
+  const bks=store.get('bookmarks',[]);
+  const titles={b1:'1.1 基础筑基',b2:'1.2 技术进阶',b3:'1.3 中级实战',b4:'1.4 高级架构',b5:'1.5 学习路径',
+    a1:'2.1 入门篇',a2:'2.2 进阶篇',a3:'2.3 精通篇',a4:'2.4 学习路线',
+    i1:'3.1 基础必考',i2:'3.2 进阶高频',i3:'3.3 项目场景',i4:'3.4 HR 面',
+    s1:'4.1 打包与上架',s2:'4.2 多机型适配',s3:'4.3 版本与运维',
+    t1:'5.1 技术分层职责',t2:'5.2 请求链路流转',t3:'5.3 学习路径规划',t4:'5.4 典型表结构',t5:'5.5 AI 服务实战'};
+  const html='<div class="hero" style="margin-bottom:20px"><h1 style="font-size:20px">我的书签</h1><p class="desc" style="font-size:13px;margin-top:6px">点击左侧列表项前的星标即可收藏/取消章节。</p></div>'+
+    (bks.length?bks.map(b=>'<div class="gcard" style="margin-bottom:8px;cursor:pointer" onclick="document.getElementById(\''+b+'\').scrollIntoView({behavior:\'smooth\'})"><h5>'+(titles[b]||b)+'</h5></div>').join(''):'<p class="desc" style="color:var(--text-2)">暂无书签</p>');
+  openPanel(html,'我的书签');
+}
+function showWrong(){
+  const w=store.get('wrong',[]);
+  const titles={};
+  $$('.quiz').forEach(q=>{
+    const qid=q.dataset.quiz;
+    const qq=q.querySelector('.quiz-q');
+    titles[qid]=qq?qq.textContent.trim().replace(/<[^>]+>/g,'').substring(0,40):(q.dataset.title||'自测题');
+  });
+  const html='<div class="hero" style="margin-bottom:20px"><h1 style="font-size:20px">错题本</h1><p class="desc" style="font-size:13px;margin-top:6px">做错的自测题会记录在这里，共 '+w.length+' 题。重做正确后可从错题本移除（点击条目回到题目位置）。</p></div>'+
+    (w.length?w.map(id=>'<div class="gcard" style="margin-bottom:8px;cursor:pointer" onclick="document.querySelector(\'[data-quiz=\"'+id+'\"]\').scrollIntoView({behavior:\'smooth\'})"><h5>'+esc(titles[id]||id)+'</h5><div class="g-tag">点击回到题目位置</div></div>').join(''):'<p class="desc" style="color:var(--text-2)">暂无错题，继续加油</p>');
+  openPanel(html,'错题本');
+}
+function openPanel(html,title){
+  // 在 main 顶部临时插入面板
+  const existing=$('#panelLayer');
+  if(existing)existing.remove();
+  const layer=document.createElement('div');
+  layer.id='panelLayer';
+  layer.innerHTML=html;
+  $('#mainContent').prepend(layer);
+  $('#crumbNow').textContent=title;
+  $('#mainContent').scrollTo({top:0,behavior:'smooth'});
+  const closeBtn=document.createElement('button');
+  closeBtn.className='tbtn';
+  closeBtn.style.cssText='position:absolute;top:16px;right:20px';
+  closeBtn.textContent='× 关闭';
+  closeBtn.addEventListener('click',()=>{layer.remove();updateNav();});
+  const hero=layer.querySelector('.hero');
+  if(hero){hero.style.position='relative';hero.appendChild(closeBtn);}
+}
+
+// ===== 路由 tab =====
+$$('.route-tab').forEach(tab=>{
+  tab.addEventListener('click',()=>{
+    $$('.route-tab').forEach(t=>t.classList.remove('on'));
+    $$('.route-panel').forEach(p=>p.classList.remove('on'));
+    tab.classList.add('on');
+    const p=document.getElementById(tab.dataset.route);
+    if(p)p.classList.add('on');
+  });
+});
+
+// ===== 移动端抽屉 =====
+const sidebar=$('#sidebar');
+const overlay=$('#overlay');
+$('#menuBtn').addEventListener('click',()=>{
+  sidebar.classList.add('open');overlay.classList.add('show');
+});
+overlay.addEventListener('click',()=>{
+  sidebar.classList.remove('open');overlay.classList.remove('show');
+});
+
+// ===== 返回顶部 =====
+const toTop=$('#toTop');
+$('#mainContent').addEventListener('scroll',()=>{
+  toTop.classList.toggle('show',$('#mainContent').scrollTop>400);
+});
+toTop.addEventListener('click',()=>{
+  $('#mainContent').scrollTo({top:0,behavior:'smooth'});
+});
+
+// ===== 导出 =====
+$('#exportBtn').addEventListener('click',()=>{
+  window.print();
+});
+
+// ===== 恢复设置 =====
+applyTheme(store.get('theme','light'));
+applyFontSize();
+if(store.get('focus',false)){
+  document.body.classList.add('focus-mode');
+  $('#focusBtn').classList.add('on');
+}
+renderChapterState();
+renderBookmarks();
+countStats();
+updateNav();
+</script>
+</body>
+</html>

@@ -1,0 +1,1157 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>开发技术单词手册 · Tech Wordbook</title>
+<meta name="description" content="本轮对话出现的技术英语词条汇总，支持搜索、分类筛选与折叠查看详解。">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23131A24'/%3E%3Ctext x='16' y='23' font-family='Georgia,serif' font-size='19' fill='%23ffffff' text-anchor='middle'%3EW%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="https://miaoda.feishu.cn/fonts/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif+SC:wght@400;600;700&family=Newsreader:opsz,wght@6..72,400;6..72,600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --paper:#F3F5F8;
+  --surface:#FFFFFF;
+  --ink:#131A24;
+  --ink-2:#5B6675;
+  --ink-3:#8B94A2;
+  --rule:#DFE4EA;
+  --accent:#1F4ED8;
+  --t-dart:oklch(0.55 0.16 250);
+  --t-android:oklch(0.58 0.15 150);
+  --t-backend:oklch(0.58 0.17 35);
+  --t-tools:oklch(0.52 0.14 300);
+  --t-async:oklch(0.58 0.14 200);
+  --t-general:oklch(0.52 0.02 260);
+  --serif:'Newsreader','Noto Serif SC',Georgia,'Songti SC',serif;
+  --sans:'Noto Sans SC',system-ui,-apple-system,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+button,input{font-family:var(--sans)}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;background:var(--paper);color:var(--ink);
+  font-family:var(--sans);font-size:15px;line-height:1.7;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1060px;margin:0 auto;padding:0 24px 90px}
+
+/* ===== 报头 ===== */
+.masthead{padding:56px 0 26px;border-bottom:1px solid var(--rule)}
+.masthead h1{
+  margin:0 0 12px;font-family:var(--serif);font-weight:600;
+  font-size:clamp(28px,4.4vw,42px);line-height:1.18;letter-spacing:-.015em;
+}
+.masthead .lede{margin:0;max-width:62ch;color:var(--ink-2);font-size:14.5px}
+.meta{
+  display:flex;flex-wrap:wrap;gap:8px 22px;margin-top:18px;
+  font-family:var(--mono);font-size:11.5px;color:var(--ink-3);letter-spacing:.01em;
+}
+.meta b{font-weight:500;color:var(--ink-2)}
+
+/* ===== 分类分布 ===== */
+.dist{margin:24px 0 12px}
+.dist-bar{display:flex;gap:2px;height:9px}
+.dist-bar button{
+  border:0;padding:0;cursor:pointer;transition:opacity .18s,transform .18s;
+  transform-origin:center;
+}
+.dist-bar button:hover{opacity:.78}
+.dist-bar button.dim{opacity:.22}
+.dist-bar button[data-t="dart"]{background:var(--t-dart)}
+.dist-bar button[data-t="android"]{background:var(--t-android)}
+.dist-bar button[data-t="backend"]{background:var(--t-backend)}
+.dist-bar button[data-t="tools"]{background:var(--t-tools)}
+.dist-bar button[data-t="async"]{background:var(--t-async)}
+.dist-bar button[data-t="general"]{background:var(--t-general)}
+
+/* ===== 工具条 ===== */
+.toolbar{
+  position:sticky;top:0;z-index:30;background:var(--paper);
+  border-bottom:1px solid var(--rule);padding:12px 0;
+  display:flex;flex-wrap:wrap;gap:10px;align-items:center;
+}
+.search{
+  flex:1 1 260px;display:flex;align-items:center;gap:9px;
+  background:var(--surface);border:1px solid var(--rule);padding:9px 12px;
+  transition:border-color .18s,box-shadow .18s;
+}
+.search:focus-within{border-color:var(--ink);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 15%,transparent)}
+.search svg{flex:none;color:var(--ink-3)}
+.search input{
+  flex:1;min-width:0;border:0;outline:0;background:transparent;
+  font-family:var(--sans);font-size:14px;color:var(--ink);
+}
+.search input::placeholder{color:var(--ink-3)}
+.search kbd{
+  font-family:var(--mono);font-size:11px;color:var(--ink-3);
+  border:1px solid var(--rule);padding:0 5px;line-height:17px;flex:none;
+}
+.btn{
+  font-family:var(--sans);font-size:13px;color:var(--ink-2);
+  background:var(--surface);border:1px solid var(--rule);
+  padding:9px 13px;cursor:pointer;transition:border-color .18s,color .18s;
+}
+.btn:hover{border-color:var(--ink);color:var(--ink)}
+.count{font-family:var(--mono);font-size:11.5px;color:var(--ink-3);margin-left:auto;flex:none}
+
+/* ===== 分类筛选 ===== */
+.chips{display:flex;flex-wrap:wrap;gap:7px;padding:14px 0 4px}
+.chip{
+  display:inline-flex;align-items:center;gap:7px;
+  background:var(--surface);border:1px solid var(--rule);border-radius:999px;
+  padding:4px 12px;font-size:12.5px;color:var(--ink-2);
+  cursor:pointer;transition:border-color .18s,color .18s,background .18s;
+}
+.chip:hover{border-color:var(--ink-2);color:var(--ink)}
+.chip.on{border-color:var(--ink);color:var(--ink);background:var(--surface)}
+.chip .dot{width:7px;height:7px;border-radius:50%;flex:none}
+.chip .num{font-family:var(--mono);font-size:11px;color:var(--ink-3)}
+.chip[data-t="dart"] .dot{background:var(--t-dart)}
+.chip[data-t="android"] .dot{background:var(--t-android)}
+.chip[data-t="backend"] .dot{background:var(--t-backend)}
+.chip[data-t="tools"] .dot{background:var(--t-tools)}
+.chip[data-t="async"] .dot{background:var(--t-async)}
+.chip[data-t="general"] .dot{background:var(--t-general)}
+.chip[data-t="all"] .dot{background:var(--ink)}
+
+/* ===== 布局：字母索引 + 词条 ===== */
+.layout{display:grid;grid-template-columns:50px 1fr;gap:22px;align-items:start}
+.rail{position:sticky;top:78px;display:flex;flex-direction:column;padding-top:26px}
+.rail button{
+  font-family:var(--mono);font-size:11.5px;line-height:1.5;
+  color:var(--ink-3);background:none;border:0;text-align:left;
+  padding:1px 6px;cursor:pointer;transition:color .15s,background .15s;
+}
+.rail button:hover{color:var(--ink);background:var(--surface)}
+.rail button.off{opacity:.3;cursor:default}
+.rail button.off:hover{background:none;color:var(--ink-3)}
+
+/* ===== 词条 ===== */
+.list{border-top:1px solid var(--rule)}
+.entry{border-bottom:1px solid var(--rule);transition:background .3s;scroll-margin-top:80px}
+.entry.flash{background:color-mix(in srgb,var(--accent) 9%,transparent)}
+.entry-head{
+  width:100%;display:grid;
+  grid-template-columns:42px minmax(150px,214px) 128px 1fr 22px;
+  align-items:baseline;gap:16px;
+  padding:15px 10px 15px 0;background:none;border:0;
+  font:inherit;color:inherit;text-align:left;cursor:pointer;
+}
+.entry-head:hover{background:var(--surface)}
+.entry-head:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.idx{font-family:var(--mono);font-size:11.5px;color:var(--ink-3)}
+.hw .w{
+  display:block;font-family:var(--serif);font-weight:600;
+  font-size:21.5px;line-height:1.25;letter-spacing:-.01em;
+}
+.hw .ph{display:block;font-family:var(--mono);font-size:11.5px;color:var(--ink-3);margin-top:3px}
+.tag{display:inline-flex;align-items:center;gap:7px;font-size:12px;color:var(--ink-2)}
+.tag .dot{width:7px;height:7px;border-radius:50%;flex:none}
+.tag[data-t="dart"] .dot{background:var(--t-dart)}
+.tag[data-t="android"] .dot{background:var(--t-android)}
+.tag[data-t="backend"] .dot{background:var(--t-backend)}
+.tag[data-t="tools"] .dot{background:var(--t-tools)}
+.tag[data-t="async"] .dot{background:var(--t-async)}
+.tag[data-t="general"] .dot{background:var(--t-general)}
+.short{color:var(--ink-2);font-size:14px}
+.chev{align-self:center;color:var(--ink-3);transition:transform .28s ease}
+.entry.open .chev{transform:rotate(180deg)}
+.entry-head:hover .w{color:var(--accent)}
+mark{background:color-mix(in srgb,var(--accent) 16%,transparent);color:inherit;padding:0 1px}
+
+.entry-body{display:grid;grid-template-rows:0fr;transition:grid-template-rows .3s cubic-bezier(.4,0,.2,1)}
+.entry.open .entry-body{grid-template-rows:1fr}
+.entry-body>.inner{overflow:hidden}
+.body-pad{padding:2px 10px 26px 58px;max-width:74ch}
+
+.sec{margin:0 0 15px}
+.sec h4{margin:0 0 5px;font-size:12px;font-weight:500;color:var(--ink-3);letter-spacing:.02em}
+.def{list-style:none;margin:0;padding:0}
+.def li{position:relative;padding-left:16px;color:var(--ink-2);font-size:14px}
+.def li+li{margin-top:3px}
+.def li:before{content:"";position:absolute;left:0;top:.78em;width:7px;height:1px;background:var(--ink-3)}
+.def strong{color:var(--ink);font-weight:600}
+.uses{display:flex;flex-wrap:wrap;gap:6px}
+.uses span{
+  font-family:var(--mono);font-size:12px;color:var(--ink-2);
+  background:var(--surface);border:1px solid var(--rule);padding:3px 8px;
+}
+.ex{margin-bottom:9px}
+.ex .en{margin:0;font-family:var(--serif);font-size:16.5px;line-height:1.5}
+.ex .zh{margin:1px 0 0;font-size:13px;color:var(--ink-3)}
+.deriv{margin:0;font-family:var(--mono);font-size:12.5px;color:var(--ink-2)}
+.tip{border-top:1px solid var(--rule);padding-top:11px}
+.tip p{margin:0;font-size:13.5px;color:var(--ink-2)}
+.tip strong{color:var(--ink);font-weight:600}
+table.vs{width:100%;border-collapse:collapse;table-layout:fixed;font-size:13.5px}
+table.vs th{
+  text-align:left;font-weight:500;font-size:12px;color:var(--ink-3);
+  border-bottom:1px solid var(--rule);padding:3px 10px 4px 0;
+}
+table.vs td{padding:5px 10px 5px 0;border-bottom:1px solid var(--rule);vertical-align:top;color:var(--ink-2)}
+table.vs td:first-child{font-family:var(--mono);font-size:12.5px;color:var(--ink)}
+table.vs tr:last-child td{border-bottom:0}
+table.vs strong{color:var(--ink);font-weight:600}
+
+.empty{padding:64px 8px;text-align:center;color:var(--ink-3)}
+.empty p{margin:0}
+.empty .big{font-family:var(--serif);font-size:22px;color:var(--ink-2);margin-bottom:6px}
+
+.foot{margin-top:34px;padding-top:16px;border-top:1px solid var(--rule);
+  display:flex;flex-wrap:wrap;gap:6px 20px;font-family:var(--mono);font-size:11.5px;color:var(--ink-3)}
+
+@media (max-width:880px){
+  .layout{grid-template-columns:1fr}
+  .rail{display:none}
+}
+@media (max-width:720px){
+  .wrap{padding:0 16px 72px}
+  .masthead{padding:36px 0 22px}
+  .entry-head{
+    grid-template-columns:32px 1fr 20px;grid-template-areas:"idx hw chev" "short short short" "tag tag tag";
+    gap:6px 12px;padding:14px 4px 14px 0;align-items:center;
+  }
+  .idx{grid-area:idx;align-self:start;padding-top:4px;font-size:12px}
+  .hw .ph{font-size:12.5px}
+  .hw{grid-area:hw}
+  .tag{grid-area:tag;margin-top:2px}
+  .short{grid-area:short}
+  .chev{grid-area:chev}
+  .body-pad{padding:2px 4px 24px 32px}
+  .count{margin-left:0;width:100%}
+  .meta,.count,.foot{font-size:12px}
+  .search input{font-size:16px}
+  .btn{min-height:44px;display:inline-flex;align-items:center}
+}
+@media (prefers-reduced-motion:reduce){
+  *{transition-duration:.01ms !important;animation-duration:.01ms !important}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="masthead">
+    <h1>开发技术单词手册</h1>
+    <p class="lede">把对话里查过、学过的技术英语词条收在一处：默认只显示词与一句话解释，点开看释义、搭配、例句和易混辨析。可用搜索框按单词、中文释义或例句检索。</p>
+    <div class="meta">
+      <span>收录 <b id="m-total">0</b> 条</span>
+      <span>分类 <b>6</b> 个</span>
+      <span>更新 <b>2026-09-28</b></span>
+    </div>
+  </header>
+
+  <!-- ===== 分类分布条 ===== -->
+  <section class="dist" aria-label="分类分布">
+    <div class="dist-bar" id="dist"></div>
+  </section>
+  <div class="chips" id="chips" role="group" aria-label="按分类筛选"></div>
+
+  <!-- ===== 工具条 ===== -->
+  <div class="toolbar">
+    <label class="search">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M16.5 16.5 21 21"/></svg>
+      <input id="q" type="search" placeholder="搜索单词 / 释义 / 搭配 / 例句" aria-label="搜索词条" autocomplete="off">
+      <kbd>/</kbd>
+    </label>
+    <button class="btn" id="toggle-all" type="button">展开全部</button>
+    <span class="count" id="count">—</span>
+  </div>
+
+  <!-- ===== 字母索引 + 词条列表 ===== -->
+  <div class="layout">
+    <nav class="rail" id="rail" aria-label="首字母索引"></nav>
+    <div class="list" id="list"></div>
+  </div>
+
+  <p class="foot">
+    <span>词条来自本会话中查过、学过的单词，按出现顺序编号</span>
+    <span>中文释义按开发语境整理，非通用词典释义</span>
+  </p>
+</div>
+
+<script>
+/* ===== 词条数据 ===== */
+/* tag: dart=Flutter/Dart  android=Android/Kotlin  backend=后端/网络  tools=工程/工具  async=并发/协程  general=通用 */
+const WORDS = [
+{w:"tuple",ph:"/ˈtjuːpl/",pos:"n.",tag:"dart",
+ short:"元组：有序、不可变的数据集合",
+ def:["编程术语，指**一组有序且不可变的数据集合**，创建后不能增删改元素。","和 list（列表）相对：list 可变，tuple 不可变。"],
+ uses:["Dart 3: (1, 'a', true)","Python: (1, 2)","返回多个值"],
+ ex:[["A record behaves like a fixed tuple.","记录（record）的行为类似固定元组。"]],
+ vs:[["tuple","有序、不可变，元素个数通常固定"],["list","有序、可变，可增删元素"],["set","元素不重复、无序"]],
+ tip:"Dart 里更常用 record（记录）表达类似结构，tuple 这个词更多出现在 Python 语境。"},
+
+{w:"Fibonacci",ph:"/ˌfɪbəˈnɑːtʃi/",pos:"n.",tag:"general",
+ short:"斐波那契：后一项等于前两项之和的数列",
+ def:["斐波那契数列：1, 1, 2, 3, 5, 8, 13……从第三项起，每项等于前两项之和。","常用于讲递归与动态规划，也常被拿来当动画缓动曲线的形状。"],
+ uses:["Fibonacci sequence 斐波那契数列","Fibonacci number 斐波那契数"],
+ ex:[["Fibonacci sequence is a classic recursion example.","斐波那契数列是经典的递归示例。"]],
+ vs:[["Fibonacci","指数列本身"],["golden ratio 黄金分割","斐波那契相邻两项之比会趋近它"]]},
+
+{w:"mutating",ph:"/ˈmjuːteɪtɪŋ/",pos:"v./adj.",tag:"dart",
+ short:"会修改原数据的；原地变更",
+ def:["动词 mutate 的现在分词，指**直接在原有对象上修改**，而不是生成一个新对象。","和 immutable（不可变的）相对，是设计集合 API 时的重要区分。"],
+ uses:["mutating method 可变方法","non-mutating 非原地修改"],
+ ex:[["This is a mutating operation, it changes the original list.","这是一个可变操作，它会修改原列表。"]],
+ vs:[["mutating","原地修改，原对象随之变化"],["immutable","不可变，改动会返回一个新对象"]]},
+
+{w:"duplicates",ph:"/ˈdjuːplɪkəts/",pos:"n.",tag:"dart",
+ short:"重复项、重复数据",
+ def:["名词复数，指集合或列表里**重复出现的元素**。","去重相关的变量名、方法名里高频出现。"],
+ uses:["remove duplicates 去重","detect duplicates 检测重复","duplicate key 重复的键"],
+ ex:[["Remove duplicates from the list before rendering.","渲染前先对列表去重。"]],
+ deriv:"duplicate v./adj. 复制；重复的"},
+
+{w:"emit",ph:"/ɪˈmɪt/",pos:"v.",tag:"dart",
+ short:"发出、派发（事件或信号）",
+ def:["把事件、信号、数据**发送出去**，交给监听方处理。","状态管理、事件总线、Stream 里都是核心动词。"],
+ uses:["emit event 派发事件","emit value 发出值"],
+ ex:[["The controller emits a new state after loading.","加载完成后 controller 会发出一个新状态。"]],
+ vs:[["emit","主动发出事件或信号"],["listen","监听，负责接收"],["notify","通知，侧重告知结果"]]},
+
+{w:"Geometry",ph:"/dʒiˈɒmətri/",pos:"n.",tag:"dart",
+ short:"几何、几何数据",
+ def:["图形界面里指**位置、尺寸、形状**这类几何信息。","布局计算、手势识别、动画路径都会用到。"],
+ uses:["geometry calculation 几何计算","widget geometry 组件几何信息"],
+ ex:[["We measure the geometry of the widget after layout.","布局完成后我们测量组件的几何信息。"]],
+ deriv:"geometric adj. 几何的"},
+
+{w:"Magnification",ph:"/ˌmæɡnɪfɪˈkeɪʃn/",pos:"n.",tag:"dart",
+ short:"放大；放大倍率",
+ def:["图像或文字的**放大比例**。","交互中常见于图片预览缩放、放大镜组件。"],
+ uses:["magnification gesture 缩放手势","magnification factor 放大倍数"],
+ ex:[["Pinch to change the magnification of the image.","双指捏合改变图片的放大倍率。"]],
+ deriv:"magnify v. 放大；magnifier n. 放大镜"},
+
+{w:"Composable",ph:"/kəmˈpəʊzəbl/",pos:"adj.",tag:"dart",
+ short:"可组合的：能像积木一样拼装复用",
+ def:["软件架构概念，指**小组件可以自由组合成更大的组件**。","Jetpack Compose 的 @Composable、Flutter 的 Widget 组合都是这个思路。"],
+ uses:["composable function 可组合函数","composable UI 可组合界面"],
+ ex:[["Build the screen from small composable widgets.","用小的可组合组件搭出整个页面。"]],
+ deriv:"compose v. 组成；composition n. 组合",
+ vs:[["composable","可自由拼装复用"],["inheritance","继承，靠父类逐层扩展"]]},
+
+{w:"trimming",ph:"/ˈtrɪmɪŋ/",pos:"v./n.",tag:"dart",
+ short:"修剪、截取（去掉首尾多余内容）",
+ def:["去掉字符串**首尾的空白或指定字符**。","也指把界面元素超出边界的部分裁掉。"],
+ uses:["string trimming 字符串去空格","trim whitespace 去掉空白","overflow trimming 溢出裁剪"],
+ ex:[["Always do trimming on the user input before validation.","校验前先对用户输入做去空格处理。"]],
+ deriv:"trim v./n. 修剪"},
+
+{w:"detached",ph:"/dɪˈtætʃt/",pos:"adj.",tag:"dart",
+ short:"分离的：已脱离父级或树结构",
+ def:["表示元素**已经从原来的父节点或上下文中脱离**。","Flutter 里 detached 表示组件已脱离元素树。"],
+ uses:["detached view 已分离视图","detached state 分离状态"],
+ ex:[["The widget becomes detached when removed from the tree.","组件从树上移除后会进入 detached 状态。"]],
+ deriv:"detach v. 分离；detachment n. 分离",
+ vs:[["detached","已分离，不在树上"],["attached","已挂载到父级"]]},
+
+{w:"patch",ph:"/pætʃ/",pos:"n./v.",tag:"tools",
+ short:"补丁：小范围的修复更新",
+ def:["针对已有版本做**小范围修改**，而不是整个重发。","git patch 是可以直接应用的一段差异文件。"],
+ uses:["bug fix patch 缺陷修复补丁","apply a patch 应用补丁","hotfix patch 热修复补丁"],
+ ex:[["We shipped a small patch to fix the crash.","我们发了一个小补丁来修复崩溃。"]],
+ vs:[["patch","局部小修复"],["update","版本更新，范围更大"],["rollback","回滚到上一个版本"]]},
+
+{w:"trigger",ph:"/ˈtrɪɡə(r)/",pos:"v./n.",tag:"backend",
+ short:"触发；触发器",
+ def:["**触发**某个动作或流程；作名词时指触发器本身。","数据库触发器、事件回调都叫 trigger。"],
+ uses:["trigger action 触发动作","trigger event 触发事件","DB trigger 数据库触发器"],
+ ex:[["Clicking the button triggers a refresh.","点击按钮会触发一次刷新。"]],
+ deriv:"triggered adj. 被触发的"},
+
+{w:"utility",ph:"/juːˈtɪləti/",pos:"n.",tag:"tools",
+ short:"工具（类／函数）：通用小功能",
+ def:["不承载业务、**到处都能直接用的通用功能**。","utility function 工具函数，utility class 工具类。"],
+ uses:["utility function 工具函数","utility class 工具类","utils 工具目录"],
+ ex:[["Move the date formatting into a utility function.","把日期格式化挪到一个工具函数里。"]],
+ vs:[["utility","纯工具，不带业务状态"],["service","承载业务逻辑"],["helper","语义相近，更口语化"]]},
+
+{w:"Project",ph:"/ˈprɒdʒekt/",pos:"n.",tag:"tools",
+ short:"项目、工程",
+ def:["一个完整的开发工程目录，包含源码、配置和依赖。","IDE 里打开的那个文件夹就是一个 project。"],
+ uses:["open project 打开项目","project structure 项目结构","project file 工程文件"],
+ ex:[["Clone the project and open it in your IDE.","克隆项目并在 IDE 中打开。"]]},
+
+{w:"Damp",ph:"/dæmp/",pos:"v./n.",tag:"dart",
+ short:"抑制、衰减（动画回弹）；也指潮湿的",
+ def:["动画与物理里指**阻尼**：让运动逐渐衰减、不再回弹。","日常含义是潮湿的，技术文档里基本只取阻尼义。"],
+ uses:["damping ratio 阻尼比","damp the bounce 抑制回弹"],
+ ex:[["Increase damping so the list stops bouncing.","加大阻尼，让列表不再回弹。"]],
+ deriv:"damping n. 阻尼；dampen v. 抑制"},
+
+{w:"Fraction",ph:"/ˈfrækʃn/",pos:"n.",tag:"dart",
+ short:"分数、比例；一小部分",
+ def:["数学上的分数，也指**占整体的比例**。","界面里用于按比例布局，例如按屏幕宽度的比例分配空间。"],
+ uses:["fraction of width 宽度的比例","FractionallySizedBox 按比例布局"],
+ ex:[["The panel takes 0.6 fraction of screen width.","面板占屏幕宽度的 0.6。"]],
+ deriv:"fractional adj. 部分的，分数的"},
+
+{w:"Sequence",ph:"/ˈsiːkwəns/",pos:"n.",tag:"general",
+ short:"序列：有先后顺序的一串数据",
+ def:["**有序**的一串元素，顺序本身有意义。","和 set（无序）相对，也常用来描述一串连续步骤。"],
+ uses:["sequence of steps 步骤序列","animation sequence 动画序列"],
+ ex:[["Run the tasks in sequence, not in parallel.","按顺序执行任务，不要并行。"]]},
+
+{w:"syntax",ph:"/ˈsɪntæks/",pos:"n.",tag:"general",
+ short:"语法：代码的书写规则",
+ def:["一门语言**允许怎么写**的规则集合。","写错语法会直接报 syntax error。"],
+ uses:["syntax error 语法错误","syntax highlight 语法高亮"],
+ ex:[["The build failed because of a syntax error.","构建因为一个语法错误失败了。"]],
+ deriv:"syntactic adj. 语法上的",
+ vs:[["syntax","语法，怎么写才对"],["semantics","语义，写出来是什么意思"]]},
+
+{w:"summarize",ph:"/ˈsʌməraɪz/",pos:"v.",tag:"general",
+ short:"概括、汇总",
+ def:["把内容**压缩成要点**，只保留主要信息。","做日报、周报、代码审查摘要时是标准动词。"],
+ uses:["summarize the changes 概括改动","summarize the log 汇总日志"],
+ ex:[["Summarize the log into three key points.","把日志概括成三个要点。"]],
+ deriv:"summary n. 摘要；summarization n. 摘要生成",
+ vs:[["summarize","压缩成要点"],["describe","展开描述细节"]]},
+
+{w:"manifest",ph:"/ˈmænɪfest/",pos:"n.",tag:"android",
+ short:"清单文件：声明应用的基本信息",
+ def:["描述应用**名称、权限、入口、依赖**等信息的配置文件。","Android 的 AndroidManifest.xml、Web 的 manifest.json 都是它。"],
+ uses:["AndroidManifest.xml","web app manifest","manifest file 清单文件"],
+ ex:[["Declare the permission in AndroidManifest.","在 AndroidManifest 里声明该权限。"]],
+ tip:"名字来源就是「清单」：系统先读清单，才知道这个应用要什么、从哪进。"},
+
+{w:"Gradle",ph:"/ˈɡreɪdl/",pos:"n.",tag:"android",
+ short:"Gradle：Android 项目默认的构建工具",
+ def:["基于 Groovy / Kotlin DSL 的**构建与依赖管理工具**。","负责编译、打包、拉依赖，Android 项目默认使用。"],
+ uses:["build.gradle 构建脚本","Gradle sync 同步依赖","gradle wrapper"],
+ ex:[["Add the dependency in build.gradle and sync.","在 build.gradle 里加上依赖并同步。"]]},
+
+{w:"remix",ph:"/ˈriːmɪks/",pos:"v./n.",tag:"backend",
+ short:"重新组合、二次混编",
+ def:["在已有内容的基础上**重新搭配、组合出新版本**。","Remix 同时也是一款 Web 全栈框架的名字。"],
+ uses:["remix content 二次组合内容","Remix framework Remix 框架"],
+ ex:[["The tool lets you remix an existing template.","这个工具可以让你重新组合已有模板。"]]},
+
+{w:"eligible",ph:"/ˈelɪdʒəbl/",pos:"adj.",tag:"general",
+ short:"符合条件的、有资格的",
+ def:["满足规则设定的条件，**可以参与或享受某项权益**。","常见于活动资格、版本升级资格的判断。"],
+ uses:["eligible user 符合条件的用户","eligible for upgrade 有权升级"],
+ ex:[["Only eligible accounts can join the beta.","只有符合条件的账号可以加入测试。"]],
+ deriv:"eligibility n. 资格",
+ vs:[["eligible","满足条件、有资格参与"],["qualified","合格，偏能力达标"]]}
+];
+WORDS.push(
+{w:"sponge",ph:"/spʌndʒ/",pos:"n.",tag:"general",
+ short:"海绵；海绵擦",
+ def:["日常名词，指海绵这种材质。","指清洁用品时说 a sponge，指功能特性时也常被借喻为「能吸收」。"],
+ uses:["wet sponge 湿海绵","sponge the surface 用海绵擦拭"],
+ ex:[["Wipe the screen with a soft sponge.","用软海绵擦拭屏幕。"]]},
+
+{w:"detected",ph:"/dɪˈtektɪd/",pos:"adj.",tag:"general",
+ short:"检测到的、已发现的",
+ def:["动词 detect 的过去分词，表示**已经被系统发现**。","日志与状态文案里常见，如 detected issue（检测到问题）。"],
+ uses:["detected issue 检测到的问题","no device detected 未检测到设备"],
+ ex:[["A slow request was detected in the release build.","在正式包中检测到一次慢请求。"]],
+ deriv:"detect v. 检测；detection n. 检测；detector n. 检测器"},
+
+{w:"consumer",ph:"/kənˈsjuːmə(r)/",pos:"n.",tag:"dart",
+ short:"消费者；数据的订阅方",
+ def:["**生产者—消费者模型**里的另一半：负责消费数据的一方。","Riverpod 里 Consumer 就是订阅并读取状态的组件。"],
+ uses:["producer / consumer 生产者 / 消费者","Consumer widget 订阅组件"],
+ ex:[["The consumer rebuilds only when the value changes.","消费方只在值变化时才重建。"]],
+ vs:[["consumer","消费数据的一方"],["producer","产出数据的一方"],["provider","提供数据，介于两者之间"]]},
+
+{w:"palette",ph:"/ˈpælət/",pos:"n.",tag:"dart",
+ short:"调色板：一组配色",
+ def:["界面里指**预定义的一套颜色**。","color palette 配色方案，多用于主题与色板管理。"],
+ uses:["color palette 配色方案","custom palette 自定义色板"],
+ ex:[["Keep the palette small so the app stays consistent.","色板保持精简，应用风格才会统一。"]]},
+
+{w:"provisioning",ph:"/prəˈvɪʒənɪŋ/",pos:"n.",tag:"tools",
+ short:"资源配置、预配置",
+ def:["提前为服务器、设备或账号**准备好运行所需的资源与凭证**。","iOS 的 provisioning profile 就是给应用授权安装的描述文件。"],
+ uses:["provisioning profile 描述文件","device provisioning 设备配置"],
+ ex:[["The build failed because the provisioning profile expired.","构建失败是因为描述文件过期了。"]],
+ deriv:"provision v. 提供，配置"},
+
+{w:"invocable",ph:"/ɪnˈvəʊkəbl/",pos:"adj.",tag:"dart",
+ short:"可调用的",
+ def:["表示这段逻辑**可以被直接调用执行**。","Dart 里 call() 让对象像函数一样被调用。"],
+ uses:["invocable object 可调用对象","invoke a method 调用方法"],
+ ex:[["Any invocable object can be passed as a callback.","任何可调用对象都能当回调传入。"]],
+ deriv:"invoke v. 调用；invocation n. 调用"},
+
+{w:"exception",ph:"/ɪkˈsepʃn/",pos:"n.",tag:"general",
+ short:"异常：程序运行时出现的错误",
+ def:["程序执行过程中发生的**非正常情况**，可以抛出与捕获。","catch 住异常做错误处理，而不是让应用直接崩掉。"],
+ uses:["throw an exception 抛出异常","catch exception 捕获异常","unhandled exception 未处理异常"],
+ ex:[["Wrap the call in try / catch to handle exceptions.","用 try / catch 包住调用以处理异常。"]],
+ vs:[["exception","可被捕获处理的运行时异常"],["error","更严重的错误，通常不指望恢复"],["crash","异常没被处理导致的闪退"]]},
+
+{w:"pattern",ph:"/ˈpætn/",pos:"n.",tag:"general",
+ short:"模式；样式；匹配规则",
+ def:["三个常见用法：**设计模式**、**文本匹配规则**（正则 pattern）、**界面样式**（背景花纹）。","具体含义由上下文决定，是典型的一词多义技术词。"],
+ uses:["design pattern 设计模式","regex pattern 正则模式","pattern matching 模式匹配"],
+ ex:[["Use a pattern to extract the version number.","用一条匹配规则把版本号提取出来。"]]},
+
+{w:"pulse",ph:"/pʌls/",pos:"n./v.",tag:"general",
+ short:"脉冲；脉动",
+ def:["周期性出现的信号或节奏。","界面上常用脉冲动画提示「正在连接 / 持续刷新」这类状态。"],
+ uses:["pulse animation 脉冲动画","pulse signal 脉冲信号"],
+ ex:[["Add a subtle pulse to show the connection is alive.","加一个轻脉冲效果表示连接仍然存活。"]]},
+
+{w:"Isolate",ph:"/ˈaɪsəleɪt/",pos:"n.",tag:"dart",
+ short:"隔离区（Dart）：独立的内存与事件循环",
+ def:["Dart 的并发单元，**每个 isolate 有自己独立的内存**，互不共享。","因此不存在锁竞争；靠端口（port）传消息通信，适合把重计算挪出主 isolate。"],
+ uses:["Isolate.spawn 启动隔离区","compute() 简化封装","main isolate 主隔离区"],
+ ex:[["Run the parsing in an Isolate so the UI stays smooth.","把解析放到隔离区执行，界面才不卡。"]],
+ vs:[["Isolate","独立内存，消息通信"],["Thread","共享内存，需要加锁同步"],["Future","只是异步任务，不等于新线程"]]},
+
+{w:"Migration",ph:"/maɪˈɡreɪʃn/",pos:"n.",tag:"backend",
+ short:"迁移：数据或版本的升级搬迁",
+ def:["把**数据结构或版本从一个状态搬到下一个状态**。","数据库迁移脚本负责建表改列；客户端迁移负责处理旧数据升级。"],
+ uses:["database migration 数据库迁移","migration script 迁移脚本","run migrations 执行迁移"],
+ ex:[["Write a migration before changing the table schema.","改表结构前先写一条迁移。"]],
+ deriv:"migrate v. 迁移"},
+
+{w:"reduce / reducer",ph:"/rɪˈdjuːs/ · /rɪˈdjuːsə(r)/",pos:"v./n.",tag:"general",
+ short:"reduce 归约：把一组值压缩成一个结果；reducer 执行归约的函数",
+ def:["**reduce**：把集合里的元素逐个合并，最终得到一个值（求和、拼接、聚合都靠它）。","**reducer**：执行归约的那个函数，在 Redux / 状态管理里就是「根据旧状态与动作算出新状态」的纯函数。"],
+ uses:["reduce(list, initial) 归约计算","reducer(state, action) 状态处理函数"],
+ ex:[["Use reduce to sum the durations.","用 reduce 把时长求和。"]],
+ vs:[["reduce","把集合压成一个结果"],["map","逐个转换，数量不变"],["filter","按条件筛选"]]},
+
+{w:"automation",ph:"/ˌɔːtəˈmeɪʃn/",pos:"n.",tag:"tools",
+ short:"自动化",
+ def:["让原本手工重复的流程**自动执行**。","开发场景主要指自动化测试、自动化构建与部署。"],
+ uses:["automation test 自动化测试","CI automation 持续集成自动化"],
+ ex:[["Set up automation to run tests on every push.","配置自动化，每次推送都跑一遍测试。"]],
+ deriv:"automate v. 使自动化；automated adj. 自动化的"},
+
+{w:"material",ph:"/məˈtɪəriəl/",pos:"n./adj.",tag:"dart",
+ short:"材料；也指 Material Design 设计体系",
+ def:["通用含义是材料、素材。","大写 Material 时特指 Google 的 **Material Design** 设计规范，以及对应的组件库。"],
+ uses:["Material Design 设计规范","MaterialApp 应用根组件","material widget 材质组件"],
+ ex:[["Wrap the page in a Material widget to get ink effects.","把页面包在 Material 组件里才有水波纹效果。"]],
+ vs:[["material","材料；Material 设计体系"],["cupertino","iOS 风格组件集合"]]},
+
+{w:"ellipsis",ph:"/ɪˈlɪpsɪs/",pos:"n.",tag:"dart",
+ short:"省略号：文字溢出时的截断标记",
+ def:["字面就是「…」，界面上用来表示**文字被截断了**。","Flutter 的 TextOverflow.ellipsis 就是溢出处显示省略号。"],
+ uses:["TextOverflow.ellipsis 溢出省略","ellipsis icon 更多菜单图标"],
+ ex:[["Long titles should use ellipsis instead of wrapping.","长标题应该用省略号而不是折行。"]],
+ tip:"注意区分：省略号是 ellipsis，一句话中间省略的标点也是它；三个点连写不是三个句号。"},
+
+{w:"stretch",ph:"/stretʃ/",pos:"v./n.",tag:"dart",
+ short:"拉伸：把元素撑满可用空间",
+ def:["让元素**沿着某个方向拉满**剩余空间，而不是按内容大小收缩。","Flutter 里 StretchMode 常让子项在交叉轴上撑满父级。"],
+ uses:["stretch to fill 撑满","Stretch mode 拉伸模式"],
+ ex:[["Let the header stretch across the full width.","让头部横向撑满整个宽度。"]],
+ vs:[["stretch","拉伸填满空间"],["shrink","收缩到内容大小"],["expand","扩大，侧重占用剩余空间"]]},
+
+{w:"abort",ph:"/əˈbɔːt/",pos:"v./n.",tag:"backend",
+ short:"中止、取消（进行中的任务）",
+ def:["主动**终止一个尚未完成的操作**，不再等它返回。","前端里 AbortController 用来取消网络请求；后端指中断事务或任务。"],
+ uses:["abort the request 取消请求","AbortController 取消控制器","abort signal 中止信号"],
+ ex:[["Abort the previous request when a new one starts.","新请求发起时，取消上一个请求。"]],
+ deriv:"abortion n. 中止（技术语境里少用）",
+ vs:[["abort","主动取消未完成的任务"],["cancel","通用取消，语义更轻"],["terminate","彻底结束进程或连接"]]},
+
+{w:"Iterable",ph:"/ˈɪtərəbl/",pos:"n./adj.",tag:"dart",
+ short:"可迭代对象：能被逐个遍历的集合",
+ def:["Dart 中所有可遍历集合的父类型，**能取到一次次「下一个元素」**。","List、Set、Map 的部分视图都是 Iterable；惰性方法（map / where）返回的也是它。"],
+ uses:["Iterable<int> 整数可迭代对象","toList() 转成列表"],
+ ex:[["map on an Iterable is lazy until you iterate it.","对 Iterator 做 map 是惰性的，直到真正遍历才执行。"]],
+ vs:[["Iterable","可被遍历的抽象，惰性"],["List","有序可索引，立即计算"],["Iterator","遍历过程的游标本身"]]},
+
+{w:"Scheme",ph:"/skiːm/",pos:"n.",tag:"dart",
+ short:"方案；配色方案；应用跳转协议",
+ def:["在开发里主要有三个意思：**配色方案**（ColorScheme）、**URL Scheme**（myapp:// 这种自定义协议，用来唤起应用）、**Xcode Scheme**（编译配置方案）。","通用含义是方案、计划。"],
+ uses:["ColorScheme 配色方案","url scheme 应用跳转协议","build scheme 编译方案"],
+ ex:[["The app registers a custom scheme to open from the browser.","应用注册了一个自定义协议，可以从浏览器唤起。"]],
+ tip:"和 schema 只差一个字母，但意思完全不同：scheme 是方案，schema 是数据结构定义。"},
+
+{w:"chunk",ph:"/tʃʌŋk/",pos:"n./v.",tag:"backend",
+ short:"块、分片",
+ def:["把大数据**切成小块**分别处理或传输。","分片上传、分包加载、流式响应都会用到。"],
+ uses:["chunk upload 分片上传","chunk size 分片大小","chunked response 分块响应"],
+ ex:[["Upload the file in chunks to survive a flaky network.","用分片上传，网络不稳也能续上。"]],
+ vs:[["chunk","数据分块"],["batch","批，按数量成组处理"],["segment","段，按逻辑或时间切分"]]},
+
+{w:"inflated",ph:"/ɪnˈfleɪtɪd/",pos:"adj.",tag:"android",
+ short:"已实例化（布局被解析成真实视图）",
+ def:["Android 里 inflate 指**把 XML 布局文件解析成真实 View 对象**，inflated 就是「已经解析成对象了」。","在 Flutter 语境里常被类比为组件挂载实例化的过程。"],
+ uses:["inflate the layout 加载布局","layout inflated 布局已实例化"],
+ ex:[["The layout is inflated once and then reused.","布局只解析一次，之后复用。"]],
+ deriv:"inflate v. 填充，实例化；inflation n."},
+
+{w:"duplex",ph:"/ˈdjuːpleks/",pos:"adj./n.",tag:"backend",
+ short:"双工的：两个方向都能传数据",
+ def:["通信术语，指**同一连接上双向都能传输**。","WebSocket 就是全双工，HTTP 请求响应则是一次一来回。"],
+ uses:["full-duplex 全双工","half-duplex 半双工"],
+ ex:[["WebSocket gives you a full-duplex channel.","WebSocket 提供的是一条全双工通道。"]],
+ vs:[["full-duplex","双向可同时收发"],["half-duplex","双向但同一时刻只能一个方向"],["simplex","单向传输"]]},
+
+{w:"express",ph:"/ɪkˈspres/",pos:"v./n.",tag:"backend",
+ short:"表达；也是 Node.js 的后端框架名",
+ def:["动词含义是表达、表示。","大写 Express 指 Node.js 生态里最经典的轻量 Web 框架，用于写接口和路由。"],
+ uses:["Express app 应用实例","express.Router() 路由分组"],
+ ex:[["We serve the API with Express.","我们用 Express 提供接口。"]],
+ vs:[["express","表达；后端框架"],["export","导出，注意拼写只差一个字母"]]},
+
+{w:"dock",ph:"/dɒk/",pos:"v./n.",tag:"general",
+ short:"停靠；也指系统底部的 Dock 栏",
+ def:["动词是**把窗口或面板停靠到边缘**；名词指 macOS 底部那条应用栏。","界面文档里常说 dock a panel to the side。"],
+ uses:["dock to the side 停靠到侧边","dock bar 停靠栏"],
+ ex:[["You can dock the panel to either side.","你可以把面板停靠到任意一侧。"]],
+ vs:[["dock","停靠，贴住边缘"],["float","浮动，不贴边"],["pin","固定，侧重不被打乱"]]}
+);
+WORDS.push(
+{w:"Docker",ph:"/ˈdɒkə(r)/",pos:"n.",tag:"tools",
+ short:"Docker：把应用和依赖打包成容器的工具",
+ def:["**容器化工具**：把应用连同运行环境一起打包，换台机器也能一致运行。","和虚拟机的区别是容器共享宿主机内核，启动更快、占用更小。"],
+ uses:["docker build 构建镜像","docker run 运行容器","Dockerfile 构建描述文件"],
+ ex:[["Package the service in Docker so the environment matches.","把服务打进 Docker，环境才能保持一致。"]],
+ vs:[["Docker 容器","共享内核，秒级启动"],["虚拟机","独立内核，更重更隔离"]]},
+
+{w:"helmet",ph:"/ˈhelmɪt/",pos:"n.",tag:"general",
+ short:"头盔、防护帽",
+ def:["硬质防护帽。","作为素材名时，界面里通常就是一枚头盔图标。"],
+ uses:["safety helmet 安全帽","riding helmet 骑行头盔"],
+ ex:[["The avatar wears a helmet in the game scene.","游戏场景里这个头像戴着头盔。"]]},
+
+{w:"volumes",ph:"/ˈvɒljuːmz/",pos:"n.",tag:"tools",
+ short:"数据卷：容器之外独立保存的数据区",
+ def:["Docker 里用来**持久保存容器数据**：容器删掉，卷里的数据还在。","也泛指卷、音量、书籍卷册，具体看上下文。"],
+ uses:["docker volumes 数据卷","volume mount 卷挂载","persistent volume 持久卷（K8s）"],
+ ex:[["Use a volume so the database survives a container restart.","用数据卷，容器重启数据库数据才不会丢。"]],
+ tip:"容器本身是临时的，数据写在容器内部，删容器数据就丢；卷把数据挂到宿主机独立存储，所以必须挂卷。"},
+
+{w:"Avatar",ph:"/ˈævətɑː(r)/",pos:"n.",tag:"dart",
+ short:"头像、虚拟形象",
+ def:["代表用户或角色的**图像 / 虚拟形象**。","软件里用户头像统一叫 avatar，圆形头像组件就叫 CircleAvatar。"],
+ uses:["user avatar 用户头像","default avatar 默认头像","avatar url 头像地址"],
+ ex:[["Upload a new avatar to replace the default one.","上传新头像替换默认头像。"]],
+ vs:[["avatar","用户或角色的形象，含虚拟形象"],["profile picture","偏真实的个人资料照片"],["icon","小图标，一般不指用户头像"]]},
+
+{w:"repository",ph:"/rɪˈpɒzətri/",pos:"n.",tag:"backend",
+ short:"仓库：代码仓库，或架构里的数据访问层",
+ def:["最常见的用法是**代码仓库**（Git / GitHub），存放源码、提交历史和分支，口语常缩写成 repo。","架构上还有 **Repository 模式**：把数据访问封装成一层，业务逻辑不直接碰数据源。"],
+ uses:["git repository 代码仓库","remote repository 远端仓库","repository pattern 仓储模式"],
+ ex:[["Push the branch to the remote repository.","把这个分支推到远端仓库。"]],
+ vs:[["repository","仓库，含完整历史与分支"],["library","库，可被引入的代码模块"],["package","包，依赖管理的最小单位"]]},
+
+{w:"poll",ph:"/pəʊl/",pos:"v./n.",tag:"backend",
+ short:"轮询：定时反复请求，主动拉最新数据",
+ def:["客户端**每隔一段时间主动问一次服务端**，拿到最新状态。","和 WebSocket 的推送相对：轮询靠客户端反复问，推送靠服务端主动发。"],
+ uses:["long poll 长轮询","poll interval 轮询间隔","poll for updates 轮询获取更新"],
+ ex:[["We poll the server every two seconds to check task status.","我们每两秒轮询一次服务器，检查任务状态。"]],
+ deriv:"polling n. 轮询；poller n. 轮询器",
+ vs:[["poll","客户端定时主动查询"],["push","服务端主动下发"],["subscribe","订阅，监听事件变化"]],
+ tip:"页面里开轮询，一定要在页面销毁时取消定时器，否则会一直空转，还可能内存泄漏。"},
+
+{w:"schema",ph:"/ˈskiːmə/",pos:"n.",tag:"backend",
+ short:"模式／结构定义：描述数据长什么样",
+ def:["**数据的骨架**：有哪些字段、什么类型、有什么约束。","JSON Schema 校验请求体，数据库 schema 描述表结构，GraphQL schema 定义接口类型。"],
+ uses:["database schema 数据库结构","json schema 结构校验模板","schema validation 结构校验"],
+ ex:[["Define a schema to validate the request body.","定义一个结构来校验请求体。"]],
+ vs:[["schema","数据结构定义"],["scheme","方案、配色、跳转协议"],["structure","泛指结构，不含约束"]]},
+
+{w:"overlap",ph:"/ˌəʊvəˈlæp/",pos:"v./n.",tag:"dart",
+ short:"重叠：部分区域互相盖住",
+ def:["两个元素**有一部分重合**，各自还有独立区域，不是完全覆盖。","界面里用 Stack 让组件重叠；屏宽变化时要防止文字互相压住。"],
+ uses:["overlap area 重叠区域","overlap detection 重叠检测","no overlap 不重叠"],
+ ex:[["Don't let the icon and the text overlap.","别让图标和文字重叠。"]],
+ deriv:"overlapping adj. 重叠的",
+ vs:[["overlap","部分交叠，仍能看到各自内容"],["overlay","浮层，整体盖在上方"],["stack","堆叠，上下摆放，不一定重叠"]]},
+
+{w:"intercept",ph:"/ˌɪntəˈsept/",pos:"v./n.",tag:"backend",
+ short:"拦截：在到达目标前先接住它",
+ def:["在请求、事件传到目标之前**中途捕获**，可以修改、放行或直接终止。","网络层拦截请求加 token、移动端拦截路由做登录校验，都叫 intercept。"],
+ uses:["intercept request 拦截请求","intercept navigation 拦截路由","http intercept HTTP 拦截"],
+ ex:[["We intercept requests to inject the auth token.","我们拦截请求，注入身份令牌。"]],
+ deriv:"interceptor n. 拦截器（开发里最高频的派生词）",
+ vs:[["intercept","中途截住，可改可放可拦"],["override","重写，替换原有实现"],["block","直接阻止，偏禁止"]]},
+
+{w:"resume",ph:"/rɪˈzjuːm/",pos:"v.",tag:"async",
+ short:"恢复、继续执行（中断之后）",
+ def:["暂停或挂起之后**接着往下执行**，是 suspend 的反动作。","Android 生命周期里的 onResume 也是这个意思：页面回到可交互状态。"],
+ uses:["resume execution 恢复执行","resume task 恢复任务","onResume 生命周期回调"],
+ ex:[["The coroutine resumes after the suspend function returns.","挂起函数返回后，协程会恢复执行。"]],
+ deriv:"resumption n. 恢复",
+ vs:[["resume","中断后接着跑"],["restart","从头重新开始"],["restore","还原数据或状态，不是继续运行"]],
+ tip:"拼写相同的名词 resume /ˈrezjumeɪ/ 是「简历」，重音和读音都不一样，技术文档里基本只取「恢复」义。"},
+
+{w:"CPS",ph:"Continuation-Passing Style",pos:"n.",tag:"async",
+ short:"续体传递风格：把「后续要执行的代码」当参数传进去",
+ def:["全称 **Continuation-Passing Style**，三个词：Continuation 续体 + Passing 传递 + Style 风格。","普通函数靠 return 把结果交回调用者；CPS 把后面还没执行的逻辑包装成续体参数传进去，等异步完成再调用它。"],
+ uses:["CPS transformation CPS 变换","continuation: Continuation<T> 续体参数"],
+ ex:[["Kotlin suspend functions use CPS transformation under the hood.","Kotlin 的挂起函数底层用的是 CPS 变换。"]],
+ vs:[["CPS","改写函数签名与控制流的方式"],["状态机","记录执行到哪一步、变量是多少"],["回调","语义相近，但续体还携带剩余执行上下文"]],
+ tip:"CPS 负责传递后续逻辑，状态机负责记住断点和局部变量，两者配合才实现了协程的挂起与恢复。"},
+
+{w:"Continuation",ph:"/kənˌtɪnjuˈeɪʃn/",pos:"n.",tag:"async",
+ short:"续体：封装「剩下还没执行的代码」的对象",
+ def:["编译器为每个挂起函数生成的**回调对象**，里面装着剩余的代码和跨挂起点的局部变量。","异步任务完成后调用它的 resumeWith() 恢复执行。"],
+ uses:["Continuation<T> 续体类型","resumeWith() 恢复执行","COROUTINE_SUSPENDED 挂起标记"],
+ ex:[["The continuation holds the rest of the function.","续体里保存着这个函数剩下的部分。"]]},
+
+{w:"State Machine",ph:"/steɪt məˈʃiːn/",pos:"n.",tag:"async",
+ short:"状态机：用「当前处于哪一步」驱动后续执行",
+ def:["在协程底层，状态机的**状态就是执行断点**：每遇到一个挂起点就是一个状态。","内部记录 label（第几步）、跨挂起点要保留的局部变量、以及续体对象，恢复时用 switch 跳到对应断点继续。"],
+ uses:["label 断点标签","state 0 / 1 / 2 各挂起点","switch 跳转到断点"],
+ ex:[["The compiler turns the function into a state machine.","编译器把这个函数变成了一个状态机。"]],
+ vs:[["状态机","记住执行到哪、变量是多少"],["CPS","规定后续逻辑怎么传递"]]},
+
+{w:"splash",ph:"/splæʃ/",pos:"n.",tag:"dart",
+ short:"启动页；也指点击的水波纹",
+ def:["**Splash Screen / 启动页**：冷启动时先展示的品牌页，遮住初始化的空窗。","**水波纹**：点击控件时扩散的涟漪，InkWell 的 splashColor 就是它。"],
+ uses:["splash screen 启动页","splashColor 水波纹颜色","ink splash 墨水涟漪"],
+ ex:[["The splash screen shows the logo while the SDK initializes.","SDK 初始化期间，启动页展示 Logo。"]],
+ vs:[["splash","启动页；点击水波纹"],["launch screen","iOS 官方叫法，同样是启动页"],["ripple","特指圆形涟漪"]]},
+
+{w:"embedding",ph:"/ɪmˈbedɪŋ/",pos:"n.",tag:"general",
+ short:"向量嵌入：把文本／图片变成一串数字向量",
+ def:["把文字、图片、音频这类**非结构化数据转成低维稠密向量**，语义相近的内容在向量空间里距离更近。","搜索、推荐、RAG 都靠它做语义相似度检索。"],
+ uses:["text embedding 文本嵌入","embedding model 嵌入模型","embedding dimension 向量维度"],
+ ex:[["We use text embedding to implement semantic search.","我们用文本嵌入实现语义搜索。"]],
+ deriv:"embed v. 嵌入；embedded adj. 嵌入式的",
+ vs:[["embedding","向量嵌入；也指嵌入这个动作"],["embedded","嵌入式的，如嵌入式系统"]]},
+
+{w:"rough",ph:"/rʌf/",pos:"adj.",tag:"general",
+ short:"粗糙的；粗略的、大概的",
+ def:["表面不光滑叫粗糙。","做方案时常说粗略的——**rough estimate 粗略估算、rough draft 草稿**，表示先出个大概。"],
+ uses:["rough estimate 粗略估算","rough sketch 草图","rough edges 毛刺，粗糙边缘"],
+ ex:[["This is just a rough prototype, polish comes later.","这只是个粗略原型，细节后面再打磨。"]],
+ deriv:"roughly adv. 大约；roughness n. 粗糙度",
+ vs:[["rough","粗糙；粗略，未打磨"],["coarse","质地粗粝，颗粒感强"],["draft","草稿，偏文稿与图纸"]]},
+
+{w:"manipulate",ph:"/məˈnɪpjuleɪt/",pos:"v.",tag:"dart",
+ short:"操作、操控（数据、图形、界面元素）",
+ def:["**精细地操控或修改**某个对象，开发里多指处理数据、图形、像素、组件状态。","用于人时带贬义，指操纵摆布。"],
+ uses:["manipulate data 处理数据","manipulate DOM 操作 DOM","manipulate geometry 操作几何图形"],
+ ex:[["The canvas lets users manipulate shapes directly.","画布允许用户直接操作图形。"]],
+ deriv:"manipulation n. 操作；manipulator n. 操纵器",
+ vs:[["manipulate","精细操控、修改"],["operate","运行设备或机器，更宽泛"],["control","控制，侧重权限与开关"]]},
+
+{w:"explicit",ph:"/ɪkˈsplɪsɪt/",pos:"adj.",tag:"general",
+ short:"显式的、明确写出来的",
+ def:["需要**手动写出来**指定，而不是让编译器或运行时自动推断。","和 implicit（隐式的）正好相对。"],
+ uses:["explicit type 显式类型","explicit cast 显式转换","explicit permission 显式授权"],
+ ex:[["Use an explicit type instead of relying on inference.","用显式类型，不要依赖自动推断。"]],
+ deriv:"explicitly adv. 显式地；explicitness n. 明确性",
+ vs:[["explicit","显式，需要写出来"],["implicit","隐式，自动推断或暗含"],["clear","清晰，日常词，不是编程术语"]]},
+
+{w:"senior",ph:"/ˈsiːniə(r)/",pos:"adj./n.",tag:"general",
+ short:"资深的、高级的；前辈",
+ def:["形容**资历更深、级别更高**。","岗位上如 senior engineer（高级工程师）、senior developer（资深开发）。"],
+ uses:["senior engineer 高级工程师","senior architect 资深架构师","senior colleague 老同事"],
+ ex:[["She is a senior mobile developer on the team.","她是团队里的资深移动端开发。"]]},
+
+{w:"ANR",ph:"Application Not Responding",pos:"n.",tag:"android",
+ short:"应用无响应：主线程被卡住太久，系统弹窗",
+ def:["全称 **Application Not Responding**。系统发现**主线程长时间无法响应用户输入**，就弹出「等待 / 关闭应用」。","判定阈值：按键触摸事件约 5 秒、广播 onReceive 约 10 秒、前台服务约 20 秒。"],
+ uses:["ANR dialog 无响应弹窗","main thread blocked 主线程阻塞","trace 分析 ANR 日志"],
+ ex:[["Long running tasks on the main thread will trigger an ANR.","在主线程执行耗时任务会触发 ANR。"]],
+ vs:[["ANR","主线程卡住，系统弹窗提示等待或关闭"],["Crash","代码异常直接闪退"],["卡顿","帧率掉帧，但还能响应"]],
+ tip:"即使用了协程，只要在 Dispatchers.Main 里执行同步耗时代码，依然会阻塞主线程触发 ANR；delay() 这类挂起函数才不阻塞。"},
+
+{w:"Coroutine",ph:"/kəˈruːtiːn/",pos:"n.",tag:"async",
+ short:"协程：跑在线程之上的轻量任务，可挂起而不阻塞线程",
+ def:["Kotlin 的**轻量级并发方案**，本质是依附在线程上、由协程库在用户态调度的任务，不是操作系统线程。","创建成本极低，可以同时启动大量协程；核心优势是用同步风格写异步代码。"],
+ uses:["Dispatchers.Main 主线程调度器","Dispatchers.IO IO 调度器","withContext 切换执行线程"],
+ ex:[["The coroutine suspends instead of blocking the thread.","协程是挂起，而不是阻塞线程。"]],
+ vs:[["协程","用户态轻量任务，可挂起，线程不阻塞"],["线程","操作系统调度，阻塞即占住资源"],["Future / Promise","表达异步结果，不含调度机制"]],
+ tip:"协程不等于子线程：跑在主调度器上就是在主线程，可以更新 UI，但也照样会 ANR。suspend 只是挂起，理解这点是关键。"}
+);
+
+/* ===== 补录：早期对话中问过、但未收录的词条（一） ===== */
+WORDS.push(
+{w:"compact",ph:"/ˈkɒmpækt/（adj./n.）；kəmˈpækt（v.）",pos:"adj./n./v.",tag:"general",
+ short:"紧凑的、精简的；也指压缩内存",
+ def:["形容词指**小巧紧凑、结构精简**，但核心功能不打折：compact layout 紧凑布局、compact data structure 紧凑数据结构。","作动词时读 /kəmˈpækt/，表示压紧、压缩，如 compact memory。","名词还指小粉盒、契约，以及 compact disc（光盘）。"],
+ uses:["compact layout 紧凑布局","compact data structure 紧凑数据结构","compact code 精简代码","compact disc 光盘"],
+ ex:[["This library provides a compact implementation of the algorithm.","这个库提供了该算法的精简实现。"],["We need a more compact JSON payload to reduce network traffic.","我们需要更精简的 JSON 负载，以减少网络流量。"]],
+ deriv:"compactness n. 紧凑度、精简性",
+ vs:[["compact","体积小、结构紧凑，功能不减"],["concise","文字表达简洁，多指文档"],["compressed","被压缩过，如 compressed file"]],
+ tip:"Flutter 里的 VisualDensity.compact 取的就是「更紧凑」这层意思，用来压小控件默认间距。"},
+
+{w:"toggle",ph:"/ˈtɒɡl/",pos:"v./n.",tag:"dart",
+ short:"切换、翻转（两个状态之间来回）",
+ def:["让状态在**两个值之间来回切换**，比如 on ↔ off、true ↔ false。","名词指那个切换开关控件本身。"],
+ uses:["toggle switch 切换开关","toggle state 切换状态","toggle visibility 切换显示与隐藏","toggle boolean 翻转布尔值"],
+ ex:[["Click the button to toggle dark mode.","点击按钮切换深色模式。"]],
+ vs:[["toggle","两个状态来回翻转"],["switch","切换，可包含多个选项"],["flip","翻转，多用于布尔值"]]},
+
+{w:"annotation",ph:"/ˌænəˈteɪʃn/",pos:"n.",tag:"general",
+ short:"注解：贴在代码上的元标记",
+ def:["给编译器或框架看的**元标记**，本身不参与业务逻辑运行。","Java 的 @Service、Dart 的 @riverpod、Kotlin 的注解都是 annotation。"],
+ uses:["custom annotation 自定义注解","annotation processor 注解处理器","compile-time annotation 编译期注解","runtime annotation 运行时注解"],
+ ex:[["Riverpod uses custom annotations to generate provider code.","Riverpod 使用自定义注解自动生成 Provider 代码。"]],
+ deriv:"annotate v. 标注、加注解；annotated adj. 带注解的",
+ vs:[["annotation","给编译器 / 框架用的元数据"],["comment","写给人看的注释，编译时忽略"],["note","普通笔记说明"]]},
+
+{w:"idempotent",ph:"/aɪˈdempətənt/",pos:"adj.",tag:"backend",
+ short:"幂等的：重复执行多次，结果与执行一次相同",
+ def:["**同一个请求执行 N 次，效果和执行 1 次完全一样**：不会重复扣款，也不会重复建单。","HTTP 里 GET / PUT / DELETE 天然幂等，POST 不幂等，所以新增与扣款要自己做幂等防护。"],
+ uses:["idempotent API 幂等接口","idempotency key 幂等键","requestId 请求唯一号","唯一索引挡重复写入"],
+ ex:[["This API must be idempotent to avoid duplicate payments.","这个接口必须保证幂等，避免重复扣款。"]],
+ deriv:"idempotency n. 幂等性",
+ vs:[["幂等","调多少次结果都一样"],["防重锁","同一时间只允许跑一次"],["唯一索引","用数据库约束挡住重复写入"]],
+ tip:"update user set name='jack' 天然幂等；update balance = balance - 100 不幂等，重复调用就会多扣钱。"},
+
+{w:"manifestation",ph:"/ˌmænɪfeˈsteɪʃn/",pos:"n.",tag:"general",
+ short:"表现、显现：抽象问题的具体体现",
+ def:["名词，指某种状态或原因**具体表现出来的形式**。","词根是 manifest（清单；显现）。"],
+ uses:["a manifestation of the runtime error 运行时错误的一种表现"],
+ ex:[["This popup is a manifestation of a state change.","这个弹窗是状态变化的一种表现。"]],
+ vs:[["manifestation","表现形式（名词）"],["manifest","清单；显示（名词 / 动词）"]],
+ tip:"拼写注意：manifestation ✔，manifaction ✘，后者不是英文单词。"},
+
+{w:"vibe",ph:"/vaɪb/",pos:"n.",tag:"general",
+ short:"氛围、调性、感觉（口语）",
+ def:["主观感受到的**整体氛围与格调**，产品评审和 UI 讨论里很常用。","复数 vibes，形容词 vibey 表示很有氛围感。"],
+ uses:["overall vibe 整体格调","match the vibe 匹配调性","good vibes 好氛围"],
+ ex:[["This UI gives a clean modern vibe.","这个界面给人清爽现代的感觉。"],["We adjust the palette to match the app's vibe.","我们调整色板来匹配应用的格调。"]],
+ vs:[["vibe","主观氛围，偏口语"],["style","客观风格，正式"],["atmosphere","环境气氛，多用于场景"]]},
+
+{w:"shrink",ph:"/ʃrɪŋk/",pos:"v./n.",tag:"dart",
+ short:"缩小、收缩（尺寸或体积变小）",
+ def:["**尺寸或体积变小**，可以是主动收缩，也可以是被压缩。","过去式 shrank，过去分词 shrunk。"],
+ uses:["shrink size 缩小尺寸","shrink bundle 缩减打包体积","shrink animation 收缩动画"],
+ ex:[["The widget will shrink when the window width decreases.","窗口宽度变小时，组件会收缩。"],["We need to shrink the bundle size for faster loading.","我们需要缩减包体积以获得更好的加载性能。"]],
+ deriv:"shrinkage n. 收缩量；shrinkable adj. 可收缩的",
+ vs:[["shrink","尺寸、体积变小"],["reduce","泛指数量或大小降低"],["compress","编码压缩，如压缩文件"]]},
+
+{w:"GMA",ph:"Google Mobile Ads",pos:"n.",tag:"dart",
+ short:"Google 移动广告 SDK 的缩写",
+ def:["移动端语境下默认指 **Google Mobile Ads**，Flutter 里对应 google_mobile_ads 包。","用来接入开屏、插屏、激励视频和横幅广告。"],
+ uses:["GMA SDK 谷歌移动广告 SDK","GMA rewarded ad 激励广告","GMA banner ad 横幅广告","GMA interstitial ad 插屏广告"],
+ ex:[["We integrated the GMA SDK to show rewarded ads.","我们集成了 GMA SDK 来展示激励广告。"]],
+ vs:[["GMA","移动端默认指谷歌移动广告"],["其他含义","Global Media Alliance 等，按上下文区分"]]},
+
+{w:"UI / UX / UE",ph:"User Interface / User Experience",pos:"n.",tag:"general",
+ short:"界面 / 体验 / 体验（UX 的旧写法）",
+ def:["**UI = User Interface**：界面长什么样，管配色、图标、布局、字体与间距。","**UX = User Experience**：用起来怎么样，管流程、交互、反馈与容错；UI 只是 UX 的一部分。","**UE** 是 UX 的旧写法，如今统一写 UX；别和 UE5（虚幻引擎）混淆。"],
+ uses:["UI designer 界面设计师","UX flow 体验流程","UED 用户体验设计部门"],
+ ex:[["UI is part of UX, not a synonym.","UI 是 UX 的一部分，不是同义词。"]],
+ vs:[["UI","视觉界面长什么样"],["UX","整体体验与流程"],["UED","做体验设计的部门或岗位"]]},
+
+{w:"UUID",ph:"/ˌjuː juː aɪ ˈdiː/",pos:"n.",tag:"backend",
+ short:"通用唯一标识符：128 位的全局唯一 ID",
+ def:["128 位的唯一标识，UUIDv4 是 36 位字符串（含 4 个连字符）。","完全无序，做主键时索引性能差；建议去掉连字符按 CHAR(32) 存储。"],
+ uses:["UUIDv4 随机版本","去掉横杠得 32 位字符串","CHAR(32) 固定长度存储"],
+ ex:[["Strip the dashes to store a UUID as 32 characters.","去掉连字符，把 UUID 按 32 位字符串存储。"]],
+ vs:[["UUID","无序、无中心生成"],["Snowflake","趋势递增，索引友好"],["UID","用户标识，业务语义，别与 UUID 混用"]]},
+
+{w:"Snowflake",ph:"/ˈsnəʊfleɪk/",pos:"n.",tag:"backend",
+ short:"雪花算法：64 位、趋势递增的分布式 ID",
+ def:["标准 64 位拆分为：1 位符号 + **41 位时间戳 + 10 位机器 ID + 12 位序列号**。","服务本地内存生成，不依赖数据库；单节点每毫秒最多 4096 个 ID。"],
+ uses:["64 位长整型，输出 18–19 位数字","接口返回转字符串，避免 JS 精度丢失","机器 ID 多实例不可重复"],
+ ex:[["Snowflake IDs are roughly ordered, so indexes stay efficient.","雪花 ID 大致有序，索引效率高。"]],
+ vs:[["Snowflake","有序递增，索引友好"],["数据库自增","连续，易被遍历，分布式下不好用"],["号段模式","批量预取，适合高并发"]],
+ tip:"两个坑：服务器时间回拨会生成重复 ID，要做回拨检测；多实例部署时机器 ID 必须唯一。"},
+
+{w:"MD5",ph:"/ˌem diː ˈfaɪv/",pos:"n.",tag:"backend",
+ short:"摘要算法：输出 128 位，即 32 位十六进制字符串",
+ def:["哈希摘要算法，输出**固定的 32 位十六进制字符串**，不可逆。","适合做签名与完整性校验，**不适合充当业务主键**：有碰撞风险，而且完全无序。"],
+ uses:["32 位 hex 字符串","签名与校验","不适合做主键"],
+ ex:[["MD5 is a digest, not encryption.","MD5 是摘要，不是加密。"]],
+ vs:[["MD5","摘要，用于校验与签名"],["UUID","唯一标识，本身已保证唯一"],["加密","可解密还原，MD5 不能"]],
+ tip:"对已经唯一的 UUID 再做一次 MD5 不会提升唯一性，反而引入碰撞风险，还白占 32 字节索引空间。"},
+
+{w:"revoke",ph:"/rɪˈvəʊk/",pos:"v.",tag:"backend",
+ short:"撤销、作废（密钥、令牌、权限）",
+ def:["把已经发出去的**凭证或权限作废**，令其立即失效。","密钥轮换时，旧密钥要等旧 token 全部过期之后才能 revoke。"],
+ uses:["revoke a key 撤销密钥","revoke token 作废令牌","revoke permission 收回权限","key rotation 密钥轮换"],
+ ex:[["Revoke the old signing key once all tokens have expired.","等所有令牌过期后，再撤销旧的签名密钥。"]],
+ vs:[["revoke","撤销已生效的凭证"],["delete","直接删除记录"],["rotate","轮换：换新的同时保留旧的做过渡"]]},
+
+{w:"technical",ph:"/ˈteknɪkl/",pos:"adj.",tag:"general",
+ short:"技术的、专业的",
+ def:["与**技术相关**的，技术文档、技术术语都用它。","重音在第一音节 /ˈteknɪkl/。"],
+ uses:["technical document 技术文档","technical term 专业术语","technical debt 技术债"],
+ ex:[["I read many technical articles.","我读了很多技术文章。"]],
+ deriv:"technically adv. 从技术上讲；technique n. 技术、技巧"},
+
+{w:"document",ph:"/ˈdɒkjumənt/（动词读 /ˈdɒkjument/）",pos:"n./v.",tag:"general",
+ short:"文档、文件；也指记录成文",
+ def:["名词指**文档、文件**；作动词时表示把过程记录下来。","开发里常见的有接口文档、设计文档、发布说明。"],
+ uses:["official document 官方文档","API document 接口文档","document the process 把流程记录下来"],
+ ex:[["Please check this official document.","请查看这份官方文档。"]],
+ deriv:"documentation n. 文档（集合）；documented adj. 有文档记录的"},
+
+{w:"API",ph:"/ˌeɪ piː ˈaɪ/",pos:"n.",tag:"backend",
+ short:"应用程序接口：程序之间约定的调用入口",
+ def:["全称 **Application Programming Interface**，一套约定好的调用方式。","前端调后端、SDK 对外提供能力，都要经过 API。"],
+ uses:["API definition 接口定义","API endpoint 接口地址","REST API / GraphQL API"],
+ ex:[["This API supports asynchronous requests.","这个 API 支持异步请求。"]],
+ vs:[["API","程序之间的调用契约"],["interface","接口，范围更广，也指语言层面的接口"],["SDK","把一组 API 连同工具打包给你的开发包"]],
+ tip:"API 是契约，SDK 是礼盒：SDK 里通常包含一组 API 加辅助工具与文档。"}
+);
+
+/* ===== 补录：最早几轮英语练习里带出的词汇（二） ===== */
+WORDS.push(
+{w:"framework",ph:"/ˈfreɪmwɜːk/",pos:"n.",tag:"general",
+ short:"框架：搭好骨架、定好约定的开发基础库",
+ def:["一套**已经搭好骨架**的代码库，你按它的规则往里填业务。","注意 /eɪ/ 双元音要到位，重音在第一音节。"],
+ uses:["Flutter / React 都是 UI 框架","framework feature 框架特性","framework upgrade 框架升级"],
+ ex:[["This mobile framework is widely used.","这个移动端框架应用很广。"]],
+ vs:[["framework","规定了调用关系，由你填代码"],["library","你主动调用它，主动权在自己"],["SDK","工具包，含工具与接口"]]},
+
+{w:"feature",ph:"/ˈfiːtʃə(r)/",pos:"n.",tag:"general",
+ short:"特性、功能点",
+ def:["产品或框架提供的**一个具体能力**。","也常出现在特性开关 feature flag 的说法里。"],
+ uses:["new feature 新功能","feature flag 特性开关","core feature 核心特性"],
+ ex:[["This new feature improves performance.","这个新功能提升了性能。"]],
+ vs:[["feature","具体功能点"],["function","函数；也指功能，偏能力实现"],["capability","能力，更抽象"]]},
+
+{w:"unfamiliar",ph:"/ˌʌnfəˈmɪliə(r)/",pos:"adj.",tag:"general",
+ short:"不熟悉的、陌生的",
+ def:["常用结构 **be unfamiliar with...**，表示对某事不熟悉。","反义词 familiar（熟悉的）。"],
+ uses:["unfamiliar vocabulary 陌生词汇","unfamiliar with the API 对接口不熟"],
+ ex:[["Some terms are unfamiliar to me.","有些术语对我来说很陌生。"]],
+ vs:[["unfamiliar","主观上不熟悉"],["strange","奇怪的，语义更强"]]},
+
+{w:"regularly",ph:"/ˈreɡjələli/",pos:"adv.",tag:"general",
+ short:"定期地、有规律地",
+ def:["按固定频率重复做某事：复习、巡检、跑任务都常用。","读音别漏掉中间的 /j/ 音。"],
+ uses:["review regularly 定期复习","run regularly 定期执行"],
+ ex:[["Review new words regularly.","定期复习新词。"]],
+ deriv:"regular adj. 规律的；regularity n. 规律性"},
+
+{w:"encounter",ph:"/ɪnˈkaʊntə(r)/",pos:"v.",tag:"general",
+ short:"遇到、遭遇（问题或情况）",
+ def:["碰到某个问题或情况，日志与复盘里很常见。","重音在第二音节，双元音 /aʊ/ 要饱满。"],
+ uses:["encounter an error 遇到报错","encounter an issue 碰到问题"],
+ ex:[["We encounter many issues during development.","开发中我们会遇到很多问题。"]],
+ vs:[["encounter","遇到，偏正式"],["meet","遇到，中性"],["come across","偶然碰到，口语"]]},
+
+{w:"tricky",ph:"/ˈtrɪki/",pos:"adj.",tag:"general",
+ short:"棘手的、难处理的",
+ def:["看着简单、实际难缠的问题，常用于 bug 与边界情况。","短元音 /ɪ/，不要读成长音。"],
+ uses:["a tricky bug 棘手的 bug","tricky edge case 难缠的边界情况"],
+ ex:[["This is a tricky bug to reproduce.","这个 bug 很难复现。"]],
+ vs:[["tricky","难在细节与边界"],["hard","难度大，泛指"],["complex","复杂，结构层面"]]},
+
+{w:"log",ph:"/lɒɡ/",pos:"n./v.",tag:"backend",
+ short:"日志；记录日志",
+ def:["程序运行留下的**文字记录**；作动词就是打日志。","常见级别：debug / info / warn / error。"],
+ uses:["log output 日志输出","crash log 崩溃日志","log level 日志级别"],
+ ex:[["Check the log output first.","先看日志输出。"]],
+ deriv:"logging n. 日志记录；logger n. 日志器"},
+
+{w:"solution",ph:"/səˈluːʃn/",pos:"n.",tag:"general",
+ short:"解决方案",
+ def:["针对某个问题的**可行解法**，重音在第二音节。"],
+ uses:["practical solution 可行方案","find a solution 找到解法"],
+ ex:[["We found a practical solution.","我们找到了一个可行的方案。"]],
+ vs:[["solution","针对问题的解法"],["fix","具体的修复动作"],["workaround","临时绕过方案"]]},
+
+{w:"professional",ph:"/prəˈfeʃənl/",pos:"adj./n.",tag:"general",
+ short:"专业的；专业人士",
+ def:["形容词表示**专业水准的**；名词指从业者。","重音在第二音节，很多人会错放到开头。"],
+ uses:["professional vocabulary 专业词汇","professional developer 专业开发者"],
+ ex:[["Learn professional vocabulary step by step.","一步一步学专业词汇。"]],
+ deriv:"profession n. 职业；professionally adv. 专业地"},
+
+{w:"build",ph:"/bɪld/",pos:"v./n.",tag:"tools",
+ short:"构建；也指一次构建产物",
+ def:["把源码**编译打包**成可运行产物；名词指构建这件事或产物版本。","build failed 是最常见的报错之一。"],
+ uses:["build a project 构建项目","build failed 构建失败","build number 构建号"],
+ ex:[["Run a release build before submitting.","提交前跑一次正式构建。"]],
+ deriv:"builder n. 构建器；build.gradle 构建脚本"},
+
+{w:"SDK",ph:"/ˌes diː ˈkeɪ/",pos:"n.",tag:"general",
+ short:"软件开发工具包",
+ def:["全称 **Software Development Kit**：把一套工具、接口和文档打包给你接入。","广告 SDK、支付 SDK、地图 SDK 都是这个套路。"],
+ uses:["SDK version SDK 版本","integrate the SDK 接入 SDK","SDK upgrade SDK 升级"],
+ ex:[["This SDK supports both iOS and Android.","这个 SDK 同时支持 iOS 和安卓。"]],
+ vs:[["SDK","工具包，含工具与接口"],["API","调用契约本身"],["framework","框架，规定项目结构"]]},
+
+{w:"interface",ph:"/ˈɪntəfeɪs/",pos:"n.",tag:"general",
+ short:"接口；界面",
+ def:["两层含义：**程序之间的调用约定**，以及**人机交互的界面**。","在 Dart / Swift 里还可以指语言层面的抽象接口。"],
+ uses:["public interface 公开接口","user interface 用户界面","interface definition 接口定义"],
+ ex:[["Call this public interface.","调用这个公开接口。"]],
+ vs:[["interface","调用约定，或界面"],["API","偏网络与对外能力"],["abstract class","语言层面的抽象实现"]]},
+
+{w:"behave",ph:"/bɪˈheɪv/",pos:"v.",tag:"general",
+ short:"表现、运行（行为如何）",
+ def:["描述程序**实际表现出来**的行为，排查异常时高频使用。","behave unexpectedly 就是行为异常。"],
+ uses:["behave differently 表现不一致","behave as expected 行为符合预期"],
+ ex:[["The app behaves strangely after the upgrade.","升级之后应用运行异常。"]],
+ deriv:"behavior n. 行为、表现"},
+
+{w:"unexpectedly",ph:"/ˌʌnɪkˈspektɪdli/",pos:"adv.",tag:"general",
+ short:"意外地、非预期地",
+ def:["结果与预期不符时使用：崩溃、退出、返回空值都常用它。"],
+ uses:["crash unexpectedly 意外崩溃","exit unexpectedly 意外退出"],
+ ex:[["The app crashed unexpectedly on startup.","应用在启动时意外崩溃了。"]],
+ deriv:"unexpected adj. 意外的"},
+
+{w:"upgrade",ph:"/ˌʌpˈɡreɪd/",pos:"v./n.",tag:"tools",
+ short:"升级（版本）",
+ def:["把版本**升到更高**；名词就是这次升级。","反义词是 downgrade（降级）。"],
+ uses:["version upgrade 版本升级","upgrade the SDK 升级 SDK","upgrade path 升级路径"],
+ ex:[["We perform a version upgrade every two weeks.","我们每两周做一次版本升级。"]],
+ vs:[["upgrade","升到新版本"],["update","更新，幅度可大可小"],["migrate","迁移，常伴随结构变更"]]},
+
+{w:"compatibility",ph:"/kəmˌpætəˈbɪləti/",pos:"n.",tag:"general",
+ short:"兼容性",
+ def:["不同版本、设备、系统之间**能否正常配合工作**。","backward compatibility（向后兼容）是常见要求。"],
+ uses:["system compatibility 系统兼容性","backward compatibility 向后兼容","compatibility issue 兼容性问题"],
+ ex:[["Pay attention to compatibility between system versions.","注意不同系统版本之间的兼容性。"]],
+ deriv:"compatible adj. 兼容的；incompatible adj. 不兼容的"}
+);
+
+/* ===== 渲染与交互 ===== */
+const TAGNAME={dart:'Flutter / Dart',android:'Android / Kotlin',backend:'后端 / 网络',tools:'工程 / 工具',async:'并发 / 协程',general:'通用'};
+const ORDER=['dart','android','backend','tools','async','general'];
+const list=document.getElementById('list');
+const rail=document.getElementById('rail');
+const chipsEl=document.getElementById('chips');
+const distEl=document.getElementById('dist');
+const qEl=document.getElementById('q');
+const countEl=document.getElementById('count');
+const toggleAll=document.getElementById('toggle-all');
+const state={q:'',tag:'all',open:new Set()};
+
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fmt=s=>esc(s).replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');
+const reEsc=s=>s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+function hl(s){
+  const out=fmt(s);
+  const q=state.q.trim();
+  if(!q) return out;
+  try{return out.replace(new RegExp('('+reEsc(q)+')','ig'),'<mark>$1</mark>');}catch(err){return out;}
+}
+function hay(e){
+  return [e.w,e.ph,e.pos,e.short,(e.def||[]).join(' '),(e.uses||[]).join(' '),
+    (e.ex||[]).map(x=>x.join(' ')).join(' '),e.deriv||'',
+    (e.vs||[]).map(x=>x.join(' ')).join(' '),e.tip||'',TAGNAME[e.tag]].join(' ').toLowerCase();
+}
+const PAD=n=>(n<10?'0':'')+n;
+const initial=e=>e.w[0].toUpperCase();
+
+function secBody(e){
+  let h='';
+  if(e.def&&e.def.length) h+='<div class="sec"><h4>释义</h4><ul class="def">'+e.def.map(d=>'<li>'+fmt(d)+'</li>').join('')+'</ul></div>';
+  if(e.uses&&e.uses.length) h+='<div class="sec"><h4>常用搭配</h4><div class="uses">'+e.uses.map(u=>'<span>'+esc(u)+'</span>').join('')+'</div></div>';
+  if(e.ex&&e.ex.length) h+='<div class="sec"><h4>例句</h4>'+e.ex.map(x=>'<div class="ex"><p class="en">'+esc(x[0])+'</p><p class="zh">'+esc(x[1])+'</p></div>').join('')+'</div>';
+  if(e.deriv) h+='<div class="sec"><h4>派生词</h4><p class="deriv">'+fmt(e.deriv)+'</p></div>';
+  if(e.vs&&e.vs.length) h+='<div class="sec"><h4>易混辨析</h4><table class="vs"><colgroup><col style="width:31%"><col style="width:69%"></colgroup><thead><tr><th>词</th><th>区别</th></tr></thead><tbody>'+e.vs.map(v=>'<tr><td>'+esc(v[0])+'</td><td>'+fmt(v[1])+'</td></tr>').join('')+'</tbody></table></div>';
+  if(e.tip) h+='<div class="sec tip"><h4>提示</h4><p>'+fmt(e.tip)+'</p></div>';
+  return h;
+}
+
+const CHEV='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>';
+
+function rowHTML(e,i){
+  const on=state.open.has(e.w);
+  return '<article class="entry'+(on?' open':'')+'" data-i="'+i+'" data-l="'+initial(e)+'">'
+    +'<button class="entry-head" type="button" aria-expanded="'+on+'" aria-controls="body-'+i+'">'
+    +'<span class="idx">'+PAD(i+1)+'</span>'
+    +'<span class="hw"><span class="w">'+hl(e.w)+'</span><span class="ph">'+esc(e.ph)+(e.pos?' · '+esc(e.pos):'')+'</span></span>'
+    +'<span class="tag" data-t="'+e.tag+'"><span class="dot"></span>'+TAGNAME[e.tag]+'</span>'
+    +'<span class="short">'+hl(e.short)+'</span>'
+    +'<span class="chev">'+CHEV+'</span>'
+    +'</button>'
+    +'<div class="entry-body" id="body-'+i+'"><div class="inner"><div class="body-pad">'+secBody(e)+'</div></div></div>'
+    +'</article>';
+}
+
+function filtered(){
+  const q=state.q.trim().toLowerCase();
+  return WORDS.map((e,i)=>({e,i})).filter(({e})=>{
+    if(state.tag!=='all'&&e.tag!==state.tag) return false;
+    if(!q) return true;
+    return hay(e).indexOf(q)>-1;
+  });
+}
+
+function render(){
+  const rows=filtered();
+  if(!rows.length){
+    list.innerHTML='<div class="empty"><p class="big">没有匹配的词条</p><p>换个关键词，或者点「全部」看完整词库。</p></div>';
+  }else{
+    list.innerHTML=rows.map(({e,i})=>rowHTML(e,i)).join('');
+  }
+  countEl.textContent='结果 '+rows.length+' / '+WORDS.length+' 条';
+  // 字母索引
+  const letters=[];
+  rows.forEach(({e})=>{const L=initial(e); if(letters.indexOf(L)<0) letters.push(L);});
+  letters.sort();
+  rail.innerHTML=letters.map(L=>'<button type="button" data-jump="'+L+'">'+L+'</button>').join('');
+  // 分类状态
+  chipsEl.querySelectorAll('.chip').forEach(c=>c.classList.toggle('on',c.dataset.t===state.tag));
+  distEl.querySelectorAll('button').forEach(b=>b.classList.toggle('dim',state.tag!=='all'&&b.dataset.t!==state.tag));
+  // 展开全部按钮文案
+  const visible=rows.map(({e})=>e.w);
+  const allOpen=visible.length>0&&visible.every(w=>state.open.has(w));
+  toggleAll.textContent=allOpen?'全部收起':'展开全部';
+}
+
+/* ===== 初始化：分布条与分类 chips ===== */
+(function initChips(){
+  document.getElementById('m-total').textContent=WORDS.length;
+  const counts={};
+  WORDS.forEach(e=>counts[e.tag]=(counts[e.tag]||0)+1);
+  distEl.innerHTML=ORDER.filter(t=>counts[t]).map(t=>'<button type="button" data-t="'+t+'" style="flex:'+counts[t]+'" title="'+TAGNAME[t]+' '+counts[t]+' 条" aria-label="'+TAGNAME[t]+' '+counts[t]+' 条"></button>').join('');
+  chipsEl.innerHTML=['<button class="chip" type="button" data-t="all"><span class="dot"></span>全部<span class="num">'+WORDS.length+'</span></button>']
+    .concat(ORDER.filter(t=>counts[t]).map(t=>'<button class="chip" type="button" data-t="'+t+'"><span class="dot"></span>'+TAGNAME[t]+'<span class="num">'+counts[t]+'</span></button>')).join('');
+})();
+
+/* ===== 事件 ===== */
+list.addEventListener('click',ev=>{
+  const head=ev.target.closest('.entry-head');
+  if(!head) return;
+  const art=head.closest('.entry');
+  const e=WORDS[+art.dataset.i];
+  const open=!art.classList.contains('open');
+  art.classList.toggle('open',open);
+  head.setAttribute('aria-expanded',String(open));
+  if(open) state.open.add(e.w); else state.open.delete(e.w);
+  render();
+});
+
+function setTag(t){
+  state.tag=(state.tag===t&&t!=='all')?'all':t;
+  render();
+}
+chipsEl.addEventListener('click',ev=>{
+  const c=ev.target.closest('.chip'); if(!c) return; setTag(c.dataset.t);
+});
+distEl.addEventListener('click',ev=>{
+  const b=ev.target.closest('button'); if(!b) return; setTag(b.dataset.t);
+});
+
+rail.addEventListener('click',ev=>{
+  const b=ev.target.closest('button'); if(!b) return;
+  const art=list.querySelector('.entry[data-l="'+b.dataset.jump+'"]');
+  if(!art) return;
+  art.scrollIntoView({behavior:'smooth',block:'start'});
+  art.classList.add('flash');
+  setTimeout(()=>art.classList.remove('flash'),1200);
+});
+
+let timer=null;
+qEl.addEventListener('input',()=>{
+  clearTimeout(timer);
+  timer=setTimeout(()=>{state.q=qEl.value;render();},120);
+});
+
+toggleAll.addEventListener('click',()=>{
+  const rows=filtered().map(({e})=>e.w);
+  const allOpen=rows.length>0&&rows.every(w=>state.open.has(w));
+  rows.forEach(w=>{allOpen?state.open.delete(w):state.open.add(w);});
+  render();
+});
+
+document.addEventListener('keydown',ev=>{
+  if(ev.key==='/'&&document.activeElement!==qEl){ev.preventDefault();qEl.focus();}
+  else if(ev.key==='Escape'&&document.activeElement===qEl){qEl.value='';state.q='';render();qEl.blur();}
+});
+
+render();
+</script>
+</body>
+</html>

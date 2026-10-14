@@ -1,0 +1,1418 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>移动端开发者 · 网络运维实战学习手册</title>
+    <style>
+        :root {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f7f8fa;
+            --bg-tertiary: #f0f2f5;
+            --text-primary: #1d2129;
+            --text-secondary: #4e5969;
+            --text-tertiary: #86909c;
+            --border-color: #e5e6eb;
+            --accent-color: #165dff;
+            --accent-light: #e8f3ff;
+            --code-bg: #f7f8fa;
+            --code-color: #d93025;
+            --sidebar-width: 280px;
+            --shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        }
+
+        [data-theme="dark"] {
+            --bg-primary: #17181a;
+            --bg-secondary: #1f2023;
+            --bg-tertiary: #27282b;
+            --text-primary: #e8e9ed;
+            --text-secondary: #a9aeb8;
+            --text-tertiary: #7a7f89;
+            --border-color: #2f3134;
+            --accent-color: #4080ff;
+            --accent-light: #1d2b4a;
+            --code-bg: #1f2023;
+            --code-color: #ff7b72;
+            --shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.7;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        /* 顶部导航 */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background-color: var(--bg-primary);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            z-index: 100;
+            box-shadow: var(--shadow);
+        }
+
+        .header-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .theme-toggle {
+            padding: 8px 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background-color: var(--bg-secondary);
+            color: var(--text-primary);
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .theme-toggle:hover {
+            border-color: var(--accent-color);
+            color: var(--accent-color);
+        }
+
+        /* 主体布局 */
+        .container {
+            display: flex;
+            margin-top: 60px;
+            min-height: calc(100vh - 60px);
+        }
+
+        /* 侧边栏目录 */
+        .sidebar {
+            width: var(--sidebar-width);
+            position: fixed;
+            top: 60px;
+            left: 0;
+            bottom: 0;
+            overflow-y: auto;
+            background-color: var(--bg-secondary);
+            border-right: 1px solid var(--border-color);
+            padding: 16px 0;
+        }
+
+        .sidebar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .sidebar::-webkit-scrollbar-thumb {
+            background-color: var(--border-color);
+            border-radius: 3px;
+        }
+
+        .sidebar details {
+            margin-bottom: 4px;
+        }
+
+        .sidebar summary {
+            padding: 10px 20px;
+            font-weight: 600;
+            font-size: 15px;
+            color: var(--text-primary);
+            cursor: pointer;
+            list-style: none;
+            position: relative;
+            transition: background-color 0.2s;
+        }
+
+        .sidebar summary::-webkit-details-marker {
+            display: none;
+        }
+
+        .sidebar summary::before {
+            content: "▶";
+            display: inline-block;
+            margin-right: 8px;
+            font-size: 10px;
+            color: var(--text-tertiary);
+            transition: transform 0.2s;
+        }
+
+        .sidebar details[open] > summary::before {
+            transform: rotate(90deg);
+        }
+
+        .sidebar summary:hover {
+            background-color: var(--bg-tertiary);
+        }
+
+        .sidebar ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .sidebar li a {
+            display: block;
+            padding: 8px 20px 8px 40px;
+            font-size: 14px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+        }
+
+        .sidebar li a:hover {
+            color: var(--accent-color);
+            background-color: var(--accent-light);
+            border-left-color: var(--accent-color);
+        }
+
+        /* 主内容区 */
+        .content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            padding: 40px 60px;
+            max-width: 1000px;
+        }
+
+        .content h1 {
+            font-size: 32px;
+            margin-bottom: 24px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--border-color);
+            color: var(--text-primary);
+            scroll-margin-top: 80px;
+        }
+
+        .content h2 {
+            font-size: 24px;
+            margin-top: 40px;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+            scroll-margin-top: 80px;
+        }
+
+        .content h3 {
+            font-size: 18px;
+            margin-top: 24px;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+            scroll-margin-top: 80px;
+        }
+
+        .content p {
+            margin-bottom: 16px;
+            color: var(--text-secondary);
+        }
+
+        .content ul, .content ol {
+            margin-bottom: 16px;
+            padding-left: 24px;
+            color: var(--text-secondary);
+        }
+
+        .content li {
+            margin-bottom: 8px;
+        }
+
+        .content strong {
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        /* 代码块 */
+        pre {
+            background-color: var(--code-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 16px;
+            overflow-x: auto;
+            margin-bottom: 20px;
+            font-family: "Consolas", "Monaco", monospace;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        code {
+            color: var(--code-color);
+            font-family: "Consolas", "Monaco", monospace;
+            padding: 2px 6px;
+            background-color: var(--bg-tertiary);
+            border-radius: 4px;
+            font-size: 13px;
+        }
+
+        pre code {
+            padding: 0;
+            background: none;
+            color: var(--text-primary);
+        }
+
+        /* 提示框 */
+        .tip-box {
+            padding: 16px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid var(--accent-color);
+            background-color: var(--accent-light);
+        }
+
+        .tip-box-title {
+            font-weight: 600;
+            color: var(--accent-color);
+            margin-bottom: 8px;
+        }
+
+        .warning-box {
+            padding: 16px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #ff7d00;
+            background-color: #fff7e8;
+        }
+
+        [data-theme="dark"] .warning-box {
+            background-color: #2b2110;
+        }
+
+        .warning-box-title {
+            font-weight: 600;
+            color: #ff7d00;
+            margin-bottom: 8px;
+        }
+
+        /* 表格 */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            border: 1px solid var(--border-color);
+        }
+
+        th, td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+            border-right: 1px solid var(--border-color);
+        }
+
+        th {
+            background-color: var(--bg-secondary);
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        td {
+            color: var(--text-secondary);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        th:last-child, td:last-child {
+            border-right: none;
+        }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s;
+            }
+            .content {
+                margin-left: 0;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-title">📘 移动端开发者 · 网络运维实战学习手册</div>
+        <button class="theme-toggle" onclick="toggleTheme()">🌙 切换深色模式</button>
+    </div>
+
+    <div class="container">
+        <!-- 侧边栏目录 -->
+        <nav class="sidebar">
+            <details open>
+                <summary>前言 & 学习路线</summary>
+                <ul>
+                    <li><a href="#preface">为什么移动端开发者要学运维</a></li>
+                    <li><a href="#roadmap">整体学习路线图</a></li>
+                    <li><a href="#cloudbase-intro">CloudBase 与运维的关系</a></li>
+                </ul>
+            </details>
+
+            <details>
+                <summary>第一章：Linux 运维基础</summary>
+                <ul>
+                    <li><a href="#ch1-1">Linux 系统基础认知</a></li>
+                    <li><a href="#ch1-2">核心命令实战大全</a></li>
+                    <li><a href="#ch1-3">文件系统与权限管理</a></li>
+                    <li><a href="#ch1-4">进程与服务管理</a></li>
+                    <li><a href="#ch1-5">网络排查常用命令</a></li>
+                </ul>
+            </details>
+
+            <details>
+                <summary>第二章：Shell 脚本自动化</summary>
+                <ul>
+                    <li><a href="#ch2-1">Shell 基础语法</a></li>
+                    <li><a href="#ch2-2">条件判断与循环</a></li>
+                    <li><a href="#ch2-3">运维常用脚本实战</a></li>
+                    <li><a href="#ch2-4">定时任务 Crontab</a></li>
+                </ul>
+            </details>
+
+            <details>
+                <summary>第三章：CloudBase Node.js 运维实战</summary>
+                <ul>
+                    <li><a href="#ch3-1">云函数部署与版本管理</a></li>
+                    <li><a href="#ch3-2">环境变量与配置管理</a></li>
+                    <li><a href="#ch3-3">日志查询与问题排查</a></li>
+                    <li><a href="#ch3-4">性能监控与告警配置</a></li>
+                    <li><a href="#ch3-5">数据库与存储运维</a></li>
+                    <li><a href="#ch3-6">安全配置与权限控制</a></li>
+                    <li><a href="#ch3-7">成本优化与资源管控</a></li>
+                </ul>
+            </details>
+
+            <details>
+                <summary>第四章：容器化技术 Docker</summary>
+                <ul>
+                    <li><a href="#ch4-1">Docker 核心概念</a></li>
+                    <li><a href="#ch4-2">镜像构建与 Dockerfile</a></li>
+                    <li><a href="#ch4-3">容器管理与网络</a></li>
+                    <li><a href="#ch4-4">Docker Compose 编排</a></li>
+                    <li><a href="#ch4-5">Node.js 项目容器化实战</a></li>
+                </ul>
+            </details>
+
+            <details>
+                <summary>第五章：CI/CD 持续集成部署</summary>
+                <ul>
+                    <li><a href="#ch5-1">CI/CD 核心理念</a></li>
+                    <li><a href="#ch5-2">GitHub Actions 实战</a></li>
+                    <li><a href="#ch5-3">CloudBase 自动化部署</a></li>
+                    <li><a href="#ch5-4">流水线设计与最佳实践</a></li>
+                </ul>
+            </details>
+
+            <details>
+                <summary>第六章：监控告警与日志体系</summary>
+                <ul>
+                    <li><a href="#ch6-1">监控体系架构</a></li>
+                    <li><a href="#ch6-2">Prometheus + Grafana 入门</a></li>
+                    <li><a href="#ch6-3">日志采集与分析 ELK/Loki</a></li>
+                    <li><a href="#ch6-4">告警规则与通知渠道</a></li>
+                </ul>
+            </details>
+
+            <details>
+                <summary>第七章：运维安全与合规</summary>
+                <ul>
+                    <li><a href="#ch7-1">网络安全基础</a></li>
+                    <li><a href="#ch7-2">防火墙与访问控制</a></li>
+                    <li><a href="#ch7-3">数据备份与恢复</a></li>
+                    <li><a href="#ch7-4">常见漏洞与防护</a></li>
+                </ul>
+            </details>
+
+            <details>
+                <summary>第八章：大中小厂运维实战</summary>
+                <ul>
+                    <li><a href="#ch8-1">中小厂：全栈运维模式</a></li>
+                    <li><a href="#ch8-2">中大厂：DevOps 标准化流程</a></li>
+                    <li><a href="#ch8-3">大厂：SRE 体系与高可用</a></li>
+                </ul>
+            </details>
+
+            <details>
+                <summary>附录：学习资源与工具</summary>
+                <ul>
+                    <li><a href="#appendix-1">推荐学习资源</a></li>
+                    <li><a href="#appendix-2">常用运维工具清单</a></li>
+                    <li><a href="#appendix-3">面试高频考点</a></li>
+                </ul>
+            </details>
+        </nav>
+
+        <!-- 主内容区 -->
+        <main class="content">
+            <h1 id="preface">前言 & 学习路线</h1>
+
+            <h2>为什么移动端开发者要学运维</h2>
+            <p>作为移动端开发者，你可能专注于 Flutter、Swift、React Native 等前端技术，但在独立开发、创业项目或中小团队中，你往往需要同时承担后端开发、部署、运维的全链路工作。掌握运维能力能让你：</p>
+            <ul>
+                <li><strong>独立完成全栈项目</strong>：从移动端到后端部署上线，全程一人搞定</li>
+                <li><strong>降低沟通成本</strong>：和运维团队沟通时更专业，快速定位问题</li>
+                <li><strong>提升技术竞争力</strong>：成为懂运维的移动端开发者，职场差异化优势明显</li>
+                <li><strong>更好地使用 CloudBase</strong>：理解底层运维原理，最大化利用云开发能力</li>
+            </ul>
+
+            <h2 id="roadmap">整体学习路线图</h2>
+            <div class="tip-box">
+                <div class="tip-box-title">💡 学习建议</div>
+                <p>按照「基础 → CloudBase 实战 → 通用运维技术 → 进阶架构」的顺序学习，边学边练，每学完一个章节就在自己的项目中实践。</p>
+            </div>
+            <ol>
+                <li><strong>基础阶段</strong>：Linux 命令 + Shell 脚本 + 网络基础（2周）</li>
+                <li><strong>核心阶段</strong>：CloudBase 运维全流程 + Node.js 服务运维（3周）</li>
+                <li><strong>进阶阶段</strong>：Docker 容器化 + CI/CD 自动化 + 监控告警（3周）</li>
+                <li><strong>拔高阶段</strong>：K8s 基础 + 高可用架构 + 安全合规（选学，2周）</li>
+            </ol>
+
+            <h2 id="cloudbase-intro">CloudBase 与运维的关系</h2>
+            <p>腾讯云 CloudBase 是 Serverless 化的云开发平台，底层帮你屏蔽了大部分服务器运维工作，但这并不代表你不需要懂运维：</p>
+            <ul>
+                <li>云函数的性能调优、超时配置、内存设置需要运维思维</li>
+                <li>数据库索引优化、存储容量管控属于运维范畴</li>
+                <li>日志排查、问题定位依赖运维排查思路</li>
+                <li>成本控制、资源配额管理是运维核心能力</li>
+                <li>从 CloudBase 过渡到自建服务器，运维能力是必经之路</li>
+            </ul>
+
+            <h1 id="ch1-1">第一章：Linux 运维基础</h1>
+
+            <h2>Linux 系统基础认知</h2>
+            <h3>1.1 发行版选择</h3>
+            <table>
+                <tr>
+                    <th>发行版</th>
+                    <th>特点</th>
+                    <th>适用场景</th>
+                </tr>
+                <tr>
+                    <td>CentOS / Rocky Linux</td>
+                    <td>稳定、免费、企业级</td>
+                    <td>服务器端主流，中小厂首选</td>
+                </tr>
+                <tr>
+                    <td>Ubuntu Server</td>
+                    <td>易用、社区活跃、软件新</td>
+                    <td>个人开发者、云服务器</td>
+                </tr>
+                <tr>
+                    <td>Debian</td>
+                    <td>极致稳定、轻量</td>
+                    <td>生产环境稳定优先</td>
+                </tr>
+            </table>
+
+            <h3>1.2 目录结构</h3>
+            <ul>
+                <li><code>/</code>：根目录，所有文件的起点</li>
+                <li><code>/etc</code>：系统配置文件目录</li>
+                <li><code>/var</code>：可变数据（日志、缓存）</li>
+                <li><code>/home</code>：用户家目录</li>
+                <li><code>/root</code>：root 用户家目录</li>
+                <li><code>/usr</code>：系统软件资源</li>
+                <li><code>/tmp</code>：临时文件目录</li>
+            </ul>
+
+            <h2 id="ch1-2">核心命令实战大全</h2>
+            <h3>2.1 文件操作命令</h3>
+<pre><code># 查看当前目录
+pwd
+
+# 列出文件
+ls -la  # 详细列表+隐藏文件
+ls -lh  # 人性化显示大小
+
+# 切换目录
+cd /path/to/dir
+cd ..   # 返回上一级
+cd ~    # 回家目录
+
+# 创建/删除
+mkdir dirname        # 创建目录
+mkdir -p a/b/c       # 递归创建
+rm filename          # 删除文件
+rm -rf dirname       # 递归删除目录（慎用！）
+
+# 复制/移动
+cp source dest       # 复制文件
+cp -r src dest       # 复制目录
+mv source dest       # 移动/重命名
+
+# 查看文件
+cat filename         # 全部输出
+head -20 filename    # 前20行
+tail -f filename     # 实时追踪末尾
+less filename        # 分页查看
+</code></pre>
+
+            <h3>2.2 系统信息命令</h3>
+<pre><code># 系统信息
+uname -a             # 内核版本
+hostname             # 主机名
+date                 # 当前时间
+
+# 资源使用
+top                  # 实时进程监控
+htop                 # 增强版top（需安装）
+free -h              # 内存使用
+df -h                # 磁盘使用
+du -sh *             # 当前目录各文件大小
+
+# 负载查看
+uptime               # 系统运行时间+负载
+w                    # 在线用户+负载
+</code></pre>
+
+            <h2 id="ch1-3">文件系统与权限管理</h2>
+            <h3>3.1 权限说明</h3>
+            <p>Linux 文件权限分为三组：所有者(u)、所属组(g)、其他用户(o)，每组有读(r)、写(w)、执行(x)三种权限。</p>
+<pre><code># 示例：-rwxr-xr--
+# 第一位：文件类型(-文件 d目录 l链接)
+# 前三位：所有者权限 rwx
+# 中三位：所属组权限 r-x
+# 后三位：其他用户权限 r--
+
+# 数字表示法：r=4, w=2, x=1
+chmod 755 filename   # rwxr-xr-x
+chmod 644 filename   # rw-r--r--
+chmod +x filename    # 添加执行权限
+
+# 更改所有者
+chown user:group filename
+chown -R user:group dirname
+</code></pre>
+
+            <div class="warning-box">
+                <div class="warning-box-title">⚠️ 安全提醒</div>
+                <p>永远不要给文件 777 权限，这是极其危险的操作，会导致任意用户都可以修改执行文件。</p>
+            </div>
+
+            <h2 id="ch1-4">进程与服务管理</h2>
+<pre><code># 进程查看
+ps aux               # 所有进程详细信息
+ps aux | grep node   # 查找node进程
+
+# 进程终止
+kill pid             # 正常终止
+kill -9 pid          # 强制杀死
+pkill processname    # 按名称杀进程
+
+# Systemd 服务管理（CentOS 7+/Ubuntu）
+systemctl start nginx      # 启动
+systemctl stop nginx       # 停止
+systemctl restart nginx    # 重启
+systemctl status nginx     # 状态
+systemctl enable nginx     # 开机自启
+systemctl disable nginx    # 取消开机自启
+</code></pre>
+
+            <h2 id="ch1-5">网络排查常用命令</h2>
+<pre><code># 网络连通性
+ping baidu.com
+telnet ip port       # 测试端口连通性
+curl url             # 测试HTTP请求
+curl -I url          # 仅看响应头
+
+# 网卡与IP
+ip addr              # 查看所有网卡IP
+ifconfig             # 旧版命令
+
+# 端口监听
+netstat -tulnp       # 查看所有监听端口
+ss -tulnp            # 更快的替代命令
+
+# 路由与DNS
+route -n             # 路由表
+nslookup domain      # DNS解析
+dig domain           # 详细DNS信息
+
+# 流量统计
+ifstat               # 网卡流量
+iftop                # 实时流量监控
+</code></pre>
+
+            <h1 id="ch2-1">第二章：Shell 脚本自动化</h1>
+
+            <h2>Shell 基础语法</h2>
+            <h3>1.1 第一个脚本</h3>
+<pre><code>#!/bin/bash
+# 这是注释
+echo "Hello World!"
+
+# 运行方式
+# chmod +x test.sh
+# ./test.sh
+</code></pre>
+
+            <h3>1.2 变量</h3>
+<pre><code>#!/bin/bash
+# 定义变量
+name="zhangsan"
+age=25
+
+# 使用变量
+echo "姓名：$name"
+echo "年龄：${age}岁"
+
+# 命令结果赋值
+current_date=$(date +%Y-%m-%d)
+echo "今天是：$current_date"
+
+# 环境变量
+echo $PATH
+echo $HOME
+</code></pre>
+
+            <h2 id="ch2-2">条件判断与循环</h2>
+            <h3>2.1 if 条件判断</h3>
+<pre><code>#!/bin/bash
+score=85
+
+if [ $score -ge 90 ]; then
+    echo "优秀"
+elif [ $score -ge 60 ]; then
+    echo "及格"
+else
+    echo "不及格"
+fi
+
+# 常用判断条件
+# -eq 等于  -ne 不等于
+# -gt 大于  -lt 小于
+# -ge 大于等于 -le 小于等于
+# -f 文件是否存在
+# -d 目录是否存在
+# -z 字符串是否为空
+</code></pre>
+
+            <h3>2.2 for 循环</h3>
+<pre><code>#!/bin/bash
+# 遍历列表
+for i in 1 2 3 4 5
+do
+    echo "数字：$i"
+done
+
+# 遍历文件
+for file in *.log
+do
+    echo "处理文件：$file"
+done
+</code></pre>
+
+            <h2 id="ch2-3">运维常用脚本实战</h2>
+            <h3>3.1 日志清理脚本</h3>
+<pre><code>#!/bin/bash
+# 清理7天前的日志文件
+LOG_DIR="/var/log/myapp"
+DAYS=7
+
+find $LOG_DIR -name "*.log" -mtime +$DAYS -delete
+echo "[$(date)] 已清理 $LOG_DIR 下 $DAYS 天前的日志" >> /var/log/clean.log
+</code></pre>
+
+            <h3>3.2 服务健康检查</h3>
+<pre><code>#!/bin/bash
+# 检查Node服务是否存活
+URL="http://localhost:3000/health"
+RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" $URL)
+
+if [ $RESPONSE -ne 200 ]; then
+    echo "服务异常，状态码：$RESPONSE，正在重启..."
+    systemctl restart node-app
+    echo "[$(date)] 服务已重启" >> /var/log/service-check.log
+fi
+</code></pre>
+
+            <h2 id="ch2-4">定时任务 Crontab</h2>
+<pre><code># 编辑定时任务
+crontab -e
+
+# 查看定时任务
+crontab -l
+
+# 格式：分 时 日 月 周 命令
+# 每天凌晨2点执行清理脚本
+0 2 * * * /root/scripts/clean-log.sh
+
+# 每5分钟检查一次服务
+*/5 * * * * /root/scripts/check-service.sh
+
+# 每周一凌晨3点备份
+0 3 * * 1 /root/scripts/backup.sh
+</code></pre>
+
+            <h1 id="ch3-1">第三章：CloudBase Node.js 运维实战</h1>
+
+            <h2>云函数部署与版本管理</h2>
+            <h3>1.1 本地开发与部署流程</h3>
+            <p>作为移动端开发者，你可以使用 CloudBase CLI 工具进行云函数的部署与管理：</p>
+<pre><code># 安装 CLI
+npm install -g @cloudbase/cli
+
+# 登录
+tcb login
+
+# 初始化项目
+tcb init
+
+# 部署单个云函数
+tcb functions:deploy myFunction
+
+# 部署全部云函数
+tcb functions:deploy
+
+# 查看云函数列表
+tcb functions:list
+</code></pre>
+
+            <h3>1.2 版本与别名管理</h3>
+            <p>云函数版本管理是运维核心能力，用于灰度发布和回滚：</p>
+<pre><code># 发布版本
+tcb functions:publish myFunction --desc "v1.0.0 正式版"
+
+# 创建别名（测试环境指向$latest，正式环境指向固定版本）
+tcb functions:create-alias myFunction --name prod --version 1
+
+# 更新别名
+tcb functions:update-alias myFunction --name prod --version 2
+
+# 回滚版本
+tcb functions:update-alias myFunction --name prod --version 1
+</code></pre>
+
+            <div class="tip-box">
+                <div class="tip-box-title">💡 最佳实践</div>
+                <p>生产环境务必使用别名指向固定版本，不要直接使用 <code>$latest</code>。每次发布新版本后，先将 test 别名指向新版本验证，通过后再切换 prod 别名。</p>
+            </div>
+
+            <h2 id="ch3-2">环境变量与配置管理</h2>
+            <h3>2.1 云函数环境变量</h3>
+            <p>敏感配置（数据库密码、API密钥）不要写死在代码里，通过环境变量注入：</p>
+<pre><code># 云函数中读取环境变量
+const dbHost = process.env.DB_HOST;
+const apiKey = process.env.API_KEY;
+
+# CLI 设置环境变量
+tcb functions:config set myFunction DB_HOST=127.0.0.1 API_KEY=xxx
+
+# 查看环境变量
+tcb functions:config get myFunction
+</code></pre>
+
+            <h3>2.2 多环境隔离</h3>
+            <p>CloudBase 支持多环境，建议至少创建三套环境：</p>
+            <ul>
+                <li><strong>dev 环境</strong>：开发调试用，可随意修改</li>
+                <li><strong>test 环境</strong>：测试验证用，保持稳定</li>
+                <li><strong>prod 环境</strong>：生产环境，严格管控</li>
+            </ul>
+
+            <h2 id="ch3-3">日志查询与问题排查</h2>
+            <h3>3.1 日志查询方法</h3>
+<pre><code># CLI 查询日志
+tcb functions:log myFunction --limit 100
+
+# 查询错误日志
+tcb functions:log myFunction --level error
+
+# 按时间范围查询
+tcb functions:log myFunction --startTime "2024-01-01 00:00:00" --endTime "2024-01-02 00:00:00"
+</code></pre>
+
+            <h3>3.2 常见问题排查思路</h3>
+            <ol>
+                <li><strong>函数执行超时</strong>：检查是否有异步操作未结束、数据库查询慢、外部接口超时</li>
+                <li><strong>内存溢出</strong>：大文件处理、内存泄漏，适当调高内存配置</li>
+                <li><strong>依赖缺失</strong>：本地能运行线上报错，检查 package.json 依赖是否完整</li>
+                <li><strong>权限不足</strong>：云函数角色权限，检查是否开通对应服务访问权限</li>
+            </ol>
+
+            <h2 id="ch3-4">性能监控与告警配置</h2>
+            <h3>4.1 核心监控指标</h3>
+            <table>
+                <tr>
+                    <th>指标</th>
+                    <th>说明</th>
+                    <th>告警阈值建议</th>
+                </tr>
+                <tr>
+                    <td>调用次数</td>
+                    <td>函数调用总量</td>
+                    <td>突增突降超过50%</td>
+                </tr>
+                <tr>
+                    <td>错误率</td>
+                    <td>调用失败占比</td>
+                    <td>持续高于1%</td>
+                </tr>
+                <tr>
+                    <td>平均耗时</td>
+                    <td>函数执行时长</td>
+                    <td>超过超时时间的80%</td>
+                </tr>
+                <tr>
+                    <td>内存使用</td>
+                    <td>运行内存峰值</td>
+                    <td>超过配置内存的80%</td>
+                </tr>
+            </table>
+
+            <h3>4.2 告警配置</h3>
+            <p>在 CloudBase 控制台 → 监控告警 → 告警策略中配置：</p>
+            <ul>
+                <li>支持邮件、短信、微信、企业微信等通知渠道</li>
+                <li>关键指标（错误率、超时）必须配置告警</li>
+                <li>避免告警风暴，设置合理的静默时间</li>
+            </ul>
+
+            <h2 id="ch3-5">数据库与存储运维</h2>
+            <h3>5.1 数据库运维要点</h3>
+            <ul>
+                <li><strong>索引优化</strong>：查询字段必须建索引，避免全表扫描</li>
+                <li><strong>慢查询排查</strong>：控制台查看慢查询日志，优化耗时超过100ms的查询</li>
+                <li><strong>数据备份</strong>：开启自动备份，保留至少7天备份</li>
+                <li><strong>连接数</strong>：云函数中复用数据库连接，避免每次新建</li>
+            </ul>
+
+            <h3>5.2 存储运维要点</h3>
+            <ul>
+                <li>设置合理的生命周期，定期清理过期文件</li>
+                <li>大文件使用分片上传，避免超时</li>
+                <li>开启 CDN 加速，降低下载费用</li>
+                <li>配置防盗链，防止资源被恶意盗用</li>
+            </ul>
+
+            <h2 id="ch3-6">安全配置与权限控制</h2>
+            <ul>
+                <li><strong>数据库安全规则</strong>：严格配置读写权限，禁止全集合公开读写</li>
+                <li><strong>存储安全规则</strong>：上传文件校验类型和大小</li>
+                <li><strong>云函数鉴权</strong>：敏感接口校验用户登录态，校验权限</li>
+                <li><strong>IP 白名单</strong>：管理后台接口限制访问IP</li>
+                <li><strong>防刷机制</strong>：接口添加限流，防止恶意调用</li>
+            </ul>
+
+            <h2 id="ch3-7">成本优化与资源管控</h2>
+            <h3>7.1 云函数成本优化</h3>
+            <ul>
+                <li>合理设置内存和超时时间，避免资源浪费</li>
+                <li>冷启动不敏感的业务，使用预置并发降低冷启动但控制成本</li>
+                <li>合并小函数，减少函数调用次数</li>
+                <li>定时清理无用的版本和别名</li>
+            </ul>
+
+            <h3>7.2 数据库与存储成本</h3>
+            <ul>
+                <li>定期归档历史数据到冷存储</li>
+                <li>存储开启智能分层，低频访问自动降成本</li>
+                <li>避免重复读取相同数据，合理使用缓存</li>
+            </ul>
+
+            <h1 id="ch4-1">第四章：容器化技术 Docker</h1>
+
+            <h2>Docker 核心概念</h2>
+            <ul>
+                <li><strong>镜像（Image）</strong>：应用的只读模板，包含代码、运行环境、依赖</li>
+                <li><strong>容器（Container）</strong>：镜像运行的实例，可理解为轻量级虚拟机</li>
+                <li><strong>仓库（Registry）</strong>：存放镜像的地方，如 Docker Hub、腾讯云镜像仓库</li>
+            </ul>
+
+            <h3>1.1 常用命令</h3>
+<pre><code># 镜像操作
+docker pull nginx            # 拉取镜像
+docker images                # 查看本地镜像
+docker rmi image_id          # 删除镜像
+
+# 容器操作
+docker run -d -p 80:80 nginx # 运行容器
+docker ps                    # 查看运行中的容器
+docker ps -a                 # 查看所有容器
+docker stop container_id     # 停止容器
+docker start container_id    # 启动容器
+docker rm container_id       # 删除容器
+docker logs -f container_id  # 查看容器日志
+docker exec -it container_id /bin/bash  # 进入容器
+</code></pre>
+
+            <h2 id="ch4-2">镜像构建与 Dockerfile</h2>
+            <h3>2.1 Node.js 项目 Dockerfile 示例</h3>
+<pre><code># 基础镜像
+FROM node:18-alpine
+
+# 设置工作目录
+WORKDIR /app
+
+# 先复制依赖文件，利用缓存
+COPY package*.json ./
+
+# 安装依赖
+RUN npm install --production
+
+# 复制源码
+COPY . .
+
+# 暴露端口
+EXPOSE 3000
+
+# 启动命令
+CMD ["node", "app.js"]
+</code></pre>
+
+            <h3>2.2 构建与运行</h3>
+<pre><code># 构建镜像
+docker build -t my-node-app:v1 .
+
+# 运行容器
+docker run -d -p 3000:3000 --name my-app my-node-app:v1
+
+# 带环境变量运行
+docker run -d -p 3000:3000 \
+  -e NODE_ENV=production \
+  -e DB_HOST=localhost \
+  my-node-app:v1
+</code></pre>
+
+            <div class="tip-box">
+                <div class="tip-box-title">💡 优化技巧</div>
+                <p>使用 alpine 版本的基础镜像可以大幅减小镜像体积；多阶段构建可以进一步优化，最终镜像只包含运行时依赖。</p>
+            </div>
+
+            <h2 id="ch4-3">容器管理与网络</h2>
+            <h3>3.1 数据卷挂载</h3>
+            <p>容器内数据是临时的，重要数据需要挂载到宿主机：</p>
+<pre><code># 挂载目录
+docker run -d -v /host/path:/container/path image
+
+# 示例：挂载日志目录
+docker run -d -p 3000:3000 \
+  -v /data/logs:/app/logs \
+  my-node-app:v1
+</code></pre>
+
+            <h3>3.2 容器网络</h3>
+<pre><code># 创建自定义网络
+docker network create my-network
+
+# 容器加入同一网络即可通过容器名互通
+docker run -d --name db --network my-network mongo
+docker run -d --name app --network my-network my-node-app
+</code></pre>
+
+            <h2 id="ch4-4">Docker Compose 编排</h2>
+            <p>用于管理多个容器的应用，一键启动整个服务栈。</p>
+            <h3>docker-compose.yml 示例</h3>
+<pre><code>version: '3'
+services:
+  web:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - DB_HOST=mongo
+    depends_on:
+      - mongo
+    volumes:
+      - ./logs:/app/logs
+
+  mongo:
+    image: mongo:5
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+volumes:
+  mongo-data:
+</code></pre>
+
+            <h3>常用命令</h3>
+<pre><code>docker-compose up -d      # 后台启动
+docker-compose down       # 停止并删除
+docker-compose logs -f    # 查看日志
+docker-compose restart    # 重启服务
+docker-compose pull       # 更新镜像
+</code></pre>
+
+            <h2 id="ch4-5">Node.js 项目容器化实战</h2>
+            <p>从 CloudBase 云函数过渡到自建 Node.js 服务的容器化部署流程：</p>
+            <ol>
+                <li>将云函数代码改造为标准 Express/Koa HTTP 服务</li>
+                <li>编写 Dockerfile 构建镜像</li>
+                <li>使用 Docker Compose 编排应用+数据库</li>
+                <li>配置 Nginx 反向代理和负载均衡</li>
+                <li>配置日志挂载和数据持久化</li>
+            </ol>
+
+            <h1 id="ch5-1">第五章：CI/CD 持续集成部署</h1>
+
+            <h2>CI/CD 核心理念</h2>
+            <ul>
+                <li><strong>CI（持续集成）</strong>：代码提交后自动构建、测试、检查</li>
+                <li><strong>CD（持续部署）</strong>：通过验证后自动部署到生产环境</li>
+                <li><strong>价值</strong>：减少人工操作、降低部署风险、提高交付效率</li>
+            </ul>
+
+            <h2 id="ch5-2">GitHub Actions 实战</h2>
+            <h3>2.1 工作流配置文件</h3>
+            <p>在项目根目录创建 <code>.github/workflows/deploy.yml</code>：</p>
+<pre><code>name: 部署到 CloudBase
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: 安装 Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: 安装依赖
+        run: npm install
+
+      - name: 安装 CloudBase CLI
+        run: npm install -g @cloudbase/cli
+
+      - name: 部署云函数
+        env:
+          TCB_ENV_ID: ${{ secrets.TCB_ENV_ID }}
+          TCB_SECRET_ID: ${{ secrets.TCB_SECRET_ID }}
+          TCB_SECRET_KEY: ${{ secrets.TCB_SECRET_KEY }}
+        run: tcb functions:deploy --envId $TCB_ENV_ID
+</code></pre>
+
+            <h3>2.2 配置密钥</h3>
+            <p>在 GitHub 仓库 Settings → Secrets and variables → Actions 中添加：</p>
+            <ul>
+                <li><code>TCB_ENV_ID</code>：CloudBase 环境ID</li>
+                <li><code>TCB_SECRET_ID</code>：腾讯云 SecretId</li>
+                <li><code>TCB_SECRET_KEY</code>：腾讯云 SecretKey</li>
+            </ul>
+
+            <h2 id="ch5-3">CloudBase 自动化部署</h2>
+            <p>除了 GitHub Actions，CloudBase 也支持官方的 CI/CD 能力：</p>
+            <ul>
+                <li>控制台直接关联 Git 仓库，代码提交自动部署</li>
+                <li>支持云函数、静态网站、小程序的自动化部署</li>
+                <li>可配置部署前执行脚本（安装依赖、构建）</li>
+            </ul>
+
+            <h2 id="ch5-4">流水线设计与最佳实践</h2>
+            <h3>标准流水线阶段</h3>
+            <ol>
+                <li><strong>代码检出</strong>：拉取最新代码</li>
+                <li><strong>依赖安装</strong>：npm install</li>
+                <li><strong>代码检查</strong>：ESLint、TypeScript 类型检查</li>
+                <li><strong>单元测试</strong>：运行测试用例</li>
+                <li><strong>构建镜像</strong>：Docker 构建</li>
+                <li><strong>部署测试环境</strong>：自动部署到测试环境</li>
+                <li><strong>人工审批</strong>：生产部署前人工确认</li>
+                <li><strong>部署生产环境</strong>：灰度/全量发布</li>
+            </ol>
+
+            <h1 id="ch6-1">第六章：监控告警与日志体系</h1>
+
+            <h2>监控体系架构</h2>
+            <p>完整的运维监控体系包含三个层面：</p>
+            <ul>
+                <li><strong>基础设施监控</strong>：CPU、内存、磁盘、网络</li>
+                <li><strong>应用性能监控（APM）</strong>：接口耗时、错误率、调用链</li>
+                <li><strong>业务监控</strong>：用户量、订单量、核心业务指标</li>
+            </ul>
+
+            <h2 id="ch6-2">Prometheus + Grafana 入门</h2>
+            <h3>2.1 核心组件</h3>
+            <ul>
+                <li><strong>Prometheus</strong>：时序数据库，定时抓取指标数据</li>
+                <li><strong>Grafana</strong>：可视化仪表盘，展示监控数据</li>
+                <li><strong>Alertmanager</strong>：告警管理，发送通知</li>
+            </ul>
+
+            <h3>2.2 Node.js 接入 Prometheus</h3>
+<pre><code>const express = require('express');
+const prometheus = require('prom-client');
+
+const app = express();
+
+// 注册指标
+const httpRequestDuration = new prometheus.Histogram({
+  name: 'http_request_duration_seconds',
+  help: 'HTTP请求耗时',
+  labelNames: ['method', 'route', 'status']
+});
+
+// 中间件统计请求耗时
+app.use((req, res, next) => {
+  const end = httpRequestDuration.startTimer();
+  res.on('finish', () => {
+    end({ method: req.method, route: req.route?.path || req.path, status: res.statusCode });
+  });
+  next();
+});
+
+// 暴露指标接口
+app.get('/metrics', (req, res) => {
+  res.set('Content-Type', prometheus.register.contentType);
+  res.end(prometheus.register.metrics());
+});
+
+app.listen(3000);
+</code></pre>
+
+            <h2 id="ch6-3">日志采集与分析 ELK/Loki</h2>
+            <h3>3.1 常见日志方案</h3>
+            <table>
+                <tr>
+                    <th>方案</th>
+                    <th>组件</th>
+                    <th>适用场景</th>
+                </tr>
+                <tr>
+                    <td>ELK Stack</td>
+                    <td>Elasticsearch + Logstash + Kibana</td>
+                    <td>中大型团队，功能强大</td>
+                </tr>
+                <tr>
+                    <td>Loki Stack</td>
+                    <td>Loki + Promtail + Grafana</td>
+                    <td>轻量级，云原生友好</td>
+                </tr>
+            </table>
+
+            <h3>3.2 日志规范建议</h3>
+            <ul>
+                <li>使用 JSON 格式输出，方便采集解析</li>
+                <li>每条日志包含：时间、级别、追踪ID、模块、内容</li>
+                <li>关键路径必须打日志，便于排查问题</li>
+                <li>敏感信息（密码、手机号）禁止打日志</li>
+            </ul>
+
+            <h2 id="ch6-4">告警规则与通知渠道</h2>
+            <h3>4.1 告警级别定义</h3>
+            <ul>
+                <li><strong>P0（紧急）</strong>：服务不可用、核心功能故障 → 电话+短信+企业微信</li>
+                <li><strong>P1（重要）</strong>：错误率升高、性能下降 → 企业微信@所有人</li>
+                <li><strong>P2（一般）</strong>：非核心异常、资源预警 → 企业微信群消息</li>
+                <li><strong>P3（提示）</strong>：日常统计、低风险告警 → 邮件</li>
+            </ul>
+
+            <h1 id="ch7-1">第七章：运维安全与合规</h1>
+
+            <h2>网络安全基础</h2>
+            <h3>1.1 常见攻击类型</h3>
+            <ul>
+                <li><strong>SQL 注入</strong>：通过恶意SQL语句操作数据库 → 使用参数化查询</li>
+                <li><strong>XSS 攻击</strong>：注入恶意脚本 → 输入输出转义</li>
+                <li><strong>CSRF 攻击</strong>：跨站请求伪造 → Token 校验</li>
+                <li><strong>DDoS 攻击</strong>：大量请求打垮服务 → 接入高防CDN</li>
+                <li><strong>暴力破解</strong>：密码穷举 → 限流+验证码+强密码</li>
+            </ul>
+
+            <h2 id="ch7-2">防火墙与访问控制</h2>
+<pre><code># firewalld 操作（CentOS）
+systemctl start firewalld       # 启动防火墙
+firewall-cmd --list-ports       # 查看开放端口
+firewall-cmd --add-port=80/tcp --permanent  # 开放80端口
+firewall-cmd --remove-port=80/tcp --permanent
+firewall-cmd --reload           # 重载规则
+
+# ufw 操作（Ubuntu）
+ufw enable                      # 启用防火墙
+ufw allow 80/tcp                # 开放80端口
+ufw deny 22                     # 禁止22端口
+ufw status                      # 查看状态
+</code></pre>
+
+            <div class="warning-box">
+                <div class="warning-box-title">⚠️ 重要提醒</div>
+                <p>远程配置防火墙时千万不要把自己的 SSH 端口封掉，否则会导致无法连接服务器。建议先测试再永久保存规则。</p>
+            </div>
+
+            <h2 id="ch7-3">数据备份与恢复</h2>
+            <h3>3.1 备份策略</h3>
+            <ul>
+                <li><strong>全量备份</strong>：完整备份所有数据，占用空间大，恢复快</li>
+                <li><strong>增量备份</strong>：只备份变化的数据，节省空间，恢复慢</li>
+                <li><strong>建议</strong>：每周一次全量备份，每天一次增量备份</li>
+            </ul>
+
+            <h3>3.2 MongoDB 备份脚本示例</h3>
+<pre><code>#!/bin/bash
+BACKUP_DIR="/data/backup"
+DATE=$(date +%Y%m%d_%H%M%S)
+DB_NAME="mydb"
+
+mkdir -p $BACKUP_DIR
+mongodump -d $DB_NAME -o $BACKUP_DIR/$DATE
+
+# 压缩
+tar -zcf $BACKUP_DIR/$DATE.tar.gz $BACKUP_DIR/$DATE
+rm -rf $BACKUP_DIR/$DATE
+
+# 删除30天前的备份
+find $BACKUP_DIR -name "*.tar.gz" -mtime +30 -delete
+</code></pre>
+
+            <h2 id="ch7-4">常见漏洞与防护</h2>
+            <ul>
+                <li>及时更新系统和软件包，修补安全漏洞</li>
+                <li>禁止 root 远程登录，使用普通用户+sudo</li>
+                <li>SSH 修改默认端口，使用密钥登录，禁用密码登录</li>
+                <li>定期扫描代码依赖漏洞（npm audit）</li>
+                <li>配置 fail2ban 防止暴力破解</li>
+            </ul>
+
+            <h1 id="ch8-1">第八章：大中小厂运维实战</h1>
+
+            <h2>中小厂：全栈运维模式</h2>
+            <p>中小公司通常没有专职运维，由开发人员兼任，特点是：</p>
+            <ul>
+                <li><strong>技术选型</strong>：优先使用云服务（CloudBase、ECS、RDS），减少自建运维</li>
+                <li><strong>自动化程度</strong>：基础自动化，脚本+定时任务为主</li>
+                <li><strong>监控告警</strong>：云厂商自带监控 + 简单的自定义告警</li>
+                <li><strong>核心能力</strong>：能部署、能排错、能备份、能恢复</li>
+            </ul>
+
+            <div class="tip-box">
+                <div class="tip-box-title">💡 给你的建议</div>
+                <p>如果你在中小团队或独立开发，优先吃透 CloudBase 全栈能力，再掌握基础的 Linux 运维和 Docker，足够应对 90% 以上的场景。</p>
+            </div>
+
+            <h2 id="ch8-2">中大厂：DevOps 标准化流程</h2>
+            <p>中等规模公司会有专门的 DevOps 团队，建立标准化的研发运维流程：</p>
+            <ul>
+                <li><strong>代码管理</strong>：Git 分支规范、Code Review 流程</li>
+                <li><strong>CI/CD 平台</strong>：Jenkins、GitLab CI、云效等统一平台</li>
+                <li><strong>容器化部署</strong>：Kubernetes 容器编排</li>
+                <li><strong>监控体系</strong>：完整的监控、日志、链路追踪</li>
+                <li><strong>发布流程</strong>：灰度发布、蓝绿部署、回滚机制</li>
+            </ul>
+
+            <h2 id="ch8-3">大厂：SRE 体系与高可用</h2>
+            <p>大厂的 SRE（站点可靠性工程）体系更加专业，关注：</p>
+            <ul>
+                <li><strong>高可用架构</strong>：多机房部署、异地容灾、故障自动切换</li>
+                <li><strong>弹性伸缩</strong>：根据流量自动扩缩容</li>
+                <li><strong>混沌工程</strong>：主动注入故障，验证系统稳定性</li>
+                <li><strong>SLA/SLO</strong>：服务可用性指标量化与考核</li>
+                <li><strong>故障演练</strong>：定期演练，提升应急响应能力</li>
+            </ul>
+
+            <h1 id="appendix-1">附录：学习资源与工具</h1>
+
+            <h2>推荐学习资源</h2>
+            <ul>
+                <li><strong>Linux 基础</strong>：《鸟哥的Linux私房菜》、菜鸟教程 Linux 教程</li>
+                <li><strong>Docker</strong>：Docker 官方文档、《Docker 从入门到实践》</li>
+                <li><strong>CloudBase</strong>：腾讯云 CloudBase 官方文档</li>
+                <li><strong>CI/CD</strong>：GitHub Actions 官方文档</li>
+                <li><strong>监控</strong>：Prometheus 官方文档、Grafana Labs</li>
+            </ul>
+
+            <h2 id="appendix-2">常用运维工具清单</h2>
+            <table>
+                <tr>
+                    <th>类别</th>
+                    <th>工具</th>
+                    <th>用途</th>
+                </tr>
+                <tr>
+                    <td>远程连接</td>
+                    <td>FinalShell / Xshell / iTerm2</td>
+                    <td>SSH 连接服务器</td>
+                </tr>
+                <tr>
+                    <td>文件传输</td>
+                    <td>FileZilla / WinSCP</td>
+                    <td>上传下载文件</td>
+                </tr>
+                <tr>
+                    <td>接口测试</td>
+                    <td>Postman / Apifox</td>
+                    <td>调试接口</td>
+                </tr>
+                <tr>
+                    <td>性能压测</td>
+                    <td>ab / wrk / JMeter</td>
+                    <td>压力测试</td>
+                </tr>
+                <tr>
+                    <td>日志分析</td>
+                    <td>grep / awk / sed</td>
+                    <td>命令行日志处理</td>
+                </tr>
+            </table>
+
+            <h2 id="appendix-3">面试高频考点</h2>
+            <ul>
+                <li>Linux 常用命令、进程排查、网络排查</li>
+                <li>Docker 镜像优化、容器与虚拟机区别</li>
+                <li>Kubernetes 核心概念、Pod、Service、Deployment</li>
+                <li>CI/CD 流水线设计思路</li>
+                <li>监控告警体系搭建、常用指标</li>
+                <li>常见安全漏洞与防护方案</li>
+                <li>高可用架构设计、灰度发布方案</li>
+            </ul>
+        </main>
+    </div>
+
+    <script>
+        // 主题切换
+        function toggleTheme() {
+            const body = document.body;
+            const currentTheme = body.getAttribute('data-theme');
+            const btn = document.querySelector('.theme-toggle');
+            
+            if (currentTheme === 'dark') {
+                body.removeAttribute('data-theme');
+                btn.textContent = '🌙 切换深色模式';
+                localStorage.setItem('theme', 'light');
+            } else {
+                body.setAttribute('data-theme', 'dark');
+                btn.textContent = '☀️ 切换浅色模式';
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
+        // 初始化主题
+        function initTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            const btn = document.querySelector('.theme-toggle');
+            if (savedTheme === 'dark') {
+                document.body.setAttribute('data-theme', 'dark');
+                btn.textContent = '☀️ 切换浅色模式';
+            }
+        }
+
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            initTheme();
+            
+            // 平滑滚动
+            document.querySelectorAll('.sidebar a').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    if (targetElement) {
+                        targetElement.scrollIntoView({ behavior: 'smooth' });
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1151 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flutter 核心原理全套复习笔记</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({ 
+            startOnLoad: true,
+            theme: 'default',
+            flowchart: { 
+                useMaxWidth: true,
+                htmlLabels: true,
+                curve: 'basis'
+            }
+        });
+    </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft Yahei", "PingFang SC", sans-serif;
+        }
+
+        body {
+            background-color: #f0f2f5;
+            color: #1f2937;
+            line-height: 1.7;
+        }
+
+        /* 页面头部 */
+        .header {
+            background: linear-gradient(135deg, #0ea5e9 0%, #6366f1 100%);
+            color: white;
+            padding: 22px 40px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            font-size: 22px;
+            font-weight: 600;
+        }
+
+        .header p {
+            font-size: 13px;
+            opacity: 0.9;
+            margin-top: 4px;
+        }
+
+        /* 主体布局 */
+        .main-container {
+            display: flex;
+            max-width: 1480px;
+            margin: 0 auto;
+            padding: 20px;
+            gap: 28px;
+        }
+
+        /* 左侧目录栏 */
+        .sidebar {
+            width: 300px;
+            flex-shrink: 0;
+            position: sticky;
+            top: 90px;
+            height: fit-content;
+            background: white;
+            border-radius: 10px;
+            padding: 18px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+
+        .sidebar-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 14px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #e5e7eb;
+            color: #1e3a8a;
+        }
+
+        .sidebar details {
+            margin-bottom: 6px;
+        }
+
+        .sidebar summary {
+            cursor: pointer;
+            padding: 6px 8px;
+            border-radius: 4px;
+            font-weight: 500;
+            list-style: none;
+            transition: background 0.2s;
+            font-size: 14px;
+        }
+
+        .sidebar summary:hover {
+            background-color: #eff6ff;
+        }
+
+        .sidebar summary::-webkit-details-marker {
+            display: none;
+        }
+
+        .sidebar summary::before {
+            content: "▸ ";
+            display: inline-block;
+            margin-right: 4px;
+            transition: transform 0.2s;
+            color: #3b82f6;
+        }
+
+        .sidebar details[open] > summary::before {
+            transform: rotate(90deg);
+        }
+
+        .sidebar ul {
+            list-style: none;
+            padding-left: 22px;
+            margin-top: 4px;
+        }
+
+        .sidebar li {
+            margin: 4px 0;
+        }
+
+        .sidebar a {
+            color: #4b5563;
+            text-decoration: none;
+            font-size: 13px;
+            padding: 4px 6px;
+            border-radius: 4px;
+            display: block;
+            transition: all 0.2s;
+        }
+
+        .sidebar a:hover {
+            background-color: #dbeafe;
+            color: #1d4ed8;
+        }
+
+        /* 右侧正文区域 */
+        .content {
+            flex: 1;
+            background: white;
+            border-radius: 10px;
+            padding: 32px 40px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+
+        /* 大章节 */
+        .chapter > details {
+            margin-bottom: 28px;
+            border-bottom: 1px solid #e5e7eb;
+            padding-bottom: 22px;
+        }
+
+        .chapter > details:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+
+        .chapter summary {
+            cursor: pointer;
+            list-style: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .chapter summary::-webkit-details-marker {
+            display: none;
+        }
+
+        .chapter summary::before {
+            content: "▾";
+            font-size: 14px;
+            color: #3b82f6;
+            transition: transform 0.2s;
+        }
+
+        .chapter details:not([open]) > summary::before {
+            transform: rotate(-90deg);
+        }
+
+        .chapter h2 {
+            font-size: 20px;
+            color: #0f172a;
+            display: inline-block;
+        }
+
+        /* 小节 */
+        .section {
+            margin: 18px 0 18px 28px;
+        }
+
+        .section summary {
+            font-weight: 500;
+            color: #1e40af;
+        }
+
+        .section h3 {
+            font-size: 16px;
+            display: inline-block;
+        }
+
+        .section p {
+            margin: 10px 0 10px 20px;
+            color: #374151;
+            font-size: 14.5px;
+        }
+
+        /* 知识要点列表 */
+        .knowledge-list {
+            margin: 10px 0 10px 44px;
+            color: #374151;
+            font-size: 14.5px;
+        }
+
+        .knowledge-list li {
+            margin: 5px 0;
+        }
+
+        .knowledge-list strong {
+            color: #0f172a;
+        }
+
+        /* 重点提示框 */
+        .tip-box {
+            margin: 14px 0 14px 20px;
+            padding: 12px 16px;
+            background-color: #f0f9ff;
+            border-left: 4px solid #0ea5e9;
+            border-radius: 4px;
+            font-size: 14px;
+            color: #0c4a6e;
+        }
+
+        /* 对比表格 */
+        .compare-table {
+            margin: 14px 0 14px 20px;
+            width: calc(100% - 20px);
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        .compare-table th, .compare-table td {
+            border: 1px solid #e5e7eb;
+            padding: 8px 12px;
+            text-align: left;
+        }
+
+        .compare-table th {
+            background-color: #f8fafc;
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        /* 流程图容器 */
+        .flow-box {
+            margin: 22px 0;
+            padding: 20px;
+            background-color: #f8fafc;
+            border-radius: 8px;
+            border-left: 4px solid #6366f1;
+        }
+
+        .flow-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #3730a3;
+            margin-bottom: 14px;
+            text-align: center;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* 自测题样式 */
+        .qa-item {
+            margin: 10px 0 10px 20px;
+            padding: 10px 14px;
+            background-color: #f9fafb;
+            border-radius: 6px;
+        }
+
+        .qa-question {
+            font-weight: 500;
+            color: #111827;
+            margin-bottom: 6px;
+        }
+
+        .qa-answer {
+            color: #4b5563;
+            font-size: 14px;
+            padding-left: 10px;
+            border-left: 2px solid #9ca3af;
+        }
+
+        /* 代码片段 */
+        code {
+            background-color: #f1f5f9;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: Consolas, monospace;
+            font-size: 13px;
+            color: #be185d;
+        }
+
+        /* 响应式适配 */
+        @media (max-width: 960px) {
+            .main-container {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+                position: static;
+            }
+            .content {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>📘 Flutter 核心原理全套复习笔记</h1>
+        <p>面试备忘 · 体系化知识图谱 · 含 Dart 语法扩展与四大方向深度解析</p>
+    </div>
+
+    <div class="main-container">
+        <!-- 左侧：可折叠目录 -->
+        <div class="sidebar">
+            <div class="sidebar-title">📑 目录导航</div>
+            
+            <details open>
+                <summary>一、三层核心树体系</summary>
+                <ul>
+                    <li><a href="#sec1-1">1.1 基础定义与对应关系</a></li>
+                    <li><a href="#flow1">▸ 三棵树对象关系图</a></li>
+                </ul>
+            </details>
+
+            <details open>
+                <summary>二、Element复用准入机制</summary>
+                <ul>
+                    <li><a href="#sec2-1">2.1 canUpdate核心规则</a></li>
+                    <li><a href="#flow2">▸ 复用判断流程图</a></li>
+                </ul>
+            </details>
+
+            <details>
+                <summary>三、InheritedWidget依赖机制</summary>
+                <ul>
+                    <li><a href="#sec3-1">3.1 核心API与更新逻辑</a></li>
+                    <li><a href="#flow3">▸ 依赖更新流程图</a></li>
+                </ul>
+            </details>
+
+            <details>
+                <summary>四、脏Element与帧调度</summary>
+                <ul>
+                    <li><a href="#sec4-1">4.1 setState与VSync机制</a></li>
+                    <li><a href="#sec4-2">4.2 四级任务队列</a></li>
+                    <li><a href="#flow4">▸ 一帧完整流水线</a></li>
+                </ul>
+            </details>
+
+            <details>
+                <summary>五、RepaintBoundary渲染链路</summary>
+                <ul>
+                    <li><a href="#sec5-1">5.1 图层隔离原理</a></li>
+                    <li><a href="#flow5">▸ 渲染三阶段流程图</a></li>
+                </ul>
+            </details>
+
+            <details>
+                <summary>六、const常量构造优化</summary>
+                <ul>
+                    <li><a href="#sec6-1">6.1 生效条件与原理</a></li>
+                </ul>
+            </details>
+
+            <details>
+                <summary>七、HitTest与手势体系</summary>
+                <ul>
+                    <li><a href="#sec7-1">7.1 命中检测与手势竞技场</a></li>
+                </ul>
+            </details>
+
+            <details>
+                <summary>八、Dart 面向对象扩展</summary>
+                <ul>
+                    <li><a href="#sec8-1">8.1 abstract class 抽象类</a></li>
+                    <li><a href="#sec8-2">8.2 mixin 混入</a></li>
+                    <li><a href="#sec8-3">8.3 implements 接口</a></li>
+                    <li><a href="#sec8-4">8.4 对比与自测</a></li>
+                </ul>
+            </details>
+
+            <details>
+                <summary>九、扩展方向：内存管理</summary>
+                <ul>
+                    <li><a href="#sec9-1">9.1 State完整生命周期</a></li>
+                    <li><a href="#sec9-2">9.2 ImageCache与内存泄漏</a></li>
+                </ul>
+            </details>
+
+            <details>
+                <summary>十、扩展方向：路由与Overlay</summary>
+                <ul>
+                    <li><a href="#sec10-1">10.1 Navigator与Overlay原理</a></li>
+                </ul>
+            </details>
+
+            <details>
+                <summary>十一、扩展方向：状态管理</summary>
+                <ul>
+                    <li><a href="#sec11-1">11.1 Provider底层原理</a></li>
+                    <li><a href="#sec11-2">11.2 Riverpod改进方案</a></li>
+                </ul>
+            </details>
+
+            <details>
+                <summary>十二、扩展方向：事件循环与Isolate</summary>
+                <ul>
+                    <li><a href="#sec12-1">12.1 EventLoop与Future</a></li>
+                    <li><a href="#sec12-2">12.2 Isolate并发模型</a></li>
+                </ul>
+            </details>
+
+            <details>
+                <summary>十三、终极全链路总复盘</summary>
+                <ul>
+                    <li><a href="#flow-final">▸ 完整运行链路全景图</a></li>
+                </ul>
+            </details>
+
+            <details>
+                <summary>十四、面试自测题与答案</summary>
+                <ul>
+                    <li><a href="#qa-list">12道高频面试题</a></li>
+                </ul>
+            </details>
+        </div>
+
+        <!-- 右侧：正文内容 -->
+        <div class="content">
+            
+            <!-- 第一章 -->
+            <div class="chapter">
+                <details open>
+                    <summary><h2>一、三层核心树：Widget / Element / RenderObject</h2></summary>
+
+                    <div class="section" id="sec1-1">
+                        <details open>
+                            <summary><h3>1.1 基础定义与对应关系</h3></summary>
+                            <p><strong>Widget</strong>：不可变(Immutable)的配置描述，不是真实实例。每次build会生成全新Widget对象，只保存UI参数，无生命周期。</p>
+                            <ul class="knowledge-list">
+                                <li><code>StatelessWidget</code> → 对应 <code>StatelessElement</code>（无State）</li>
+                                <li><code>StatefulWidget</code> → 对应 <code>StatefulElement</code>（持有State对象）</li>
+                            </ul>
+
+                            <p><strong>Element</strong>：Widget的实例管理器，<code>BuildContext</code>本质就是Element对象，构成Element树。</p>
+                            <ul class="knowledge-list">
+                                <li>核心职责：管理生命周期、维护依赖、连接Widget和RenderObject</li>
+                                <li>Element是可以复用的核心单元</li>
+                                <li><code>StatefulElement</code> 内部持有 <code>_state</code> 成员变量；State反向持有element（即context）</li>
+                            </ul>
+
+                            <p><strong>State</strong>：仅StatefulWidget才有，存放可变业务状态、业务逻辑；跟随Element复用。</p>
+                            <ul class="knowledge-list">
+                                <li>生命周期：initState → didUpdateWidget → build → dispose</li>
+                            </ul>
+
+                            <p><strong>RenderObject</strong>：渲染对象，负责布局、尺寸计算、绘制、点击命中，是三棵树中开销最重的一层。</p>
+
+                            <div class="tip-box">
+                                💡 一句话口诀：Widget是图纸，Element是节点实例（context本体），StatefulElement挂载State存状态；RenderObject负责绘制交互。
+                            </div>
+                        </details>
+                    </div>
+
+                    <!-- 流程图 -->
+                    <div class="flow-box" id="flow1">
+                        <div class="flow-title">📊 三棵树对象关系图谱</div>
+                        <div class="mermaid">
+flowchart TD
+    subgraph 配置层 Widget
+        W1[StatelessWidget<br>不可变配置]
+        W2[StatefulWidget<br>不可变配置]
+    end
+
+    subgraph 实例层 Element
+        E1[StatelessElement<br>实例管理 / 上下文]
+        E2[StatefulElement<br>实例管理 + 持有State]
+        S[State 对象<br>存放可变状态 / 业务逻辑]
+        E2 --> S
+        S -.-> E2
+    end
+
+    subgraph 渲染层 RenderObject
+        R1[RenderObject<br>布局 / 绘制 / 点击命中]
+        R2[RenderObject<br>布局 / 绘制 / 点击命中]
+    end
+
+    W1 --> E1
+    W2 --> E2
+    E1 --> R1
+    E2 --> R2
+                        </div>
+                    </div>
+                </details>
+            </div>
+
+            <!-- 第二章 -->
+            <div class="chapter">
+                <details open>
+                    <summary><h2>二、canUpdate：Element复用准入机制</h2></summary>
+
+                    <div class="section" id="sec2-1">
+                        <details open>
+                            <summary><h3>2.1 核心方法与典型场景</h3></summary>
+                            <p><strong>核心方法签名</strong>：<code>bool canUpdate(Widget oldWidget, Widget newWidget)</code></p>
+                            <p>默认两个条件<strong>同时成立</strong>，才复用旧Element：</p>
+                            <ul class="knowledge-list">
+                                <li><code>oldWidget.runtimeType == newWidget.runtimeType</code>（Widget类型一致）</li>
+                                <li><code>oldWidget.key == newWidget.key</code>（key相等，无key时均为null，判定相等）</li>
+                            </ul>
+
+                            <p><strong>✅ 可复用</strong>：复用旧Element，State保留，不会执行initState；触发 <code>didUpdateWidget</code>。</p>
+                            <p><strong>❌ 不可复用</strong>：卸载销毁旧Element，执行 <code>State.dispose</code>；新建Element、新建State，执行 <code>initState</code>。</p>
+
+                            <div class="tip-box">
+                                🔑 Key本质：在同类型组件列表中，给Widget唯一标识，让canUpdate正确映射新旧Widget，避免列表增删排序时状态错乱。
+                            </div>
+                        </details>
+                    </div>
+
+                    <div class="flow-box" id="flow2">
+                        <div class="flow-title">📊 Element复用判断流程</div>
+                        <div class="mermaid">
+flowchart LR
+    A[新旧Widget对比] --> B{runtimeType 相同?}
+    B -->|否| C[不可复用<br>销毁旧Element + dispose State<br>新建Element + 新建State + initState]
+    B -->|是| D{Key 相等?}
+    D -->|否| C
+    D -->|是| E[可复用<br>保留旧Element + State<br>触发 didUpdateWidget]
+                        </div>
+                    </div>
+                </details>
+            </div>
+
+            <!-- 第三章 -->
+            <div class="chapter">
+                <details>
+                    <summary><h2>三、InheritedWidget 跨节点数据下发 & 依赖机制</h2></summary>
+
+                    <div class="section" id="sec3-1">
+                        <details open>
+                            <summary><h3>3.1 核心API与更新逻辑</h3></summary>
+                            <p><strong>一句话总结</strong>：InheritedWidget 用于自上而下传递数据；更新时只通知已经注册依赖的子Element，精准局部刷新，是Theme、MediaQuery、Provider的底层基础。</p>
+                            
+                            <p><strong>两个关键API</strong>：</p>
+                            <ul class="knowledge-list">
+                                <li><code>context.dependOnInheritedWidgetOfExactType&lt;T&gt;()</code>
+                                    <ul>
+                                        <li>向上Element树查找最近T类型InheritedElement</li>
+                                        <li><strong>注册依赖</strong>：子Element加入InheritedElement依赖列表</li>
+                                        <li>Inherited数据变化，当前子Element自动标记脏节点，触发重建</li>
+                                    </ul>
+                                </li>
+                                <li><code>context.getInheritedWidgetOfExactType&lt;T&gt;()</code>
+                                    <ul>
+                                        <li>仅查找，不注册依赖；数据更新，子组件不会自动重建</li>
+                                    </ul>
+                                </li>
+                            </ul>
+
+                            <p><strong>更新逻辑</strong>：InheritedWidget更新，执行 <code>updateShouldNotify(oldWidget)</code></p>
+                            <ul class="knowledge-list">
+                                <li>返回true：遍历依赖列表，全部依赖Element标记脏，触发重建</li>
+                                <li>返回false：数据无变化，不通知子节点，不重建</li>
+                            </ul>
+
+                            <div class="tip-box">
+                                ⚠️ 重要规则：依赖只能在build阶段注册；在initState调用dependOn，无法注册依赖，数据变更不会刷新。查找遵循就近原则。
+                            </div>
+                        </details>
+                    </div>
+
+                    <div class="flow-box" id="flow3">
+                        <div class="flow-title">📊 InheritedWidget依赖更新流程</div>
+                        <div class="mermaid">
+flowchart TD
+    A[InheritedWidget 数据更新] --> B[执行 updateShouldNotify]
+    B -->|返回 false| C[不通知子节点<br>无UI重建]
+    B -->|返回 true| D[遍历内部依赖列表]
+    D --> E[所有依赖 Element 标记 dirty]
+    E --> F[等待下一帧触发局部重建]
+                        </div>
+                    </div>
+                </details>
+            </div>
+
+            <!-- 第四章 -->
+            <div class="chapter">
+                <details>
+                    <summary><h2>四、脏Element + SchedulerBinding 帧调度（VSync机制）</h2></summary>
+
+                    <div class="section" id="sec4-1">
+                        <details open>
+                            <summary><h3>4.1 setState执行流程</h3></summary>
+                            <p><strong>核心结论</strong>：setState不会立刻build、不会立即渲染；仅标记Element为dirty脏节点，加入任务队列，等待VSync垂直同步信号，批量统一执行一帧渲染，合并多次状态修改，减少重复渲染开销。</p>
+                            
+                            <p><strong>Element两种状态</strong>：</p>
+                            <ul class="knowledge-list">
+                                <li><strong>Clean干净</strong>：UI最新，无需重建</li>
+                                <li><strong>Dirty脏</strong>：数据变更，需要执行build生成新Widget子树</li>
+                            </ul>
+
+                            <p><strong>setState完整执行流程</strong>：</p>
+                            <ol class="knowledge-list">
+                                <li>setState回调内部代码同步执行，修改状态变量</li>
+                                <li>底层调用 <code>element.markNeedsBuild()</code>，标记脏Element，向Scheduler申请新帧</li>
+                                <li>当前Dart代码执行栈跑完后，等待VSync信号，开启新一帧</li>
+                            </ol>
+                        </details>
+                    </div>
+
+                    <div class="section" id="sec4-2">
+                        <details open>
+                            <summary><h3>4.2 SchedulerBinding 四级任务队列</h3></summary>
+                            <p>优先级从高到低，串行执行：</p>
+                            <ol class="knowledge-list">
+                                <li><strong>TransientCallbacks</strong>（临时回调，最高优先级）：帧开始，build之前。动画AnimationController放在这里，先更新动画值。</li>
+                                <li><strong>PersistentCallbacks</strong>：build完成，layout布局之前。</li>
+                                <li><strong>PostFrameCallbacks</strong>：一帧全部完成（build+layout+paint）之后。常用 <code>addPostFrameCallback</code>，用来获取渲染完成后的尺寸、滚动定位。</li>
+                                <li><strong>IdleCallbacks</strong>（空闲回调，最低）：屏幕空闲无新帧，执行低优先级任务，埋点、预加载。</li>
+                            </ol>
+
+                            <div class="tip-box">
+                                💡 高频考点：同一帧多次setState，只会触发一次build；build阶段内部禁止调用setState，会抛异常。
+                            </div>
+                        </details>
+                    </div>
+
+                    <div class="flow-box" id="flow4">
+                        <div class="flow-title">📊 一帧完整渲染流水线</div>
+                        <div class="mermaid">
+flowchart TD
+    A[VSync 垂直同步信号到来] --> B[TransientCallbacks<br>动画更新 / 最高优先级]
+    B --> C[遍历脏Element执行 rebuild/build<br>走 canUpdate 复用逻辑]
+    C --> D[PersistentCallbacks<br>build完成，布局前处理]
+    D --> E[Layout 布局阶段<br>自上而下：父给子约束，子返回尺寸]
+    E --> F[Paint 绘制阶段<br>自下而上绘制RenderObject]
+    F --> G[Layer 图层合成 + 光栅化 + GPU上屏]
+    G --> H[PostFrameCallbacks<br>帧完成回调]
+    H --> I[IdleCallbacks<br>空闲低优先级任务]
+                        </div>
+                    </div>
+                </details>
+            </div>
+
+            <!-- 第五章 -->
+            <div class="chapter">
+                <details>
+                    <summary><h2>五、RepaintBoundary 图层隔离、Build/Layout/Paint分离原理</h2></summary>
+
+                    <div class="section" id="sec5-1">
+                        <details open>
+                            <summary><h3>5.1 核心原理与使用准则</h3></summary>
+                            <p><strong>核心结论</strong>：Build、Layout、Paint是三个独立阶段。build不一定layout，layout不一定paint。 RepaintBoundary创建独立Layer图层缓冲区，<strong>只隔离绘制重绘，布局无法隔离</strong>。</p>
+                            
+                            <p><strong>RenderObject两个标记</strong>：</p>
+                            <ul class="knowledge-list">
+                                <li><code>markNeedsLayout()</code>：标记需要布局，自上而下测量计算约束尺寸，开销更大。</li>
+                                <li><code>markNeedsPaint()</code>：仅标记绘制内容变更，不需要重新计算大小，只执行绘制，自下而上。</li>
+                            </ul>
+
+                            <p><strong>自带RepaintBoundary的组件</strong>：ListView/ScrollView、CustomPaint、Texture/Video、持续动画组件。</p>
+
+                            <div class="tip-box">
+                                ⚠️ 不要滥用：新建Layer占用内存，图层过多会增加图层合并开销，内存上涨。适合局部高频绘制但尺寸固定的场景（粒子动画、进度条、CustomPaint）。
+                            </div>
+                        </details>
+                    </div>
+
+                    <div class="flow-box" id="flow5">
+                        <div class="flow-title">📊 渲染三阶段分离与图层隔离</div>
+                        <div class="mermaid">
+flowchart LR
+    A[状态变更] --> B[Build 阶段<br>生成新Widget树<br>更新Element树]
+    B --> C{尺寸变化?}
+    C -->|是| D[markNeedsLayout<br>标记需要布局]
+    C -->|否| E[markNeedsPaint<br>仅标记需要绘制]
+    D --> F[Layout 布局<br>自上而下约束尺寸]
+    F --> G[Paint 内容绘制]
+    E --> G
+    G --> H[RepaintBoundary<br>切割独立Layer图层]
+    H --> I[Layer合成 + 光栅化上屏]
+                        </div>
+                    </div>
+                </details>
+            </div>
+
+            <!-- 第六章 -->
+            <div class="chapter">
+                <details>
+                    <summary><h2>六、const 常量构造函数优化</h2></summary>
+
+                    <div class="section" id="sec6-1">
+                        <details open>
+                            <summary><h3>6.1 生效条件与优化原理</h3></summary>
+                            <p><strong>生效条件（全部满足）</strong>：</p>
+                            <ul class="knowledge-list">
+                                <li>构造函数添加 <code>const</code> 修饰</li>
+                                <li>所有入参都必须是编译期常量，不能包含运行时变量</li>
+                            </ul>
+
+                            <p><strong>优化原理</strong>：编译期就创建Widget实例，运行全程复用同一个Widget对象，减少build过程中大量Widget对象创建，降低Dart GC压力。</p>
+
+                            <div class="tip-box">
+                                ⚠️ 重要误区：const不能阻止UI刷新！const仅仅复用Widget对象；上层状态变化，Element依然会执行重建流程，只是减少对象创建开销。
+                            </div>
+
+                            <p><strong>对比 RepaintBoundary</strong>：</p>
+                            <ul class="knowledge-list">
+                                <li><strong>const</strong>：减少Widget对象创建，减轻Dart GC</li>
+                                <li><strong>RepaintBoundary</strong>：隔离绘制区域，减少GPU绘制开销</li>
+                            </ul>
+                        </details>
+                    </div>
+                </details>
+            </div>
+
+            <!-- 第七章 -->
+            <div class="chapter">
+                <details>
+                    <summary><h2>七、HitTest点击命中 & 手势体系</h2></summary>
+
+                    <div class="section" id="sec7-1">
+                        <details open>
+                            <summary><h3>7.1 命中检测与手势竞技场</h3></summary>
+                            <p>点击、手势逻辑全部由<strong>RenderObject</strong>处理，Widget和Element仅配置。</p>
+                            
+                            <p><strong>HitTest命中流程</strong>：</p>
+                            <ol class="knowledge-list">
+                                <li>触摸屏幕，底层获取坐标</li>
+                                <li>自上而下HitTest遍历RenderObject，判断坐标是否落在组件范围内，收集HitTestResult命中链路</li>
+                                <li>事件自下而上冒泡分发PointerDown / PointerMove / PointerUp原始指针事件</li>
+                            </ol>
+
+                            <p><strong>两个屏蔽点击组件</strong>：</p>
+                            <ul class="knowledge-list">
+                                <li><strong>IgnorePointer</strong>：自身不接收事件，事件穿透到下层组件</li>
+                                <li><strong>AbsorbPointer</strong>：自身消费点击事件，阻止事件继续向下传递</li>
+                            </ul>
+
+                            <p><strong>手势竞技场 GestureArena</strong>：GestureDetector监听底层Pointer原始事件；多个手势同时识别，进入手势竞技场，竞争判定唯一获胜手势，执行对应回调。</p>
+                            <div class="tip-box">
+                                💡 Stack布局：后写的组件，RenderObject在上层，优先命中。
+                            </div>
+                        </details>
+                    </div>
+                </details>
+            </div>
+
+            <!-- 第八章 -->
+            <div class="chapter">
+                <details>
+                    <summary><h2>八、Dart 抽象类 / mixin / implements</h2></summary>
+
+                    <div class="section" id="sec8-1">
+                        <details open>
+                            <summary><h3>8.1 abstract class 抽象类</h3></summary>
+                            <p><strong>作用</strong>：abstract修饰class，该类不能直接实例化new，只能被extends继承。可以包含普通成员、普通实现方法；也可以包含抽象方法（只有签名，无方法体，子类必须实现）。</p>
+                            <ul class="knowledge-list">
+                                <li>使用 <code>extends</code> 继承抽象类，单继承</li>
+                                <li>抽象类可以拥有构造函数，但不能直接new</li>
+                                <li>抽象类不一定需要抽象方法；只加abstract，也可以单纯禁止外部实例化</li>
+                                <li>设计语义：<strong>is-a</strong>（是一个XX）</li>
+                            </ul>
+                        </details>
+                    </div>
+
+                    <div class="section" id="sec8-2">
+                        <details open>
+                            <summary><h3>8.2 mixin 混入</h3></summary>
+                            <p><strong>一句话作用</strong>：解决Dart只能单类继承的限制，用于复用能力代码；一个类可以with多个mixin。</p>
+                            <ul class="knowledge-list">
+                                <li>使用 <code>with</code> 关键字引入，支持多个连续混入</li>
+                                <li>mixin禁止写任何构造函数</li>
+                                <li><code>on</code> 关键字：限制mixin只能被指定类或者该类的子类混入，mixin内部可以访问on类的成员</li>
+                                <li>同名方法冲突：后面的mixin优先级更高，覆盖前面mixin同名方法</li>
+                                <li>设计语义：<strong>has-a</strong>（具备某项能力）</li>
+                            </ul>
+                        </details>
+                    </div>
+
+                    <div class="section" id="sec8-3">
+                        <details open>
+                            <summary><h3>8.3 implements 接口实现</h3></summary>
+                            <p>Dart没有单独interface关键字，所有class隐式可以作为接口。</p>
+                            <ul class="knowledge-list">
+                                <li>implements：只遵守接口规范，不复用父类任何代码实现，所有方法必须手动重写</li>
+                            </ul>
+                        </details>
+                    </div>
+
+                    <div class="section" id="sec8-4">
+                        <details open>
+                            <summary><h3>8.4 对比与自测</h3></summary>
+                            <table class="compare-table">
+                                <thead>
+                                    <tr>
+                                        <th>特性</th>
+                                        <th>abstract class</th>
+                                        <th>mixin</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>引入方式</td>
+                                        <td>extends，只能单继承</td>
+                                        <td>with，支持多个混入</td>
+                                    </tr>
+                                    <tr>
+                                        <td>构造函数</td>
+                                        <td>支持定义构造</td>
+                                        <td>不能写任何构造</td>
+                                    </tr>
+                                    <tr>
+                                        <td>语义</td>
+                                        <td>is-a，是某一类事物</td>
+                                        <td>has-a，具备某项能力</td>
+                                    </tr>
+                                    <tr>
+                                        <td>实例化</td>
+                                        <td>不能直接new</td>
+                                        <td>完全不能实例化</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <div class="tip-box">
+                                extends是继承，复用父类的代码实现；implements是实现接口，必须全部重写，不会复用父类任何实现。
+                            </div>
+                        </details>
+                    </div>
+                </details>
+            </div>
+
+            <!-- 第九章 内存管理 -->
+            <div class="chapter">
+                <details>
+                    <summary><h2>九、扩展方向1：内存管理</h2></summary>
+
+                    <div class="section" id="sec9-1">
+                        <details open>
+                            <summary><h3>9.1 State完整生命周期</h3></summary>
+                            <ol class="knowledge-list">
+                                <li><code>createState()</code>：创建State对象，仅一次</li>
+                                <li><code>initState()</code>：State初始化，挂载到Element，只执行一次。注意：initState中context可用，但不能执行dependOnInherited</li>
+                                <li><code>didChangeDependencies()</code>：依赖的InheritedWidget发生变化触发；build前也会调用一次</li>
+                                <li><code>build()</code>：构建UI，可注册Inherited依赖</li>
+                                <li><code>didUpdateWidget(Widget oldWidget)</code>：Widget更新，canUpdate复用Element时触发</li>
+                                <li><code>deactivate()</code>：Element临时从树移除（可重新挂载，比如PageView缓存）</li>
+                                <li><code>dispose()</code>：Element永久卸载，只执行一次；资源释放：controller、stream监听、timer，必须在这里取消</li>
+                            </ol>
+                            <div class="tip-box">
+                                重点：deactivate只是临时移出，不一定执行dispose；只有永久卸载才会dispose。
+                            </div>
+                        </details>
+                    </div>
+
+                    <div class="section" id="sec9-2">
+                        <details open>
+                            <summary><h3>9.2 ImageCache与内存泄漏</h3></summary>
+                            <p><strong>ImageCache 图片缓存</strong>：Flutter全局单例，默认内存上限：最多1000张图片，最大100MB。缓存key：图片url+scale。</p>
+                            <p>优化方案：</p>
+                            <ul class="knowledge-list">
+                                <li>使用cacheWidth/cacheHeight缩小解码尺寸</li>
+                                <li>大图懒加载，不在页面预加载大量图片</li>
+                                <li>手动清理缓存：<code>imageCache.clear()</code></li>
+                            </ul>
+
+                            <p><strong>常见内存泄漏场景</strong>：</p>
+                            <ul class="knowledge-list">
+                                <li>AnimationController、Timer、StreamSubscription，页面销毁没有cancel</li>
+                                <li>全局静态变量持有State/context引用，阻止GC回收</li>
+                                <li>WebView、Texture等原生插件没有释放资源</li>
+                                <li>大量大图不解码限制，ImageCache缓存堆积</li>
+                            </ul>
+                        </details>
+                    </div>
+                </details>
+            </div>
+
+            <!-- 第十章 路由Overlay -->
+            <div class="chapter">
+                <details>
+                    <summary><h2>十、扩展方向2：Navigator、Overlay原理</h2></summary>
+
+                    <div class="section" id="sec10-1">
+                        <details open>
+                            <summary><h3>10.1 核心原理</h3></summary>
+                            <p><strong>Overlay</strong>：页面最顶层的一个特殊Stack，维护OverlayEntry；OverlayEntry是独立Element子树，悬浮在页面之上（弹窗、toast、对话框）。</p>
+                            <p><strong>Navigator</strong>：管理路由栈，本质维护Route栈；每个Route内部会创建OverlayEntry挂载到Overlay。</p>
+
+                            <ul class="knowledge-list">
+                                <li><code>Navigator.push</code>：新建Route，生成OverlayEntry，加入Overlay，入栈</li>
+                                <li><code>Navigator.pop</code>：移除栈顶OverlayEntry，出栈，销毁对应Element、State，执行dispose</li>
+                            </ul>
+
+                            <div class="tip-box">
+                                💡 面试考点：OverlayEntry是独立Element树，可以脱离当前页面存在；toast就算页面pop，依然能显示，直到手动remove。
+                            </div>
+
+                            <p><strong>关键区分</strong>：</p>
+                            <ul class="knowledge-list">
+                                <li>PageView缓存：keepAlive的页面只是deactivate，不会dispose，保存在内存</li>
+                                <li>Navigator pop：页面OverlayEntry移除，Element卸载，执行dispose</li>
+                            </ul>
+                        </details>
+                    </div>
+                </details>
+            </div>
+
+            <!-- 第十一章 状态管理 -->
+            <div class="chapter">
+                <details>
+                    <summary><h2>十一、扩展方向3：状态管理 Provider / Riverpod</h2></summary>
+
+                    <div class="section" id="sec11-1">
+                        <details open>
+                            <summary><h3>11.1 Provider底层原理</h3></summary>
+                            <p>Provider 是对 InheritedWidget 的封装，解决原生InheritedWidget粒度粗的痛点。</p>
+                            <ul class="knowledge-list">
+                                <li>ChangeNotifierProvider：内部持有ChangeNotifier，封装InheritedWidget</li>
+                                <li><code>Provider.of&lt;T&gt;(context)</code> 底层调用dependOnInheritedWidgetOfExactType注册依赖</li>
+                                <li>ChangeNotifier调用notifyListeners，触发Inherited更新，依赖组件标记脏节点重建</li>
+                            </ul>
+                            <div class="tip-box">
+                                缺点：只要notifyListeners，所有依赖该Provider的组件全部重建，无法细粒度监听单个字段。
+                            </div>
+                        </details>
+                    </div>
+
+                    <div class="section" id="sec11-2">
+                        <details open>
+                            <summary><h3>11.2 Riverpod改进方案</h3></summary>
+                            <p>解决Provider核心痛点：</p>
+                            <ul class="knowledge-list">
+                                <li>不需要context，不需要嵌套InheritedWidget树</li>
+                                <li>细粒度订阅，可以只监听对象里某一个属性变化</li>
+                                <li>自动缓存、支持异步Future/Stream状态，内置错误处理</li>
+                                <li>全局容器管理状态，不受Widget树层级限制</li>
+                            </ul>
+
+                            <p><strong>选型对比</strong>：</p>
+                            <ul class="knowledge-list">
+                                <li>Provider：适合中小型项目，简单状态，上手简单，基于InheritedWidget</li>
+                                <li>Riverpod：中大型项目，细粒度更新，异步状态友好，减少不必要重建</li>
+                            </ul>
+                        </details>
+                    </div>
+                </details>
+            </div>
+
+            <!-- 第十二章 事件循环 -->
+            <div class="chapter">
+                <details>
+                    <summary><h2>十二、扩展方向4：Dart EventLoop、Future、Isolate</h2></summary>
+
+                    <div class="section" id="sec12-1">
+                        <details open>
+                            <summary><h3>12.1 单线程模型与EventLoop</h3></summary>
+                            <p>Dart主UI线程是单线程，Flutter所有Widget、Element、State逻辑都跑在这个主线程。依靠EventLoop事件循环，任务放入队列依次执行。</p>
+                            
+                            <p><strong>两个队列</strong>：</p>
+                            <ol class="knowledge-list">
+                                <li><strong>Microtask 微任务队列</strong>（优先级更高）：scheduleMicrotask；当前同步代码执行完，优先清空所有微任务</li>
+                                <li><strong>Event 事件队列</strong>：Future、Timer、IO、手势、VSync信号等任务</li>
+                            </ol>
+
+                            <p><strong>执行顺序</strong>：同步代码 → Microtask微任务全部跑完 → Event队列取任务执行。</p>
+                            <div class="tip-box">
+                                Future.then回调进入Event队列。async/await只是语法糖，本质还是Future，不会开启新线程。
+                            </div>
+                        </details>
+                    </div>
+
+                    <div class="section" id="sec12-2">
+                        <details open>
+                            <summary><h3>12.2 Isolate并发模型</h3></summary>
+                            <p>Dart的并发方案：Isolate。每个Isolate拥有独立堆内存、独立事件循环，不共享内存，通过Port消息通信。</p>
+                            
+                            <ul class="knowledge-list">
+                                <li>Flutter主线程是Main Isolate；耗时计算放到子Isolate，避免阻塞UI</li>
+                                <li>Isolate之间不共享对象，只能传递基础类型、可序列化对象</li>
+                                <li>Isolate无法访问UI相关对象（BuildContext、Widget等），只能主Isolate操作UI</li>
+                            </ul>
+                        </details>
+                    </div>
+                </details>
+            </div>
+
+            <!-- 第十三章 总复盘 -->
+            <div class="chapter">
+                <details open>
+                    <summary><h2>十三、终极完整全链路总复盘</h2></summary>
+
+                    <div class="flow-box" id="flow-final">
+                        <div class="flow-title">🌐 Flutter完整运行链路全景图</div>
+                        <div class="mermaid">
+flowchart TD
+    A[触发源<br>setState / Inherited更新 / 手势事件] --> B[Element 标记 dirty<br>向 Scheduler 申请新帧]
+    B --> C[等待 VSync 信号<br>合并多次状态变更]
+    C --> D[新一帧启动<br>动画回调优先执行]
+    D --> E[脏Element rebuild<br>build生成新Widget树]
+    E --> F[canUpdate 判断<br>Element复用/重建]
+    F --> G[更新 RenderObject 属性]
+    G --> H[Layout 布局计算<br>自上而下约束尺寸]
+    H --> I[Paint 内容绘制<br>RepaintBoundary图层隔离]
+    I --> J[Layer 合成 + 光栅化 + GPU上屏]
+    J --> K[帧结束回调 PostFrameCallback]
+    
+    L[用户触摸输入] --> M[HitTest 命中检测<br>自上而下遍历RenderObject]
+    M --> N[手势竞技场识别手势]
+    N --> O[事件冒泡分发<br>触发业务逻辑]
+    O --> A
+    
+    P[耗时计算任务] --> Q[子Isolate 执行<br>独立内存/事件循环]
+    Q --> R[Port 通信回传结果]
+    R --> A
+
+    style A fill:#e0f2fe
+    style J fill:#dcfce7
+    style Q fill:#fef3c7
+                        </div>
+                    </div>
+
+                    <div class="tip-box">
+                        📌 核心脉络：状态变更 → 脏节点标记 → 等待VSync → Build构建 → Layout布局 → Paint绘制 → 图层合成上屏 → 事件回调。
+                    </div>
+                </details>
+            </div>
+
+            <!-- 第十四章 自测题 -->
+            <div class="chapter">
+                <details>
+                    <summary><h2>十四、面试高频自测题与参考答案</h2></summary>
+
+                    <div id="qa-list">
+                        <div class="qa-item">
+                            <div class="qa-question">1. Widget、Element、RenderObject三者区别？</div>
+                            <div class="qa-answer">
+                                Widget是不可变的配置描述（图纸），每次build生成新对象，只存UI参数；Element是Widget的实例节点，BuildContext本质就是Element，负责生命周期与依赖管理，可复用；RenderObject是渲染对象，负责布局、绘制、点击命中，开销最重。
+                            </div>
+                        </div>
+
+                        <div class="qa-item">
+                            <div class="qa-question">2. canUpdate判断条件，key作用？</div>
+                            <div class="qa-answer">
+                                同时满足runtimeType相同、key相等才可复用Element。Key的作用是在同类型Widget列表中给唯一标识，保证列表增删排序时Element/State正确匹配，避免状态错乱。
+                            </div>
+                        </div>
+
+                        <div class="qa-item">
+                            <div class="qa-question">3. dependOnInheritedWidgetOfExactType和getInherited区别？</div>
+                            <div class="qa-answer">
+                                dependOn会向上查找并注册依赖，数据更新时当前Element自动标记脏重建；getInherited仅查找获取数据，不注册依赖，数据变化不会自动重建。
+                            </div>
+                        </div>
+
+                        <div class="qa-item">
+                            <div class="qa-question">4. setState什么时候build？SchedulerBinding队列优先级？</div>
+                            <div class="qa-answer">
+                                setState不会立刻build，仅标记脏节点申请新帧，等当前代码栈跑完、VSync信号到来才执行build。队列优先级：TransientCallbacks > PersistentCallbacks > PostFrameCallbacks > IdleCallbacks。
+                            </div>
+                        </div>
+
+                        <div class="qa-item">
+                            <div class="qa-question">5. RepaintBoundary隔离的是layout还是paint？</div>
+                            <div class="qa-answer">
+                                只隔离Paint绘制，不能隔离Layout布局。通过创建独立Layer图层缓冲区，实现内部重绘不影响外部，外部重绘不影响内部。
+                            </div>
+                        </div>
+
+                        <div class="qa-item">
+                            <div class="qa-question">6. const优化原理，能不能阻止UI刷新？</div>
+                            <div class="qa-answer">
+                                const在编译期创建Widget对象，运行时全程复用，减少对象创建与GC压力。不能阻止UI刷新，上层状态变化Element依然会重建，只是减少了对象创建开销。
+                            </div>
+                        </div>
+
+                        <div class="qa-item">
+                            <div class="qa-question">7. HitTest流程，IgnorePointer和AbsorbPointer差异？</div>
+                            <div class="qa-answer">
+                                触摸后自上而下遍历RenderObject命中检测，收集命中链路，事件自下而上冒泡分发。IgnorePointer自身不接收事件，穿透到下层；AbsorbPointer自身消费事件，阻止向下传递。
+                            </div>
+                        </div>
+
+                        <div class="qa-item">
+                            <div class="qa-question">8. deactivate和dispose区别？常见内存泄漏场景？</div>
+                            <div class="qa-answer">
+                                deactivate是Element临时从树移除，可重新挂载，不释放资源；dispose是永久卸载，必须释放资源。常见泄漏：控制器/流/定时器未取消、全局变量持有context、原生资源未释放、大图缓存堆积。
+                            </div>
+                        </div>
+
+                        <div class="qa-item">
+                            <div class="qa-question">9. Navigator、Overlay原理是什么？</div>
+                            <div class="qa-answer">
+                                Overlay是顶层特殊Stack，维护独立Element子树OverlayEntry；Navigator维护Route栈，每个Route生成OverlayEntry挂载到Overlay。push入栈、pop出栈并销毁资源。
+                            </div>
+                        </div>
+
+                        <div class="qa-item">
+                            <div class="qa-question">10. Provider和Riverpod底层原理与差异？</div>
+                            <div class="qa-answer">
+                                Provider基于InheritedWidget+ChangeNotifier封装，粒度粗；Riverpod不需要context，支持细粒度订阅、异步状态、全局管理，减少不必要重建。
+                            </div>
+                        </div>
+
+                        <div class="qa-item">
+                            <div class="qa-question">11. Dart EventLoop执行顺序？Isolate特点？</div>
+                            <div class="qa-answer">
+                                执行顺序：同步代码 → 全部微任务 → 事件队列任务。Isolate是Dart并发方案，拥有独立内存和事件循环，不共享内存，通过Port通信，避免阻塞UI线程。
+                            </div>
+                        </div>
+
+                        <div class="qa-item">
+                            <div class="qa-question">12. abstract class、mixin作用；extends / implements区别？</div>
+                            <div class="qa-answer">
+                                abstract class是抽象类，不能实例化，用于继承复用，语义is-a；mixin是混入，实现多能力复用，语义has-a，不能有构造函数。extends继承复用代码，单继承；implements实现接口，全部重写不复用代码。
+                            </div>
+                        </div>
+                    </div>
+                </details>
+            </div>
+
+        </div>
+    </div>
+</body>
+</html>

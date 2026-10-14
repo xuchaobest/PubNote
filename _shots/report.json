@@ -1,0 +1,171 @@
+{
+  "src": "index.html",
+  "url": "file:///Users/chao/Documents/GitHub/PubNote/index.html",
+  "outdir": "/Users/chao/Documents/GitHub/PubNote/_shots",
+  "include": [
+    "lint",
+    "screenshots",
+    "structure"
+  ],
+  "shots": {},
+  "error": {
+    "code": "no_browser",
+    "message": "没有可用的浏览器：playwright 未装，也没在系统里找到 chrome/edge/chromium。\n推荐装 playwright：`pip install playwright && playwright install chromium`。\n或安装任一系统浏览器：Chrome / Edge / Chromium。"
+  },
+  "elapsedSec": 0.03,
+  "schemaVersion": 2,
+  "status": "tool_error",
+  "engineInfo": {
+    "name": "playwright",
+    "degraded": false,
+    "degradedReasons": []
+  },
+  "input": {
+    "original": "index.html",
+    "resolvedPath": "/Users/chao/Documents/GitHub/PubNote/index.html",
+    "baseUrl": "file:///Users/chao/Documents/GitHub/PubNote/index.html",
+    "protocol": "file",
+    "cwd": "/Users/chao/Documents/GitHub/PubNote",
+    "mediaMode": {
+      "reducedMotion": true
+    }
+  },
+  "artifacts": {
+    "screenshots": []
+  },
+  "summary": {
+    "blocker": 0,
+    "error": 0,
+    "warning": 0,
+    "info": 0
+  },
+  "findings": [],
+  "notRunChecks": [
+    {
+      "check": "captureWritten",
+      "reason": "capture_failed"
+    },
+    {
+      "check": "visualCoverage",
+      "reason": "capture_incomplete_or_truncated"
+    },
+    {
+      "ruleId": "consoleErrors",
+      "reason": "dom_report_unavailable"
+    },
+    {
+      "ruleId": "consoleWarnings",
+      "reason": "dom_report_unavailable"
+    },
+    {
+      "ruleId": "resourceErrors",
+      "reason": "dom_report_unavailable"
+    },
+    {
+      "ruleId": "horizontalOverflow",
+      "reason": "dom_report_unavailable"
+    },
+    {
+      "ruleId": "misalignedBlocks",
+      "reason": "dom_report_unavailable"
+    },
+    {
+      "ruleId": "unevenColumns",
+      "reason": "dom_report_unavailable"
+    },
+    {
+      "ruleId": "pseudoOverflow",
+      "reason": "dom_report_unavailable"
+    },
+    {
+      "ruleId": "orphanCardsWarning",
+      "reason": "dom_report_unavailable"
+    },
+    {
+      "ruleId": "squeezedTableColumns",
+      "reason": "dom_report_unavailable"
+    },
+    {
+      "ruleId": "fakeDisclosureBulletsWarning",
+      "reason": "dom_report_unavailable"
+    },
+    {
+      "ruleId": "edgeHuggingTextWarning",
+      "reason": "dom_report_unavailable"
+    },
+    {
+      "ruleId": "fixedWidthElementsWarning",
+      "reason": "dom_report_unavailable"
+    },
+    {
+      "ruleId": "timelineAlignmentIssues",
+      "reason": "dom_report_unavailable"
+    },
+    {
+      "ruleId": "timelineBrokenAxis",
+      "reason": "dom_report_unavailable"
+    },
+    {
+      "ruleId": "timelineDeadDotStyle",
+      "reason": "dom_report_unavailable"
+    },
+    {
+      "ruleId": "chartBadValues",
+      "reason": "dom_report_unavailable"
+    },
+    {
+      "ruleId": "chartHtmlInCanvasText",
+      "reason": "dom_report_unavailable"
+    },
+    {
+      "ruleId": "responsiveChartIssues",
+      "reason": "dom_report_unavailable"
+    },
+    {
+      "ruleId": "duplicateImagesWarning",
+      "reason": "dom_report_unavailable"
+    },
+    {
+      "ruleId": "stretchedImages",
+      "reason": "dom_report_unavailable"
+    },
+    {
+      "ruleId": "localImageWarnings",
+      "reason": "dom_report_unavailable"
+    },
+    {
+      "ruleId": "publishBrokenAssets",
+      "reason": "dom_report_unavailable"
+    },
+    {
+      "ruleId": "unsafeHrefRefsWarning",
+      "reason": "dom_report_unavailable"
+    },
+    {
+      "ruleId": "slopFontsWarning",
+      "reason": "dom_report_unavailable"
+    },
+    {
+      "ruleId": "emojiUsageWarning",
+      "reason": "dom_report_unavailable"
+    },
+    {
+      "ruleId": "mobileFontIssues",
+      "reason": "dom_report_unavailable"
+    },
+    {
+      "ruleId": "textContrastIssues",
+      "reason": "dom_report_unavailable"
+    },
+    {
+      "ruleId": "invisibleAnimationsWarning",
+      "reason": "dom_report_unavailable"
+    },
+    {
+      "ruleId": "deadButtons",
+      "reason": "dom_report_unavailable"
+    }
+  ],
+  "prioritizedActions": [],
+  "reportPath": "/Users/chao/Documents/GitHub/PubNote/_shots/report.json"
+}

@@ -1,0 +1,1787 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>全栈开发后端实战学习手册</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.7;
+            color: #333;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 40px 20px 60px;
+            background: #f7f8fa;
+        }
+        h1 { font-size: 28px; font-weight: 700; color: #1a1a1a; text-align: center; margin-bottom: 8px; }
+        .subtitle { text-align: center; color: #666; margin-bottom: 40px; font-size: 14px; }
+        h2 { font-size: 20px; font-weight: 600; color: #1a1a1a; margin-top: 32px; margin-bottom: 12px; }
+        h3 { font-size: 16px; font-weight: 600; color: #2c3e50; margin-top: 20px; margin-bottom: 8px; }
+        h4 { font-size: 14px; font-weight: 600; color: #34495e; margin-top: 12px; margin-bottom: 6px; }
+        p { margin-bottom: 12px; color: #444; }
+        ul, ol { margin-left: 24px; margin-bottom: 12px; }
+        li { margin-bottom: 6px; }
+        code {
+            background: #f0f2f5;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: "SF Mono", Monaco, Consolas, monospace;
+            font-size: 13px;
+            color: #c7254e;
+        }
+        pre {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 16px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin-bottom: 12px;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+        pre code { background: none; color: inherit; padding: 0; }
+        details {
+            background: #fff;
+            border-radius: 10px;
+            padding: 16px 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border: 1px solid #eaecef;
+        }
+        summary {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2563eb;
+            cursor: pointer;
+            list-style: none;
+            position: relative;
+            padding-left: 24px;
+        }
+        summary::before {
+            content: "▶";
+            position: absolute;
+            left: 0;
+            top: 2px;
+            font-size: 12px;
+            transition: transform 0.2s;
+            color: #2563eb;
+        }
+        details[open] summary::before { transform: rotate(90deg); }
+        .tip {
+            background: #eff6ff;
+            border-left: 4px solid #2563eb;
+            padding: 12px 16px;
+            border-radius: 4px;
+            margin: 12px 0;
+            font-size: 14px;
+        }
+        .warn {
+            background: #fff7ed;
+            border-left: 4px solid #f97316;
+            padding: 12px 16px;
+            border-radius: 4px;
+            margin: 12px 0;
+            font-size: 14px;
+        }
+        .table-box {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 12px 0;
+            font-size: 14px;
+        }
+        .table-box th, .table-box td {
+            border: 1px solid #e5e7eb;
+            padding: 10px 12px;
+            text-align: left;
+        }
+        .table-box th { background: #f9fafb; font-weight: 600; }
+        .section-intro { color: #666; margin-bottom: 16px; font-size: 14px; }
+    </style>
+</head>
+<body>
+
+<h1>全栈开发后端实战保姆级学习手册</h1>
+<p class="subtitle">移动端转全栈 · 基于 Flutter + CloudBase + Node.js + PostgreSQL · 含工程化与AI工程化完整实践</p>
+
+<!-- 开篇 -->
+<details open>
+<summary>开篇：学习定位与路径规划</summary>
+<div class="section-intro">
+    本手册针对「有10年移动端研发经验，后端知识体系化不足，希望快速补齐企业级全栈实战能力」的开发者设计，完全围绕你正在使用的技术栈与已落地的项目实践展开，拒绝空泛理论，所有内容均可直接落地到「项目」项目中。
+</div>
+
+<h3>适合人群</h3>
+<ul>
+    <li>有 iOS/Flutter 前端开发经验，能看懂基础代码，但后端、数据库、部署运维知识零散</li>
+    <li>用 AI 辅助完成了全栈项目，但对底层逻辑、工程规范、线上运维理解不深</li>
+    <li>准备求职全栈岗位，需要补齐企业级开发、部署、运维、AI工程化流程能力</li>
+</ul>
+
+<h3>学习目标</h3>
+<ol>
+    <li>能独立读懂 Node.js 后端代码，理解分层架构和业务逻辑，掌握企业级接口契约规范</li>
+    <li>能独立设计、修改 PostgreSQL 数据库，掌握索引、触发器、RLS、企业级迁移治理体系</li>
+    <li>掌握 CloudBase 云函数开发、部署、配置治理、性能优化、自检全流程工程化能力</li>
+    <li>理解多环境隔离、配置密钥分离、CI/CD 构建、Git 工程化等企业级研发流程</li>
+    <li>掌握线上运维、故障排查、稳定性兜底、灰度发布与回滚的完整方法论</li>
+    <li>掌握 AI 工程化集成：多 provider 容错、成本控制、异步任务队列、用量护栏</li>
+    <li>达到初中级全栈工程师的后端能力要求，匹配一线互联网岗位标准</li>
+</ol>
+
+<h3>推荐学习路径（按顺序递进）</h3>
+<p>Node.js 代码与接口规范 → 数据库设计与迁移治理 → 云函数开发与工程化 → 多环境与CI构建 → 线上运维与稳定性兜底 → AI工程化集成 → 企业级能力进阶</p>
+
+<div class="tip">
+    💡 学习建议：边学边对照「项目」现有实现，每学一个章节就对应优化项目中的一块内容，比纯看文档效率高 3 倍。
+</div>
+</details>
+
+<!-- 第一章 Node.js 与接口规范 -->
+<details>
+<summary>一、Node.js 核心与接口契约规范</summary>
+<div class="section-intro">
+    Node.js 是后端开发的基础，也是 CloudBase 云函数的运行时。本章从代码阅读、异步编程、分层架构到接口契约、鉴权、限流，完整覆盖企业级后端开发基础规范。
+</div>
+
+<h3>1.1 Node.js 与前端 JS 的核心区别</h3>
+<table class="table-box">
+    <tr><th>维度</th><th>前端浏览器 JS</th><th>Node.js</th></tr>
+    <tr><td>运行环境</td><td>浏览器内核</td><td>服务器端 V8 引擎</td></tr>
+    <tr><td>顶层对象</td><td>window</td><td>global / globalThis</td></tr>
+    <tr><td>核心能力</td><td>DOM 操作、页面交互</td><td>文件读写、网络服务、数据库操作、系统调用</td></tr>
+    <tr><td>模块规范</td><td>ES Module（主流）</td><td>CommonJS（原生）+ ESM（兼容）</td></tr>
+    <tr><td>API 差异</td><td>fetch、DOM API</td><td>fs、path、http、crypto 等内置模块</td></tr>
+    <tr><td>错误模型</td><td>页面异常不影响整体</td><td>未捕获异常会导致进程退出</td></tr>
+</table>
+
+<div class="tip">
+    💡 类比理解：Node.js 就像没有 UI 层的 iOS 运行时，语法都是 JS/类C语言，区别只在系统提供的能力 API。你写 Flutter 时的 Dart 异步、分层思想，大部分可以平移过来。
+</div>
+
+<h3>1.2 模块规范：CommonJS 与 ESM</h3>
+<p>CloudBase 云函数默认支持 CommonJS，也可配置 ESM，这是读代码首先要识别的。</p>
+
+<h4>CommonJS（Node.js 原生规范，最常用）</h4>
+<pre><code>// 导入模块
+const fs = require('fs');
+const { db } = require('./db');
+
+// 导出模块
+module.exports = {
+  getUser: async (id) => { ... },
+  updateUser: async (data) => { ... }
+};
+</code></pre>
+
+<h4>ES Module（现代写法，与前端一致）</h4>
+<pre><code>// 导入模块
+import fs from 'node:fs';
+import { db } from './db.js';
+
+// 导出模块
+export async function getUser(id) { ... }
+export const updateUser = async (data) => { ... };
+</code></pre>
+
+<h3>1.3 异步编程核心：Promise 与 async/await</h3>
+<p>后端几乎所有操作都是异步的（数据库、网络、文件），这是最核心的基础能力。</p>
+
+<h4>三种异步写法</h4>
+<pre><code>// 1. 回调地狱（弃用）
+db.query('SELECT * FROM users', (err, res) => {
+  if (err) throw err;
+  db.query('SELECT * FROM posts', (err2, res2) => {
+    // 嵌套层级越多越难维护
+  });
+});
+
+// 2. Promise 链式
+db.query('SELECT * FROM users')
+  .then(res => {
+    return db.query('SELECT * FROM posts');
+  })
+  .then(res2 => { ... })
+  .catch(err => { ... });
+
+// 3. async/await（推荐，同步写法）
+async function getData() {
+  try {
+    const users = await db.query('SELECT * FROM users');
+    const posts = await db.query('SELECT * FROM posts');
+    return { users, posts };
+  } catch (err) {
+    console.error('查询失败:', err);
+    throw err;
+  }
+}
+</code></pre>
+
+<h4>并发控制</h4>
+<pre><code>// 串行：一个执行完再执行下一个（顺序依赖）
+const a = await taskA();
+const b = await taskB();
+
+// 并行：同时执行，全部完成返回（无依赖，提升性能）
+const [a, b] = await Promise.all([taskA(), taskB()]);
+
+// 竞速：谁先完成返回谁
+const result = await Promise.race([taskA(), taskB()]);
+</code></pre>
+
+<h3>1.4 代码阅读方法论：五步读懂任意 Node.js 项目</h3>
+<ol>
+    <li><strong>看 package.json（项目说明书）</strong>
+        <ul>
+            <li><code>scripts</code>：所有命令入口（启动、构建、部署、测试）</li>
+            <li><code>dependencies</code>：生产依赖，判断项目用到了哪些技术</li>
+            <li><code>main</code>：入口文件位置</li>
+        </ul>
+    </li>
+    <li><strong>找入口文件</strong>
+        <p>CloudBase 云函数入口一般是 <code>index.js</code>，先看导出的主函数 <code>exports.main</code>，理解入参（event, context）和出参格式。</p>
+    </li>
+    <li><strong>顺调用链梳理分层</strong>
+        <p>标准链路：入口函数 → 业务逻辑层（service） → 数据访问层（repository） → 数据库</p>
+        <p>不用逐行看懂细节，先理清「数据从哪来、经过什么处理、返回什么」。</p>
+    </li>
+    <li><strong>看配置与常量</strong>
+        <p>环境变量、数据库配置、第三方密钥，一般在 <code>.env</code>、<code>config/</code> 目录。</p>
+    </li>
+    <li><strong>看目录结构</strong>
+        <p>通过目录判断项目分层：<code>controllers/</code>控制层、<code>services/</code>业务层、<code>models/</code>模型层、<code>utils/</code>工具类。</p>
+    </li>
+</ol>
+
+<h3>1.5 后端标准分层架构</h3>
+<p>好的后端项目一定是分层的，每层职责单一，和 iOS 的 MVC/MVVM 分层思想一致。</p>
+
+<table class="table-box">
+    <tr><th>层级</th><th>职责</th><th>类比iOS</th></tr>
+    <tr><td>入口层（Handler/Controller）</td><td>接收请求、参数校验、鉴权、统一返回格式</td><td>ViewController</td></tr>
+    <tr><td>业务层（Service）</td><td>核心业务逻辑、事务控制、业务校验</td><td>ViewModel/业务逻辑层</td></tr>
+    <tr><td>数据访问层（Repository/DAO）</td><td>数据库操作、SQL 封装，只做增删改查</td><td>数据持久层</td></tr>
+    <tr><td>模型层（Model）</td><td>数据实体定义、字段映射</td><td>Model</td></tr>
+    <tr><td>工具层（Utils/Common）</td><td>通用工具、加密、日期、响应封装</td><td>通用工具类</td></tr>
+</table>
+
+<h4>云函数分层示例（项目可直接套用）</h4>
+<pre><code>// index.js 入口层
+const { auth } = require('./utils/auth');
+const { createBubbleService } = require('./services/bubbleService');
+const { success, fail } = require('./utils/response');
+
+exports.main = async (event, context) => {
+  try {
+    // 1. 鉴权
+    const userId = await auth(event);
+    // 2. 参数校验
+    if (!event.content) return fail(4000, '内容不能为空');
+    // 3. 调用业务层
+    const result = await createBubbleService(userId, event);
+    // 4. 统一返回
+    return success(result);
+  } catch (err) {
+    console.error('创建项目失败:', err);
+    return fail(5000, '创建失败');
+  }
+};
+</code></pre>
+
+<h3>1.6 企业级接口契约规范</h3>
+<p>接口不是能跑就行，统一的契约规范是团队协作、线上排错、多端适配的基础。</p>
+
+<h4>1. 统一返回格式</h4>
+<pre><code>{
+  code: 0,      // 业务状态码：0成功，非0失败
+  message: '',  // 提示文案，失败时返回错误原因
+  data: {}      // 业务数据
+}
+</code></pre>
+
+<h4>2. 错误码体系（分段定义，避免乱码）</h4>
+<table class="table-box">
+    <tr><th>码段</th><th>含义</th><th>示例</th></tr>
+    <tr><td>0</td><td>成功</td><td>操作成功</td></tr>
+    <tr><td>4000-4999</td><td>客户端错误</td><td>参数错误、格式非法、请求不存在</td></tr>
+    <tr><td>4010</td><td>未授权</td><td>token 失效、未登录</td></tr>
+    <tr><td>4030</td><td>权限不足</td><td>无操作权限</td></tr>
+    <tr><td>4290</td><td>请求限流</td><td>请求过于频繁</td></tr>
+    <tr><td>5000-5999</td><td>服务端错误</td><td>内部异常、数据库失败</td></tr>
+    <tr><td>5003</td><td>第三方服务失败</td><td>大模型、短信服务异常</td></tr>
+</table>
+
+<h4>3. 参数校验（入口第一道防线）</h4>
+<p>所有入参必须在入口处校验，不合法直接返回，不进入业务逻辑，保护后端服务。</p>
+<pre><code>const Joi = require('joi');
+
+// 定义校验规则
+const schema = Joi.object({
+  content: Joi.string().required().max(500),
+  isAnonymous: Joi.boolean().default(false),
+  tags: Joi.array().items(Joi.string()).max(5)
+});
+
+// 入口校验
+const { error, value } = schema.validate(event);
+if (error) {
+  return {
+    code: 4000,
+    message: '参数错误：' + error.details[0].message
+  };
+}
+</code></pre>
+
+<h4>4. 幂等性设计</h4>
+<p>幂等 = 同一个请求调用 1 次和 N 次，结果完全一致。防止重复提交、网络重发导致数据异常。</p>
+<p>常用实现方案：</p>
+<ul>
+    <li><strong>唯一幂等号</strong>：前端生成唯一 requestId，服务端记录已处理请求，重复请求直接返回成功</li>
+    <li><strong>数据库唯一索引</strong>：用户ID+业务类型建唯一索引，重复插入直接报错</li>
+    <li><strong>先查后插</strong>：写入前先判断是否已存在，不存在才执行</li>
+</ul>
+
+<h3>1.7 鉴权体系：JWT 实现与最佳实践</h3>
+<h4>什么是 JWT</h4>
+<p>JSON Web Token，是目前最主流的无状态鉴权方案：用户登录后服务端签发 token，后续请求携带 token，服务端校验即可识别用户。</p>
+
+<h4>核心流程</h4>
+<ol>
+    <li>用户登录成功 → 服务端用密钥签发 JWT（包含用户ID、过期时间）</li>
+    <li>前端保存 token，后续请求放在 header 里</li>
+    <li>接口入口处校验 token 合法性、有效期</li>
+    <li>解析出用户ID，注入业务逻辑</li>
+</ol>
+
+<h4>代码示例</h4>
+<pre><code>const jwt = require('jsonwebtoken');
+const SECRET_KEY = process.env.JWT_SECRET; // 密钥从环境变量读取
+
+// 签发 token
+function generateToken(userId) {
+  return jwt.sign(
+    { userId },
+    SECRET_KEY,
+    { expiresIn: '7d' } // 7天过期
+  );
+}
+
+// 校验 token
+function verifyToken(token) {
+  try {
+    const payload = jwt.verify(token, SECRET_KEY);
+    return payload.userId;
+  } catch (err) {
+    return null; // 过期或非法
+  }
+}
+</code></pre>
+
+<div class="warn">
+    ⚠️ 安全红线：密钥绝对不能硬编码在代码里，必须从环境变量配置；使用 HS256 算法，密钥长度足够；遵循 fail-closed 原则：校验失败直接拒绝，不放通。
+</div>
+
+<h3>1.8 限流与熔断基础</h3>
+<h4>为什么要限流</h4>
+<p>防止恶意请求、突发流量打垮服务，保护系统可用性。</p>
+
+<h4>常用限流算法</h4>
+<table class="table-box">
+    <tr><th>算法</th><th>原理</th><th>优缺点</th></tr>
+    <tr><td>固定窗口计数</td><td>每分钟最多 N 次，到点清零</td><td>实现简单，边界有突刺问题</td></tr>
+    <tr><td>滑动窗口</td><td>记录最近一分钟的请求数，平滑滑动</td><td>更平滑，实现稍复杂</td></tr>
+    <tr><td>令牌桶</td><td>匀速生成令牌，请求消耗令牌</td><td>允许突发流量，最常用</td></tr>
+</table>
+
+<h4>熔断降级</h4>
+<p>第三方服务（如大模型、短信）不可用时，快速失败，不要拖垮主服务。</p>
+<ul>
+    <li>失败累计到阈值，触发熔断，一段时间内直接返回失败</li>
+    <li>熔断后定期探测，服务恢复后自动关闭熔断</li>
+    <li><strong>Fail-Closed 原则</strong>：依赖的服务/密钥缺失时，默认拒绝服务，而不是放通，避免安全风险</li>
+</ul>
+
+<h3>1.9 日志规范与错误处理</h3>
+<h4>日志分级</h4>
+<ul>
+    <li><code>error</code>：错误、异常，必须排查</li>
+    <li><code>warn</code>：警告，潜在问题</li>
+    <li><code>info</code>：关键流程节点，如创建成功、登录成功</li>
+    <li><code>debug</code>：调试信息，生产环境关闭</li>
+</ul>
+
+<h4>日志规范</h4>
+<pre><code>// ✅ 好的日志：有时间、有场景、有上下文、有错误栈
+console.error('[创建项目失败] userId:', userId, 'error:', err.message, err.stack);
+
+// ❌ 坏的日志：只有错误，没有上下文，无法排查
+console.error('出错了');
+</code></pre>
+
+<h3>1.10 常用依赖库速查</h3>
+<table class="table-box">
+    <tr><th>依赖包</th><th>作用</th><th>常见场景</th></tr>
+    <tr><td>@cloudbase/node-sdk</td><td>CloudBase 官方 SDK</td><td>操作数据库、云存储、云函数</td></tr>
+    <tr><td>pg</td><td>PostgreSQL 驱动</td><td>连接数据库，执行 SQL</td></tr>
+    <tr><td>axios</td><td>HTTP 请求库</td><td>调用第三方接口、大模型服务</td></tr>
+    <tr><td>joi</td><td>参数校验</td><td>接口入参合法性校验</td></tr>
+    <tr><td>jsonwebtoken</td><td>JWT 鉴权</td><td>用户登录令牌签发与校验</td></tr>
+    <tr><td>bcryptjs</td><td>加密</td><td>密码哈希存储</td></tr>
+    <tr><td>dayjs</td><td>日期处理</td><td>时间格式化、计算</td></tr>
+    <tr><td>lodash</td><td>工具函数库</td><td>数组、对象处理</td></tr>
+</table>
+</details>
+
+<!-- 第二章 数据库设计与迁移治理 -->
+<details>
+<summary>二、PostgreSQL 数据库设计与迁移治理</summary>
+<div class="section-intro">
+    数据库是全栈开发的核心，也是最容易出线上问题的环节。本章从表设计、SQL 操作、索引、触发器、RLS 到企业级迁移治理体系，完整覆盖日常开发 99% 场景。
+</div>
+
+<h3>2.1 PostgreSQL 基础认知</h3>
+<p>PostgreSQL（简称 PG）是开源关系型数据库的标杆，支持复杂查询、事务、索引、JSON 类型、行级权限，是 CloudBase 的默认数据库，也是企业级项目的主流选择。</p>
+
+<h4>常用管理工具</h4>
+<ul>
+    <li><strong>CloudBase 控制台</strong>：在线查看表、执行 SQL，新手首选</li>
+    <li><strong>TablePlus / DBeaver</strong>：本地客户端工具，功能强大，日常开发推荐</li>
+    <li><strong>psql 命令行</strong>：服务器端原生命令，线上排查用</li>
+</ul>
+
+<h3>2.2 表设计规范与最佳实践</h3>
+<h4>命名规范（企业级标准）</h4>
+<ul>
+    <li>表名、字段名全部 <strong>snake_case（下划线小写）</strong>，如 <code>user_profile</code>、<code>created_at</code></li>
+    <li>表名用复数，如 <code>users</code>、<code>bubbles</code>、<code>comments</code></li>
+    <li>主键统一叫 <code>id</code>，类型用 <code>BIGSERIAL</code> 自增或 UUID</li>
+    <li>必须包含三公共字段：<code>created_at</code>（创建时间）、<code>updated_at</code>（更新时间）、<code>deleted_at</code>（软删除）</li>
+    <li>索引统一前缀 <code>idx_表名_字段名</code>，唯一索引前缀 <code>uk_表名_字段名</code></li>
+</ul>
+
+<h4>常用字段类型</h4>
+<table class="table-box">
+    <tr><th>类型</th><th>说明</th><th>示例</th></tr>
+    <tr><td>BIGSERIAL</td><td>自增 64 位整数，主键专用</td><td>id BIGSERIAL PRIMARY KEY</td></tr>
+    <tr><td>VARCHAR(n)</td><td>变长字符串，n 为最大长度</td><td>username VARCHAR(50) NOT NULL</td></tr>
+    <tr><td>TEXT</td><td>长文本，无长度限制</td><td>content TEXT</td></tr>
+    <tr><td>INTEGER / BIGINT</td><td>整数</td><td>view_count INTEGER DEFAULT 0</td></tr>
+    <tr><td>NUMERIC(10,2)</td><td>精确小数，用于金额</td><td>price NUMERIC(10,2)</td></tr>
+    <tr><td>BOOLEAN</td><td>布尔值</td><td>is_active BOOLEAN DEFAULT true</td></tr>
+    <tr><td>TIMESTAMPTZ</td><td>带时区时间</td><td>created_at TIMESTAMPTZ DEFAULT NOW()</td></tr>
+    <tr><td>JSONB</td><td>二进制 JSON，可索引</td><td>extra JSONB DEFAULT '{}'::jsonb</td></tr>
+</table>
+
+<h4>表设计六大原则</h4>
+<ol>
+    <li><strong>单一职责</strong>：一张表只描述一个实体，避免大而全的表</li>
+    <li><strong>适度冗余</strong>：为查询性能，可适当冗余字段，避免频繁联表</li>
+    <li><strong>软删除优先</strong>：用 <code>deleted_at</code> 软删除，保留数据痕迹</li>
+    <li><strong>非空约束</strong>：必填字段加 NOT NULL，从数据库层保证数据完整性</li>
+    <li><strong>合理默认值</strong>：状态、时间、数字尽量设置默认值</li>
+    <li><strong>禁止物理删除</strong>：重要业务数据不做 DELETE 操作</li>
+</ol>
+
+<h3>2.3 核心 SQL 语句实战</h3>
+<h4>1. 建表（CREATE TABLE）</h4>
+<pre><code>-- 用户表
+CREATE TABLE users (
+  id BIGSERIAL PRIMARY KEY,
+  username VARCHAR(50) NOT NULL UNIQUE,
+  email VARCHAR(100) NOT NULL UNIQUE,
+  password_hash VARCHAR(255) NOT NULL,
+  nickname VARCHAR(50),
+  avatar_url VARCHAR(255),
+  is_active BOOLEAN DEFAULT true,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW(),
+  deleted_at TIMESTAMPTZ
+);
+
+-- 索引
+CREATE INDEX idx_users_username ON users(username);
+CREATE INDEX idx_users_deleted_at ON users(deleted_at);
+</code></pre>
+
+<h4>2. 查询（SELECT）</h4>
+<pre><code>-- 基础条件查询
+SELECT id, username, nickname FROM users 
+WHERE is_active = true AND deleted_at IS NULL;
+
+-- 分页查询
+SELECT * FROM bubbles 
+ORDER BY created_at DESC 
+LIMIT 10 OFFSET 20;
+
+-- 模糊搜索
+SELECT * FROM bubbles 
+WHERE content LIKE '%关键词%' 
+  AND status = 'published';
+
+-- 联表查询
+SELECT b.id, b.content, u.nickname AS author
+FROM bubbles b
+JOIN users u ON b.user_id = u.id
+WHERE b.deleted_at IS NULL;
+
+-- 聚合统计
+SELECT user_id, COUNT(*) as bubble_count 
+FROM bubbles 
+GROUP BY user_id
+HAVING COUNT(*) > 5;
+</code></pre>
+
+<h4>3. 新增（INSERT）</h4>
+<pre><code>INSERT INTO bubbles (user_id, content, is_anonymous)
+VALUES (123, '测试内容', false)
+RETURNING id, created_at; -- 返回插入的记录
+</code></pre>
+
+<h4>4. 更新（UPDATE）</h4>
+<pre><code>UPDATE bubbles 
+SET view_count = view_count + 1, updated_at = NOW()
+WHERE id = 456
+RETURNING *;
+</code></pre>
+
+<h4>5. 删除（软删除）</h4>
+<pre><code>-- 软删除（推荐）
+UPDATE bubbles SET deleted_at = NOW() WHERE id = 456;
+
+-- 物理删除（慎用）
+DELETE FROM bubbles WHERE id = 456;
+</code></pre>
+
+<h3>2.4 索引设计与性能优化</h3>
+<h4>索引的本质</h4>
+<p>索引就像书的目录，通过额外的存储空间，大幅提升查询速度，但会降低写入速度。不是越多越好，只给高频查询字段加。</p>
+
+<h4>索引使用场景</h4>
+<ul>
+    <li>✅ WHERE 条件中频繁出现的字段</li>
+    <li>✅ JOIN 关联的字段</li>
+    <li>✅ ORDER BY 排序的字段</li>
+    <li>✅ GROUP BY 分组的字段</li>
+    <li>❌ 数据量很小的表（几百条以内）</li>
+    <li>❌ 频繁更新的字段（索引维护成本高）</li>
+    <li>❌ 区分度很低的字段（如性别、状态只有2-3个值）</li>
+</ul>
+
+<h4>查看执行计划（排查慢查询）</h4>
+<pre><code>EXPLAIN ANALYZE
+SELECT * FROM bubbles WHERE user_id = 123 ORDER BY created_at DESC;
+</code></pre>
+<p>结果中出现 <code>Seq Scan</code> = 全表扫描（慢），出现 <code>Index Scan</code> = 索引扫描（快）。全表扫描就要考虑加索引。</p>
+
+<h3>2.5 触发器与自动更新</h3>
+<p>触发器是数据库内置功能，数据变更时自动执行逻辑，比代码层更可靠。</p>
+
+<h4>经典场景：自动更新 updated_at</h4>
+<pre><code>-- 创建触发器函数
+CREATE OR REPLACE FUNCTION update_updated_at_column()
+RETURNS TRIGGER AS $$
+BEGIN
+  NEW.updated_at = NOW();
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- 给表绑定触发器
+CREATE TRIGGER update_bubbles_updated_at
+BEFORE UPDATE ON bubbles
+FOR EACH ROW
+EXECUTE FUNCTION update_updated_at_column();
+</code></pre>
+
+<h4>其他适用场景</h4>
+<ul>
+    <li>数据变更时自动记录操作日志</li>
+    <li>数据变更触发关联数据更新</li>
+    <li>写入前数据校验、格式化</li>
+</ul>
+
+<h3>2.6 RLS 行级权限策略</h3>
+<p>RLS（Row Level Security）是 PostgreSQL 高级特性，CloudBase 深度集成，在数据库层面实现「用户只能看到自己的数据」，比代码层判断更安全。</p>
+
+<pre><code>-- 开启表的 RLS
+ALTER TABLE bubbles ENABLE ROW LEVEL SECURITY;
+
+-- 查询策略：只能看自己的泡泡
+CREATE POLICY bubble_select ON bubbles
+  FOR SELECT USING (user_id = current_setting('app.current_user_id')::bigint);
+
+-- 插入策略：只能插入自己的泡泡
+CREATE POLICY bubble_insert ON bubbles
+  FOR INSERT WITH CHECK (user_id = current_setting('app.current_user_id')::bigint);
+
+-- 更新策略：只能更新自己的泡泡
+CREATE POLICY bubble_update ON bubbles
+  FOR UPDATE USING (user_id = current_setting('app.current_user_id')::bigint);
+</code></pre>
+
+<div class="tip">
+    💡 核心价值：RLS 遵循 fail-closed 原则，没有匹配策略的操作默认被拒绝，绕开代码层也无法越权访问，是 CloudBase 项目的核心安全机制。
+</div>
+
+<h3>2.7 事务与并发控制</h3>
+<h4>什么是事务</h4>
+<p>事务是一组 SQL 操作，要么全部成功，要么全部失败，保证数据一致性。</p>
+
+<h4>ACID 四大特性</h4>
+<ul>
+    <li><strong>原子性（Atomicity）</strong>：事务内操作不可分割</li>
+    <li><strong>一致性（Consistency）</strong>：事务前后数据保持一致</li>
+    <li><strong>隔离性（Isolation）</strong>：多个事务互不干扰</li>
+    <li><strong>持久性（Durability）</strong>：事务提交后永久生效</li>
+</ul>
+
+<h4>代码示例</h4>
+<pre><code>BEGIN; -- 开启事务
+
+UPDATE accounts SET balance = balance - 100 WHERE id = 1;
+UPDATE accounts SET balance = balance + 100 WHERE id = 2;
+
+COMMIT; -- 提交，全部成功
+-- ROLLBACK; -- 回滚，全部失败
+</code></pre>
+
+<h3>2.8 企业级数据库迁移治理体系</h3>
+<p>迁移就是把表结构变更代码化、版本化，保证开发、测试、生产环境表结构完全一致，是企业级项目的标配。</p>
+
+<h4>核心原则：基线冻结 + 严格增量 + 迁移台账</h4>
+<ol>
+    <li><strong>基线冻结</strong>：初始表结构作为基线版本，一旦发布不再修改</li>
+    <li><strong>严格增量</strong>：所有表结构变更都通过新增迁移文件实现，不修改已有迁移文件</li>
+    <li><strong>迁移台账</strong>：数据库中记录表，记录已执行的迁移版本，避免重复执行</li>
+    <li><strong>可回滚</strong>：每个迁移都对应回滚方案，出错能快速恢复</li>
+    <li><strong>幂等执行</strong>：迁移脚本重复执行不会出错</li>
+</ol>
+
+<h4>迁移文件命名规范</h4>
+<p><code>序号_描述.sql</code>，序号按时间递增，如：</p>
+<ul>
+    <li><code>001_init_users.sql</code></li>
+    <li><code>002_create_bubbles.sql</code></li>
+    <li><code>003_add_bubbles_view_count.sql</code></li>
+</ul>
+
+<h4>迁移脚本结构</h4>
+<pre><code>-- 升级
+CREATE TABLE comments (
+  id BIGSERIAL PRIMARY KEY,
+  bubble_id BIGINT NOT NULL REFERENCES bubbles(id),
+  user_id BIGINT NOT NULL REFERENCES users(id),
+  content TEXT NOT NULL,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW(),
+  deleted_at TIMESTAMPTZ
+);
+
+CREATE INDEX idx_comments_bubble_id ON comments(bubble_id);
+CREATE INDEX idx_comments_user_id ON comments(user_id);
+
+-- 回滚
+-- DROP TABLE comments;
+</code></pre>
+
+<h4>迁移执行流程</h4>
+<ol>
+    <li>本地编写迁移脚本</li>
+    <li>本地执行迁移，验证功能</li>
+    <li>提交代码，测试环境执行</li>
+    <li>上线前预发布环境执行</li>
+    <li>生产环境低峰期执行</li>
+</ol>
+
+<div class="warn">
+    ⚠️ 线上红线：大表 ALTER TABLE 可能锁表，导致业务暂停。数据量大的表必须选低峰期操作，或使用平滑迁移方案。
+</div>
+
+<h3>2.9 数据库安全最佳实践</h3>
+<ul>
+    <li>最小权限原则：数据库账号只给必要权限，不给超级权限</li>
+    <li>密码强复杂度，定期轮换</li>
+    <li>敏感数据加密存储：密码用 bcrypt 哈希，不存明文</li>
+    <li>开启 RLS 行级权限，数据按用户隔离</li>
+    <li>SQL 注入防护：使用参数化查询，不拼接 SQL 字符串</li>
+    <li>定期备份，验证备份可恢复</li>
+</ul>
+</details>
+
+<!-- 第三章 云函数开发与工程化 -->
+<details>
+<summary>三、CloudBase 云函数开发与工程化</summary>
+<div class="section-intro">
+    本章完整讲解 CloudBase 云函数从架构设计、模块化、配置治理、部署流水线到性能优化、自检机制的全流程工程化实践，对齐企业级 Serverless 开发标准。
+</div>
+
+<h3>3.1 云函数核心概念进阶</h3>
+<h4>什么是 Serverless 云函数</h4>
+<p>运行在云端的事件驱动代码，无需管理服务器，按需运行，按量计费。平台自动处理扩容、容灾、运维。</p>
+
+<h4>核心特性</h4>
+<ul>
+    <li><strong>无服务器</strong>：不用管机器、操作系统、进程</li>
+    <li><strong>按需计费</strong>：调用才收费，空闲不花钱</li>
+    <li><strong>自动扩容</strong>：高并发时平台自动增加实例</li>
+    <li><strong>冷启动</strong>：长时间不调用，实例销毁，下次调用需重新初始化，有几百毫秒延迟</li>
+    <li><strong>无状态</strong>：函数实例可能随时销毁，全局变量不保证持久化</li>
+</ul>
+
+<h4>触发方式</h4>
+<table class="table-box">
+    <tr><th>触发方式</th><th>说明</th><th>适用场景</th></tr>
+    <tr><td>SDK 调用</td><td>Flutter 端通过 SDK 直接调用</td><td>App 内业务接口，最常用</td></tr>
+    <tr><td>HTTP 触发</td><td>生成 URL，HTTP 请求调用</td><td>第三方回调、外部系统对接</td></tr>
+    <tr><td>定时触发</td><td>按 Cron 表达式定时执行</td><td>每日统计、数据清理、定时推送</td></tr>
+    <tr><td>数据库触发</td><td>表数据增删改时触发</td><td>数据变更同步、消息通知</td></tr>
+    <tr><td>存储触发</td><td>文件上传/删除时触发</td><td>图片处理、文件转码</td></tr>
+</table>
+
+<h3>3.2 云函数分层架构与模块化</h3>
+<p>即使是单个云函数，也要分层设计，避免代码堆砌，提升可维护性。</p>
+
+<h4>标准分层结构</h4>
+<pre><code>functions/
+└── createBubble/          # 单个云函数目录
+    ├── index.js          # 入口层：鉴权、参数校验、统一返回
+    ├── service.js        # 业务层：核心业务逻辑
+    ├── repository.js     # 数据层：数据库操作封装
+    ├── utils/            # 工具类
+    │   ├── auth.js
+    │   ├── response.js
+    │   └── validator.js
+    ├── package.json      # 依赖声明
+    └── .env.example      # 环境变量示例
+</code></pre>
+
+<h4>各层职责边界</h4>
+<ul>
+    <li><strong>入口层</strong>：只做请求接入，不写业务逻辑</li>
+    <li><strong>业务层</strong>：只写业务逻辑，不直接写 SQL</li>
+    <li><strong>数据层</strong>：只做数据库操作，不包含业务判断</li>
+    <li><strong>工具层</strong>：通用能力，可被所有函数复用</li>
+</ul>
+
+<h3>3.3 共享公共模块沉淀</h3>
+<p>多个云函数都用到的能力，抽成公共模块，避免重复代码，统一维护。</p>
+
+<h4>建议沉淀的公共模块</h4>
+<table class="table-box">
+    <tr><th>模块</th><th>功能</th><th>复用价值</th></tr>
+    <tr><td>统一响应封装</td><td>success / fail 标准返回格式</td><td>所有接口格式统一</td></tr>
+    <tr><td>鉴权中间件</td><td>JWT 校验、用户上下文注入</td><td>所有需要登录的接口复用</td></tr>
+    <tr><td>数据库访问</td><td>数据库连接初始化、通用 CRUD</td><td>避免每个函数重复写连接逻辑</td></tr>
+    <tr><td>参数校验</td><td>通用校验规则、校验工具</td><td>统一参数校验标准</td></tr>
+    <tr><td>限流工具</td><td>限流算法、频控策略</td><td>保护接口不被刷</td></tr>
+    <tr><td>错误码常量</td><td>统一错误码定义</td><td>全项目错误码一致</td></tr>
+</table>
+
+<h4>公共模块引用方式</h4>
+<pre><code>// 方式一：相对路径引用（适合函数少的场景）
+const { success, fail } = require('../../common/response');
+
+// 方式二：npm 私有包（适合团队、大量函数）
+const { auth } = require('@glubble/common');
+</code></pre>
+
+<h3>3.4 配置管理与配置漂移治理</h3>
+<h4>配置漂移是什么</h4>
+<p>不同环境、不同函数的配置不一致，导致测试正常、线上出问题，是 Serverless 项目的常见坑。</p>
+
+<h4>配置管理三大原则</h4>
+<ol>
+    <li><strong>代码配置分离</strong>：密钥、环境 ID、地址绝对不硬编码，全部走环境变量</li>
+    <li><strong>环境隔离</strong>：开发、测试、生产配置独立，互不干扰</li>
+    <li><strong>集中管理</strong>：公共配置统一维护，避免每个函数各自配置</li>
+</ol>
+
+<h4>配置分层</h4>
+<ul>
+    <li><strong>全局配置</strong>：数据库地址、密钥等，所有函数共享</li>
+    <li><strong>函数配置</strong>：单个函数的超时、内存、特有参数</li>
+    <li><strong>环境配置</strong>：不同环境的差异配置</li>
+</ul>
+
+<h4>配置漂移治理方案</h4>
+<ol>
+    <li>配置文件代码化，提交到 Git 仓库，变更有记录</li>
+    <li>使用配置文件统一管理所有函数配置，部署时自动注入</li>
+    <li>定期巡检线上配置与代码中配置是否一致</li>
+    <li>新增配置必须同步更新所有环境，不能只改生产</li>
+</ol>
+
+<h3>3.5 函数注册与自检机制</h3>
+<h4>为什么需要自检</h4>
+<p>云函数数量多了之后，容易出现部署失败、配置缺失、依赖报错等问题，上线后才发现。自检机制可以在部署后自动验证函数可用性。</p>
+
+<h4>自检实现方案</h4>
+<ol>
+    <li>每个函数提供一个 <code>health</code> 检查入口</li>
+    <li>部署完成后，自动调用所有函数的健康检查接口</li>
+    <li>验证：数据库连接正常、配置加载正常、依赖可用</li>
+    <li>自检失败，部署流程中断，告警通知</li>
+</ol>
+
+<h4>健康检查示例</h4>
+<pre><code>exports.health = async () => {
+  try {
+    // 验证数据库连接
+    await db.query('SELECT 1');
+    // 验证关键配置
+    if (!process.env.JWT_SECRET) throw new Error('JWT_SECRET 缺失');
+    
+    return { status: 'ok', code: 0 };
+  } catch (err) {
+    return { status: 'error', message: err.message, code: 500 };
+  }
+};
+</code></pre>
+
+<h3>3.6 完整部署流程与 CLI 自动化</h3>
+<h4>部署方式对比</h4>
+<table class="table-box">
+    <tr><th>部署方式</th><th>优点</th><th>缺点</th><th>适用场景</th></tr>
+    <tr><td>控制台手动上传</td><td>简单直观</td><td>效率低，易出错，不可追溯</td><td>新手、临时测试</td></tr>
+    <tr><td>CLI 命令行部署</td><td>可自动化、可脚本化、可追溯</td><td>需要学习命令</td><td>日常开发、推荐</td></tr>
+    <tr><td>CI/CD 自动部署</td><td>全自动、规范、不易错</td><td>搭建成本高</td><td>团队、生产环境</td></tr>
+</table>
+
+<h4>CLI 部署步骤</h4>
+<ol>
+    <li>安装 CloudBase CLI
+<pre><code>npm install -g @cloudbase/cli
+</code></pre>
+    </li>
+    <li>登录授权
+<pre><code>tcb login
+</code></pre>
+    </li>
+    <li>项目根目录创建 <code>cloudbaserc.json</code> 配置文件
+<pre><code>{
+  "envId": "你的环境ID",
+  "functions": [
+    {
+      "name": "createBubble",
+      "timeout": 5,
+      "memorySize": 256,
+      "runtime": "Nodejs20.0",
+      "handler": "index.main"
+    }
+  ]
+}
+</code></pre>
+    </li>
+    <li>执行部署
+<pre><code># 部署单个函数
+tcb functions:deploy createBubble
+
+# 批量部署所有函数
+tcb functions:deploy --all
+</code></pre>
+    </li>
+</ol>
+
+<h4>部署前准备（生产环境必须）</h4>
+<ol>
+    <li>安装生产依赖：<code>npm install --production</code>，去掉开发依赖，减小包体积</li>
+    <li>本地单元测试通过</li>
+    <li>检查环境变量配置完整</li>
+    <li>执行代码格式检查</li>
+</ol>
+
+<h3>3.7 冷启动优化与性能调优</h3>
+<h4>冷启动产生的原因</h4>
+<p>函数长时间没有调用，平台会销毁实例；下次调用需要重新初始化环境、加载代码、建立连接，产生几百毫秒到几秒的延迟。</p>
+
+<h4>优化手段</h4>
+<ol>
+    <li><strong>减小部署包体积</strong>
+        <ul>
+            <li>只安装生产依赖，移除 devDependencies</li>
+            <li>删除不必要的文件、文档、测试代码</li>
+            <li>大的依赖包按需加载，不要在顶部 require</li>
+        </ul>
+    </li>
+    <li><strong>初始化外置</strong>
+        <p>数据库连接、SDK 初始化放在函数外面，全局只初始化一次，实例复用时不用重复初始化。</p>
+<pre><code>// ✅ 好：全局初始化，冷启动只执行一次
+const db = require('./db').init();
+
+exports.main = async (event) => {
+  // 直接使用 db
+};
+
+// ❌ 坏：每次调用都初始化
+exports.main = async (event) => {
+  const db = require('./db').init(); // 每次都重新连接
+};
+</code></pre>
+    </li>
+    <li><strong>合理配置资源</strong>
+        <ul>
+            <li>普通接口：256MB 内存，3-5 秒超时</li>
+            <li>计算密集型：512MB 或 1GB 内存</li>
+            <li>AI 任务：2GB 内存，30-60 秒超时</li>
+        </ul>
+    </li>
+    <li><strong>预置并发</strong>
+        <p>核心接口配置常驻实例，消除冷启动延迟；会增加成本，只给核心接口用。</p>
+    </li>
+    <li><strong>定时预热</strong>
+        <p>用定时函数每隔几分钟调用一次核心接口，保持实例存活。</p>
+    </li>
+</ol>
+
+<h3>3.8 云函数测试策略</h3>
+<h4>1. 单元测试</h4>
+<p>针对单个函数、单个模块，模拟依赖，验证逻辑正确性。</p>
+<ul>
+    <li>业务逻辑、工具函数必须写单测</li>
+    <li>数据库、第三方接口用 mock 模拟</li>
+    <li>覆盖正常、异常、边界场景</li>
+</ul>
+
+<h4>2. 集成测试</h4>
+<p>部署到测试环境，真实调用，验证全链路是否正常。</p>
+<ul>
+    <li>测试真实数据库、真实依赖</li>
+    <li>验证接口入参出参、业务流程</li>
+    <li>核心路径必须覆盖</li>
+</ul>
+
+<h4>3. 冒烟测试</h4>
+<p>上线前快速验证核心功能是否可用，不用测全量。</p>
+<ul>
+    <li>部署后立即调用核心接口</li>
+    <li>验证主流程能跑通</li>
+    <li>冒烟不通过，直接回滚</li>
+</ul>
+
+<h3>3.9 常见问题排查</h3>
+<table class="table-box">
+    <tr><th>问题</th><th>排查方向</th></tr>
+    <tr><td>函数调用超时</td><td>1. 业务逻辑是否太慢；2. 数据库查询是否慢；3. 第三方接口是否卡住；4. 超时配置是否太短</td></tr>
+    <tr><td>部署后调用报错</td><td>1. 依赖是否完整；2. 环境变量是否配置；3. 权限是否足够；4. 看日志报错栈</td></tr>
+    <tr><td>本地正常线上报错</td><td>1. 配置不一致；2. 依赖版本不同；3. 线上权限不足；4. 数据环境不同</td></tr>
+    <tr><td>冷启动慢</td><td>1. 部署包是否太大；2. 初始化逻辑是否过多；3. 考虑加预置并发</td></tr>
+</table>
+</details>
+
+<!-- 第四章 多环境与CI构建 -->
+<details>
+<summary>四、多环境配置与工程化构建</summary>
+<div class="section-intro">
+    企业级项目绝对不是一套环境跑到底。本章讲解多环境体系设计、配置隔离、密钥管理、Git 工程化、CI/CD 流水线、自动化脚本，建立规范的研发流程。
+</div>
+
+<h3>4.1 多环境体系设计</h3>
+<h4>为什么需要多环境</h4>
+<p>开发、测试、生产严格隔离，避免开发操作影响线上数据，保证发布质量。</p>
+
+<h4>标准四环境体系</h4>
+<table class="table-box">
+    <tr><th>环境</th><th>用途</th><th>数据</th><th>稳定性</th><th>部署频率</th></tr>
+    <tr><td>开发环境（dev）</td><td>开发者日常开发调试</td><td>测试数据，可随便改</td><td>低</td><td>随时</td></tr>
+    <tr><td>测试环境（test）</td><td>测试人员功能测试</td><td>模拟真实数据</td><td>中</td><td>每日/按提测</td></tr>
+    <tr><td>预发布环境（pre）</td><td>上线前最后验证</td><td>生产数据快照</td><td>高</td><td>版本发布前</td></tr>
+    <tr><td>生产环境（prod）</td><td>正式用户使用</td><td>真实用户数据</td><td>极高</td><td>按版本计划</td></tr>
+</table>
+
+<div class="warn">
+    ⚠️ 红线：绝对不能在生产环境直接改代码、测功能！所有变更必须经过开发→测试→预发→生产的流程。
+</div>
+
+<h4>CloudBase 多环境实现</h4>
+<ol>
+    <li>在 CloudBase 控制台创建多个独立环境，分别命名 dev、test、prod</li>
+    <li>每个环境有独立的环境 ID、独立数据库、独立云函数、独立存储</li>
+    <li>数据库表结构通过迁移文件保证一致</li>
+    <li>代码同一套，通过环境变量区分配置</li>
+</ol>
+
+<h3>4.2 环境配置隔离与密钥管理</h3>
+<h4>配置分类</h4>
+<table class="table-box">
+    <tr><th>类型</th><th>举例</th><th>存放位置</th></tr>
+    <tr><td>非敏感配置</td><td>超时时间、分页大小、功能开关</td><td>代码配置文件、环境变量</td></tr>
+    <tr><td>敏感配置</td><td>数据库密码、密钥、Token</td><td>环境变量、密钥管理服务</td></tr>
+</table>
+
+<h4>配置管理最佳实践</h4>
+<ol>
+    <li><strong>配置与代码分离</strong>：所有环境相关配置都不写死在代码里</li>
+    <li><strong>环境变量优先</strong>：通过系统环境变量注入，不同环境自动加载对应配置</li>
+    <li><strong>密钥不上代码库</strong>：.env 文件加入 .gitignore，只提交 .env.example 模板</li>
+    <li><strong>配置集中管理</strong>：公共配置统一维护，避免分散在各个函数里</li>
+    <li><strong>变更可追溯</strong>：配置变更有记录，能回滚</li>
+</ol>
+
+<h4>前端多环境配置（Flutter）</h4>
+<ul>
+    <li>创建不同入口文件：main_dev.dart、main_test.dart、main_prod.dart</li>
+    <li>每个入口配置不同的 CloudBase 环境 ID、接口地址</li>
+    <li>打包时指定入口：<code>flutter build ios -t lib/main_prod.dart</code></li>
+</ul>
+
+<h3>4.3 Git 分支管理与代码规范</h3>
+<h4>简化 Git Flow 分支策略</h4>
+<table class="table-box">
+    <tr><th>分支</th><th>作用</th><th>权限</th></tr>
+    <tr><td>main</td><td>主分支，只存正式发布代码</td><td>受保护，只能合并，不能直接提交</td></tr>
+    <tr><td>develop</td><td>开发分支，日常开发基准</td><td>开发人员可提交</td></tr>
+    <tr><td>feature/xxx</td><td>功能分支，开发单个功能</td><td>个人开发，从 develop 切出</td></tr>
+    <tr><td>fix/xxx</td><td>修复分支，修复 bug</td><td>从 develop 或 main 切出</td></tr>
+    <tr><td>release/v1.0.0</td><td>发布分支，版本上线前用</td><td>发布前冻结，只修 bug</td></tr>
+</table>
+
+<h4>标准开发工作流</h4>
+<ol>
+    <li>从 develop 切出 feature 分支</li>
+    <li>本地开发，提交代码</li>
+    <li>开发完成，合并回 develop</li>
+    <li>部署测试环境，测试验证</li>
+    <li>测试通过，切 release 分支，部署预发布</li>
+    <li>预发布验证通过，合并到 main，打标签，上线生产</li>
+</ol>
+
+<h4>提交信息规范</h4>
+<p>格式：<code>类型: 描述</code></p>
+<ul>
+    <li><code>feat: 新增xxx功能</code></li>
+    <li><code>fix: 修复xxxbug</code></li>
+    <li><code>refactor: 重构xxx模块</code></li>
+    <li><code>docs: 更新文档</code></li>
+    <li><code>style: 代码格式调整</code></li>
+    <li><code>perf: 性能优化</code></li>
+    <li><code>chore: 构建脚本、配置变更</code></li>
+</ul>
+
+<h3>4.4 CI/CD 流水线基础</h3>
+<h4>什么是 CI/CD</h4>
+<ul>
+    <li><strong>CI（持续集成）</strong>：代码提交后自动构建、测试、检查，尽早发现问题</li>
+    <li><strong>CD（持续部署）</strong>：通过自动化流程，自动部署到对应环境</li>
+</ul>
+
+<h4>流水线核心环节</h4>
+<ol>
+    <li><strong>代码检出</strong>：拉取对应分支代码</li>
+    <li><strong>依赖安装</strong>：npm install / flutter pub get</li>
+    <li><strong>代码检查</strong>：flutter analyze / 语法检查</li>
+    <li><strong>单元测试</strong>：运行测试用例</li>
+    <li><strong>构建打包</strong>：生成部署包</li>
+    <li><strong>部署发布</strong>：自动部署到对应环境</li>
+    <li><strong>冒烟测试</strong>：部署后验证核心功能</li>
+</ol>
+
+<h4>常用 CI 平台</h4>
+<ul>
+    <li>GitHub Actions：适合 GitHub 项目，配置简单</li>
+    <li>GitLab CI：适合私有 GitLab</li>
+    <li>云构建：腾讯云、阿里云等云厂商提供</li>
+</ul>
+
+<h3>4.5 Shell 脚本自动化实践</h3>
+<p>把重复操作写成脚本，提升效率，减少手动出错。</p>
+
+<h4>常用脚本示例</h4>
+<pre><code>#!/bin/bash
+# deploy.sh - 一键部署云函数到测试环境
+
+set -e # 出错立即停止
+
+echo "开始部署到测试环境..."
+
+# 1. 安装依赖
+cd cloudbase/functions/createBubble
+npm install --production
+
+# 2. 执行部署
+tcb functions:deploy createBubble --env test-env-id
+
+# 3. 冒烟测试
+echo "执行冒烟测试..."
+node ../../scripts/smoke-test.js
+
+echo "✅ 部署完成"
+</code></pre>
+
+<h4>建议沉淀的脚本</h4>
+<ul>
+    <li>数据库迁移执行脚本</li>
+    <li>多环境一键部署脚本</li>
+    <li>冒烟测试脚本</li>
+    <li>版本发布脚本</li>
+    <li>数据备份脚本</li>
+</ul>
+
+<h3>4.6 项目目录结构规范</h3>
+<pre><code>glubble/                          # 项目根目录
+├── flutter/                      # 前端 Flutter 项目
+│   ├── lib/
+│   │   ├── features/             # 业务模块
+│   │   ├── core/                 # 核心基础
+│   │   ├── shared/               # 公共组件
+│   │   └── main.dart
+│   └── pubspec.yaml
+├── cloudbase/                    # 后端 CloudBase 项目
+│   ├── functions/                # 云函数
+│   │   ├── createBubble/
+│   │   ├── getBubbles/
+│   │   └── ...
+│   ├── common/                   # 公共共享模块
+│   │   ├── response.js
+│   │   ├── auth.js
+│   │   └── db.js
+│   ├── migrations/               # 数据库迁移文件
+│   │   ├── 001_init_users.sql
+│   │   └── ...
+│   ├── scripts/                  # 工具脚本
+│   │   ├── migrate.py
+│   │   └── deploy.sh
+│   └── cloudbaserc.json
+├── docs/                         # 项目文档
+│   ├── api/
+│   ├── db/
+│   └── architecture.md
+├── .gitignore
+└── README.md
+</code></pre>
+</details>
+
+<!-- 第五章 线上运维与稳定性兜底 -->
+<details>
+<summary>五、线上运维与稳定性兜底</summary>
+<div class="section-intro">
+    上线只是开始，线上运维能力是区分普通开发和资深开发的关键。本章讲解监控告警、问题排查、故障处理、性能优化、稳定性兜底、发布回滚全流程。
+</div>
+
+<h3>5.1 线上运维体系全景</h3>
+<h4>日常运维工作内容</h4>
+<ul>
+    <li><strong>监控告警</strong>：每日看系统运行状态，错误率、响应时间、调用量</li>
+    <li><strong>日志巡检</strong>：定期查看错误日志，提前发现潜在问题</li>
+    <li><strong>数据备份</strong>：确保备份正常，定期验证可恢复</li>
+    <li><strong>性能优化</strong>：慢查询优化、接口性能优化、成本优化</li>
+    <li><strong>问题处理</strong>：处理用户反馈的线上问题，排查修复</li>
+    <li><strong>版本迭代</strong>：按计划发布新功能，保障上线稳定</li>
+</ul>
+
+<h4>运维核心目标</h4>
+<p>保障系统稳定可用、快速发现并解决问题、持续优化性能与成本。</p>
+
+<h3>5.2 监控告警体系搭建</h3>
+<h4>监控四大黄金指标</h4>
+<table class="table-box">
+    <tr><th>指标</th><th>说明</th><th>正常标准</th></tr>
+    <tr><td>错误率</td><td>请求失败的比例</td><td>低于 0.1%</td></tr>
+    <tr><td>响应时间</td><td>接口平均耗时、P95 耗时</td><td>普通接口小于 500ms</td></tr>
+    <tr><td>调用量</td><td>QPS、每日请求数</td><td>与历史趋势对比</td></tr>
+    <tr><td>资源使用率</td><td>内存、CPU、数据库连接数</td><td>低于 70%</td></tr>
+</table>
+
+<h4>告警分级</h4>
+<ul>
+    <li><strong>P0 紧急</strong>：核心功能不可用、大量用户受影响 → 短信、电话告警，立即处理</li>
+    <li><strong>P1 重要</strong>：重要功能异常、部分用户受影响 → 企业微信/钉钉告警，2小时内处理</li>
+    <li><strong>P2 一般</strong>：普通问题、少量用户 → 邮件告警，工作日处理</li>
+</ul>
+
+<h4>CloudBase 可用监控能力</h4>
+<ul>
+    <li>云函数监控：调用次数、错误次数、平均耗时、冷启动次数</li>
+    <li>数据库监控：CPU、连接数、慢查询、QPS</li>
+    <li>存储监控：存储量、上传下载流量</li>
+    <li>自定义告警规则，配置阈值触发通知</li>
+</ul>
+
+<h3>5.3 日志规范与问题排查方法论</h3>
+<h4>日志要记录什么</h4>
+<ul>
+    <li>关键业务节点：创建、更新、删除等操作</li>
+    <li>所有错误异常：必须带错误栈、上下文信息</li>
+    <li>第三方调用：入参出参、耗时、结果</li>
+    <li>关键数据变更：变更前后对比、操作人</li>
+</ul>
+
+<h4>排查问题五步法</h4>
+<ol>
+    <li><strong>收集信息</strong>：什么问题？什么时候出现？影响范围？有没有复现路径？</li>
+    <li><strong>复现问题</strong>：尽量在测试环境复现，确定稳定复现步骤</li>
+    <li><strong>缩小范围</strong>
+        <ul>
+            <li>是前端问题还是后端问题？</li>
+            <li>是哪个接口、哪个模块出的错？</li>
+            <li>是数据库、业务逻辑还是第三方服务？</li>
+        </ul>
+    </li>
+    <li><strong>定位根因</strong>：查日志、看错误栈、定位到具体代码行</li>
+    <li><strong>验证修复</strong>：修复后验证，确认问题解决，回归测试</li>
+</ol>
+
+<div class="tip">
+    💡 排查技巧：先看错误信息，再看日志上下文，不要上来就猜。90% 的问题日志里都有答案。
+</div>
+
+<h3>5.4 线上故障分级与应急响应</h3>
+<h4>故障分级</h4>
+<table class="table-box">
+    <tr><th>级别</th><th>定义</th><th>响应时间</th><th>处理优先级</th></tr>
+    <tr><td>P0 致命</td><td>核心功能不可用，大量用户受影响</td><td>立即响应</td><td>最高，停止一切其他工作</td></tr>
+    <tr><td>P1 严重</td><td>重要功能异常，部分用户受影响</td><td>30分钟内响应</td><td>高，优先处理</td></tr>
+    <tr><td>P2 一般</td><td>普通功能bug，少量用户</td><td>工作日内</td><td>正常迭代修复</td></tr>
+    <tr><td>P3 轻微</td><td>体验问题、文案错误</td><td>排期修复</td><td>低</td></tr>
+</table>
+
+<h4>P0 故障处理流程</h4>
+<ol>
+    <li><strong>止损优先</strong>：先恢复服务，再排查原因。能回滚先回滚，能降级先降级</li>
+    <li><strong>同步信息</strong>：及时同步给相关人，说明影响范围、处理进度</li>
+    <li><strong>定位修复</strong>：快速定位问题，临时修复方案</li>
+    <li><strong>验证恢复</strong>：确认服务恢复正常</li>
+    <li><strong>事后复盘</strong>：根因分析、改进措施、避免再发生</li>
+</ol>
+
+<div class="warn">
+    ⚠️ 重要原则：线上故障先止损，不要死磕根因耽误时间。用户体验和服务可用性是第一位的。
+</div>
+
+<h3>5.5 性能优化实战方法论</h3>
+<h4>性能优化通用步骤</h4>
+<ol>
+    <li><strong>先测量</strong>：性能数据是多少？瓶颈在哪里？不要凭感觉优化</li>
+    <li><strong>定目标</strong>：优化到什么程度？比如接口耗时从 1s 降到 300ms</li>
+    <li><strong>做优化</strong>：针对瓶颈点优化</li>
+    <li><strong>再验证</strong>：优化后效果怎么样？有没有达到目标？有没有副作用？</li>
+</ol>
+
+<h4>常见性能瓶颈与优化手段</h4>
+<table class="table-box">
+    <tr><th>瓶颈</th><th>优化手段</th></tr>
+    <tr><td>慢查询</td><td>加索引、优化 SQL、分页、减少联表</td></tr>
+    <tr><td>接口慢</td><td>缓存热点数据、减少数据库查询、并行调用</td></tr>
+    <tr><td>列表卡顿</td><td>分页加载、虚拟列表、图片懒加载</td></tr>
+    <tr><td>冷启动慢</td><td>减小包体积、初始化外置、预置并发</td></tr>
+    <tr><td>写入慢</td><td>批量写入、异步写入、消息队列削峰</td></tr>
+</table>
+
+<h3>5.6 稳定性兜底七板斧</h4>
+<p>高可用系统的标配手段，保障系统在各种异常情况下依然可用。</p>
+
+<h4>1. 幂等</h4>
+<p>同一个请求调用多次结果一致，防止重复提交、网络重发导致数据错误。</p>
+
+<h4>2. 重试</h4>
+<p>网络抖动、临时失败时，自动重试，提升成功率。</p>
+<ul>
+    <li>只读接口可以重试，写入接口要配合幂等</li>
+    <li>指数退避：重试间隔逐渐变长</li>
+    <li>设置最大重试次数，避免无限重试</li>
+</ul>
+
+<h4>3. 熔断</h4>
+<p>依赖的第三方服务挂了，快速失败，不要拖垮自己。</p>
+<ul>
+    <li>失败率达到阈值，触发熔断</li>
+    <li>熔断期间直接返回错误，不调用下游</li>
+    <li>定期探测，恢复后自动关闭熔断</li>
+</ul>
+
+<h4>4. 降级</h4>
+<p>系统压力大时，暂时关闭非核心功能，保证核心功能可用。</p>
+<ul>
+    <li>比如推荐功能挂了，保证列表浏览正常</li>
+    <li>通过功能开关控制，一键降级</li>
+</ul>
+
+<h4>5. 限流</h4>
+<p>限制请求频率，防止恶意刷接口、突发流量打垮系统。</p>
+
+<h4>6. 缓存</h4>
+<p>热点数据放缓存，减少数据库压力，提升响应速度。</p>
+<ul>
+    <li>适合读多写少的数据</li>
+    <li>注意缓存一致性、缓存过期策略</li>
+</ul>
+
+<h4>7. 隔离</h4>
+<p>不同业务、不同模块隔离，一个出问题不影响其他。</p>
+<ul>
+    <li>核心功能和非核心功能隔离</li>
+    <li>第三方调用单独线程池/实例</li>
+</ul>
+
+<h3>5.7 数据备份与灾难恢复</h3>
+<h4>备份策略</h4>
+<table class="table-box">
+    <tr><th>备份类型</th><th>频率</th><th>保留时间</th><th>用途</th></tr>
+    <tr><td>自动日备份</td><td>每天凌晨</td><td>7天</td><td>日常问题恢复</td></tr>
+    <tr><td>手动备份</td><td>版本上线前</td><td>长期</td><td>版本回滚兜底</td></tr>
+    <tr><td>月度归档</td><td>每月底</td><td>半年以上</td><td>历史数据归档</td></tr>
+</table>
+
+<h4>灾难恢复</h4>
+<ol>
+    <li>评估影响范围和严重程度</li>
+    <li>选择合适的备份点</li>
+    <li>恢复到临时环境验证数据完整性</li>
+    <li>正式恢复，验证业务可用</li>
+    <li>事后分析原因，避免再次发生</li>
+</ol>
+
+<div class="tip">
+    💡 重要：备份一定要定期做恢复演练，不要等到出事了才发现备份坏了。
+</div>
+
+<h3>5.8 版本发布与灰度回滚</h3>
+<h4>标准发布流程</h4>
+<ol>
+    <li>需求评审 → 技术方案 → 开发 → 测试</li>
+    <li>预发布环境验证，用真实数据场景测试</li>
+    <li>选择低峰期发布（如凌晨、非工作日）</li>
+    <li>先执行数据库迁移</li>
+    <li>再部署云函数/前端</li>
+    <li>发布后立即冒烟测试，验证核心功能</li>
+    <li>发布后观察 1-2 小时，监控指标是否正常</li>
+</ol>
+
+<h4>灰度发布</h4>
+<p>新版本不一下子全量上线，先给一小部分用户用，验证没问题再逐步放开，降低风险。</p>
+<ul>
+    <li>按用户 ID 灰度：先给 1% 用户开放</li>
+    <li>按设备灰度：内测用户先体验</li>
+    <li>CloudBase 云函数支持版本管理，实现流量灰度</li>
+</ul>
+
+<h4>回滚机制</h4>
+<p>上线后发现严重问题，快速回退到上一个稳定版本。</p>
+<ul>
+    <li>云函数：控制台切换回上一个版本，1分钟内完成</li>
+    <li>数据库：回滚迁移脚本，或从备份恢复</li>
+    <li>前端：App 发布无法快速回滚，所以必须更谨慎，先灰度再全量</li>
+</ul>
+</details>
+
+<!-- 第六章 AI工程化集成 -->
+<details>
+<summary>六、AI 工程化集成实践</summary>
+<div class="section-intro">
+    AI 能力是现代全栈项目的标配，但不是调个 API 就完事。本章讲解企业级 AI 工程化：统一接入层、多 provider 容错、成本控制、异步任务队列、用量护栏，结合项目场景落地。
+</div>
+
+<h3>6.1 AI 工程化核心认知</h3>
+<h4>什么是 AI 工程化</h4>
+<p>把 AI 能力稳定、可靠、低成本地集成到产品中，而不是简单的 API 调用。要考虑容错、成本、性能、安全、可运维。</p>
+
+<h4>AI 集成常见坑</h4>
+<ul>
+    <li>单一大模型服务商，挂了就全挂</li>
+    <li>不做成本控制，月底账单爆炸</li>
+    <li>同步调用大模型，接口超时</li>
+    <li>输入不做校验，被注入攻击</li>
+    <li>没有用量监控，超了都不知道</li>
+</ul>
+
+<h3>6.2 统一 LLM 接入层架构设计</h3>
+<h4>为什么需要统一接入层</h4>
+<ul>
+    <li>屏蔽不同厂商的 API 差异，业务层不用关心具体服务商</li>
+    <li>方便切换、新增服务商，不用改业务代码</li>
+    <li>统一做限流、熔断、计费、日志</li>
+</ul>
+
+<h4>分层架构</h4>
+<pre><code>业务层 → 统一AI网关 → 服务商适配层 → 各大模型服务商
+</code></pre>
+
+<h4>核心能力</h4>
+<ul>
+    <li>统一的调用接口</li>
+    <li>多服务商自动切换</li>
+    <li>失败重试与降级</li>
+    <li>Token 用量统计</li>
+    <li>输入输出安全校验</li>
+    <li>成本控制与告警</li>
+</ul>
+
+<h3>6.3 多提供商容错与降级策略</h3>
+<h4>核心思路</h4>
+<p>不要把鸡蛋放一个篮子里。配置多个模型服务商，一个挂了自动切另一个，保障可用性。</p>
+
+<h4>策略实现</h4>
+<ol>
+    <li><strong>主备模式</strong>：默认用主服务商，失败自动切备用服务商</li>
+    <li><strong>均分流量</strong>：请求按比例分给多个服务商，避免单家超限</li>
+    <li><strong>按场景选型</strong>：简单任务用便宜模型，复杂任务用好模型</li>
+</ol>
+
+<h4>失败降级链路</h4>
+<pre><code>调用主模型 → 失败 → 重试1次 → 再失败 → 切换备用模型 → 再失败 → 返回降级结果
+</code></pre>
+
+<div class="tip">
+    💡 设计原则：fail-soft 优先。AI 能力属于增强功能，不能因为 AI 挂了导致主业务不可用。极端情况返回兜底结果，保证主流程通畅。
+</div>
+
+<h3>6.4 输入裁剪与 Token 成本控制</h3>
+<h4>Token 是什么</h4>
+<p>大模型按 Token 计费，Token 是模型处理文本的单位，大概 1000 Token ≈ 700 汉字。输入输出都计费，控制输入长度就是省钱。</p>
+
+<h4>成本优化手段</h4>
+<ol>
+    <li><strong>输入裁剪</strong>
+        <ul>
+            <li>移除不必要的上下文、冗余信息</li>
+            <li>长文本先摘要，再送入模型</li>
+            <li>设置最大输入长度限制，超长截断</li>
+        </ul>
+    </li>
+    <li><strong>输出限制</strong>
+        <ul>
+            <li>设置 max_tokens，限制输出长度</li>
+            <li>明确指令，让模型简洁回答</li>
+        </ul>
+    </li>
+    <li><strong>选型优化</strong>
+        <ul>
+            <li>简单任务用轻量模型，便宜又快</li>
+            <li>复杂任务才用高级模型</li>
+        </ul>
+    </li>
+    <li><strong>缓存复用</strong>
+        <ul>
+            <li>相同的问题缓存答案，不用重复调用</li>
+            <li>高频请求命中率很高，大幅省钱</li>
+        </ul>
+    </li>
+</ol>
+
+<h3>6.5 异步任务队列架构（AI 生图典型场景）</h3>
+<h4>为什么用异步</h4>
+<p>AI 生图、长文本生成耗时久（几秒到几十秒），同步调用会导致接口超时、用户等待。异步架构：提交任务 → 后台处理 → 完成通知。</p>
+
+<h4>架构组成</h4>
+<table class="table-box">
+    <tr><th>组件</th><th>作用</th></tr>
+    <tr><td>任务提交接口</td><td>接收请求，入队，返回任务ID</td></tr>
+    <tr><td>任务队列</td><td>待处理任务排队，削峰填谷</td></tr>
+    <tr><td>Worker 进程</td><td>定时拉取任务，执行 AI 调用</td></tr>
+    <tr><td>任务状态表</td><td>记录任务状态、进度、结果</td></tr>
+    <tr><td>结果查询/通知</td><td>用户查询进度，完成后推送通知</td></tr>
+</table>
+
+<h4>任务状态机</h4>
+<ul>
+    <li><code>pending</code>：等待处理</li>
+    <li><code>processing</code>：处理中</li>
+    <li><code>success</code>：成功</li>
+    <li><code>failed</code>：失败</li>
+</ul>
+
+<h4>租约式任务领取</h4>
+<p>避免多个 Worker 重复处理同一个任务：</p>
+<ol>
+    <li>Worker 领取任务时，加锁并设置租约过期时间</li>
+    <li>规定时间内没处理完，租约过期，其他 Worker 可以重新领取</li>
+    <li>处理完成，标记成功</li>
+    <li>失败回退到 pending，可重试</li>
+</ol>
+
+<h4>CloudBase 实现方案</h4>
+<ul>
+    <li>数据库表存任务，状态字段标记进度</li>
+    <li>定时云函数作为 Worker，每分钟拉取待处理任务</li>
+    <li>处理完成更新任务状态，存结果</li>
+    <li>前端轮询查询任务状态，或用订阅消息通知</li>
+</ul>
+
+<h3>6.6 用量监控与成本护栏</h3>
+<h4>用量统计</h4>
+<ul>
+    <li>每次调用记录 Token 用量、费用</li>
+    <li>按用户、按天、按模型维度统计</li>
+    <li>存入数据库，方便查询对账</li>
+</ul>
+
+<h4>成本护栏机制</h4>
+<ol>
+    <li><strong>单用户限额</strong>：每个用户每天/每月免费次数上限，超了收费或限制</li>
+    <li><strong>全局日限额</strong>：整个项目每日预算上限，超了自动降级或暂停服务</li>
+    <li><strong>超额告警</strong>：用到 80% 发告警通知，提前感知</li>
+    <li><strong>异常熔断</strong>：短时间用量暴增，自动熔断，防止刷接口</li>
+</ol>
+
+<h3>6.7 Prompt 工程规范与安全</h3>
+<h4>Prompt 编写原则</h4>
+<ul>
+    <li>角色明确：告诉模型扮演什么角色</li>
+    <li>任务清晰：明确要做什么，输出格式是什么</li>
+    <li>约束具体：限制范围、长度、风格</li>
+    <li>示例引导：给例子，模型更容易符合预期</li>
+</ul>
+
+<h4>安全规范</h4>
+<ul>
+    <li>用户输入做过滤，防止提示词注入攻击</li>
+    <li>敏感内容校验，输出违规内容拦截</li>
+    <li>不把系统提示词暴露给前端</li>
+    <li>用户输入和系统提示词分开，不直接拼接</li>
+</ul>
+</details>
+
+<!-- 第七章 企业级能力进阶 -->
+<details>
+<summary>七、企业级全栈能力进阶</summary>
+<div class="section-intro">
+    本章对齐企业招聘要求，讲解全栈工程师能力模型、面试核心考点、项目经验包装、技术选型与架构思维，帮你把技术能力转化为求职竞争力。
+</div>
+
+<h3>7.1 初中级全栈工程师能力模型</h3>
+<table class="table-box">
+    <tr><th>维度</th><th>初级全栈</th><th>中级全栈</th></tr>
+    <tr><td>前端能力</td><td>熟练使用框架开发页面，实现交互</td><td>能做架构设计、性能优化、组件封装</td></tr>
+    <tr><td>后端能力</td><td>能写简单接口，会 CRUD</td><td>能设计表结构、做业务分层、处理复杂业务逻辑</td></tr>
+    <tr><td>数据库</td><td>会写基础 SQL</td><td>会索引优化、事务处理、数据建模</td></tr>
+    <tr><td>部署运维</td><td>会部署代码，能看日志</td><td>懂多环境、发布流程、问题排查、性能优化</td></tr>
+    <tr><td>工程化</td><td>会用 Git</td><td>懂分支管理、代码规范、模块化设计</td></tr>
+    <tr><td>安全意识</td><td>基础了解</td><td>懂权限控制、SQL注入、数据安全</td></tr>
+    <tr><td>业务理解</td><td>能实现需求</td><td>能理解业务背景，给出技术方案建议</td></tr>
+    <tr><td>问题解决</td><td>遇到问题知道怎么查</td><td>能独立排查线上问题，给出解决方案</td></tr>
+</table>
+
+<div class="tip">
+    💡 你的定位：移动端 10 年经验 + 全栈项目实战，面试突出「前端/移动端能力扎实，后端具备独立开发能力，能独立负责项目全流程」，这是很大的差异化优势。
+</div>
+
+<h3>7.2 企业面试核心考察点</h3>
+<h4>后端基础必问</h4>
+<ul>
+    <li>说一下 Node.js 的理解，和浏览器 JS 有什么区别？</li>
+    <li>什么是 RESTful API？你怎么设计接口？</li>
+    <li>数据库三范式是什么？你怎么设计表结构？</li>
+    <li>索引的原理？什么情况会失效？</li>
+    <li>什么是事务？ACID 是什么？</li>
+    <li>常见的 SQL 注入、XSS、CSRF 攻击怎么防范？</li>
+    <li>什么是 JWT？优缺点是什么？</li>
+    <li>说一下你对 Serverless 的理解，优缺点是什么？</li>
+</ul>
+
+<h4>项目实战必问</h4>
+<ul>
+    <li>介绍一下项目，技术选型是什么？为什么这么选？</li>
+    <li>数据库怎么设计的？有哪些表？关系是什么？</li>
+    <li>云函数怎么部署的？多环境怎么管理？</li>
+    <li>遇到过什么线上问题？怎么排查和解决的？</li>
+    <li>性能优化做过哪些？效果怎么样？</li>
+    <li>用户量上来了，你会怎么优化架构？</li>
+    <li>AI 能力怎么集成的？怎么做成本控制？</li>
+    <li>怎么保证线上发布的稳定性？</li>
+</ul>
+
+<h4>工程与思维必问</h4>
+<ul>
+    <li>怎么理解微服务？Serverless 和微服务的区别？</li>
+    <li>怎么评估一个需求的开发工作量？</li>
+    <li>线上出了紧急问题，你的处理流程是什么？</li>
+    <li>你做过最有挑战的项目是什么？难点在哪？</li>
+</ul>
+
+<h3>7.3 项目经验包装与表达技巧</h3>
+<h4>STAR 法则</h4>
+<ul>
+    <li><strong>S 情境（Situation）</strong>：什么背景下做的这个项目</li>
+    <li><strong>T 任务（Task）</strong>：你负责什么，目标是什么</li>
+    <li><strong>A 行动（Action）</strong>：你具体做了什么，用了什么技术，怎么实现的</li>
+    <li><strong>R 结果（Result）</strong>：取得了什么成果，性能提升多少，解决了什么问题</li>
+</ul>
+
+<h4>项目标准表述</h4>
+<p>「这是我独立从 0 到 1 设计开发的全栈产品，前端用 Flutter 实现跨端，后端基于腾讯云 CloudBase 搭建 Serverless 架构，使用 Node.js 开发云函数，PostgreSQL 做数据存储。我独立完成了需求梳理、技术选型、数据库设计、前后端开发、部署上线全流程。设计了完整的用户体系、数据模型和 RLS 行级权限策略，保障数据安全。集成了 AI 能力，采用异步任务队列架构，设计了多提供商容错与成本护栏机制。目前核心功能已经开发完成，正在推进双端应用商店上架。」</p>
+
+<h3>7.4 技术选型方法论</h3>
+<h4>选型核心原则</h4>
+<ol>
+    <li><strong>业务优先</strong>：技术服务于业务，不是为了炫技用新技术</li>
+    <li><strong>团队匹配</strong>：选团队熟悉的技术，降低学习成本</li>
+    <li><strong>生态成熟</strong>：社区活跃、文档完善、问题好查</li>
+    <li><strong>成本可控</strong>：开发成本、运维成本、扩容成本</li>
+    <li><strong>可扩展性</strong>：未来业务增长能扛住</li>
+</ol>
+
+<h4>为什么选 CloudBase + Flutter</h4>
+<ul>
+    <li>个人开发者、小团队，Serverless 不用运维服务器，效率高</li>
+    <li>Flutter 一套代码多端发布，开发成本低</li>
+    <li>CloudBase 一体化后端，数据库、云函数、存储都有，不用拼凑服务</li>
+    <li>按量计费，初期成本低，用户起来了再扩容</li>
+    <li>生态完善，文档齐全，上手快</li>
+</ul>
+
+<h3>7.5 架构设计基础思维</h3>
+<h4>架构设计核心目标</h4>
+<ul>
+    <li>高性能：响应快、并发高</li>
+    <li>高可用：稳定、少出问题、出问题能快速恢复</li>
+    <li>可扩展：业务增长能平滑扩容</li>
+    <li>可维护：代码好懂、好改、好排查</li>
+    <li>安全：数据安全、权限控制</li>
+    <li>成本：投入产出合理</li>
+</ul>
+
+<h4>常见架构模式</h4>
+<ul>
+    <li><strong>MVC / MVVM</strong>：前端/客户端分层</li>
+    <li><strong>三层架构</strong>：表现层、业务层、数据层</li>
+    <li><strong>微服务</strong>：按业务拆分成独立服务</li>
+    <li><strong>Serverless</strong>：云函数，按需运行，免运维</li>
+</ul>
+
+<h4>架构演进思路</h4>
+<p>不要一开始就做完美架构，随着业务发展逐步演进。</p>
+<ol>
+    <li>初期：单体架构，快速上线，验证业务</li>
+    <li>增长：模块化、优化性能、加缓存</li>
+    <li>规模化：微服务、分库分表、多机房</li>
+</ol>
+
+<h3>7.6 中级全栈工程师企业专项能力清单</h3>
+<table class="table-box">
+<tr><th>能力分类</th><th>能力项</th><th>企业实际工作内容</th><th>项目可落地实践</th><th>面试表达提示</th></tr>
+<tr>
+<td>安全体系</td>
+<td>多层防御、防注入、敏感数据保护</td>
+<td>外部输入校验、SQL防注入、敏感信息脱敏、密钥生命周期管理</td>
+<td>统一入口参数校验；PG参数化查询；密码bcrypt哈希；日志脱敏；密钥全部环境变量管理</td>
+<td>“我坚持业务层+数据库RLS两层权限防护，即使业务逻辑漏写判断，数据库层面依然可以阻止越权访问”</td>
+</tr>
+<tr>
+<td>可观测性</td>
+<td>结构化日志 & 全链路traceId</td>
+<td>日志带requestId、userId，便于问题检索；区分业务指标与平台技术指标</td>
+<td>封装统一日志工具；一次请求从Flutter到云函数透传requestId，所有日志打印该标识</td>
+<td>“线上排查用户问题，我可以通过traceId一键检索整条请求链路所有日志，快速定位故障点”</td>
+</tr>
+<tr>
+<td>性能与容量</td>
+<td>容量评估、压测、慢SQL治理</td>
+<td>需求阶段评估承载上限；上线前压测；定期巡检慢查询，提前发现性能隐患</td>
+<td>使用k6对核心接口做并发压测；定期EXPLAIN分析高频SQL；简单做用户规模容量推演</td>
+<td>“我不会等线上流量上来出现卡顿再优化，会提前做容量评估和压测，识别潜在瓶颈”</td>
+</tr>
+<tr>
+<td>方案输出</td>
+<td>技术方案文档 & ADR架构决策记录</td>
+<td>需求评审识别风险；输出技术方案，包含风险预案、发布回滚步骤；记录架构选型取舍</td>
+<td>新增复杂功能输出简短技术方案；记录技术选型的取舍（为何选择PG+定时Worker而不是MQ）</td>
+<td>“拿到需求我不会直接上手写代码，会先输出技术方案，梳理边界case、风险点、降级与回滚方案”</td>
+</tr>
+<tr>
+<td>质量保障</td>
+<td>分层测试思维、边界用例、代码自查CR</td>
+<td>单元测试、集成测试；设计边界用例；代码评审关注安全、异常、性能隐患</td>
+<td>对核心service编写单元测试；建立自我CR检查清单；编写接口冒烟测试脚本</td>
+<td>“我会区分单元测试、集成测试、冒烟测试，对于bug修复会补充对应的测试用例，防止后续回归”</td>
+</tr>
+<tr>
+<td>业务合规风控</td>
+<td>内容风控、隐私最小化、账号注销数据处理</td>
+<td>用户UGC内容审核；遵循隐私规范；账号注销的数据清理流程</td>
+<td>设计用户发布内容的安全检测链路；设计账号注销软删除、敏感信息清除逻辑</td>
+<td>“面向C端产品，我会考虑UGC内容风控、用户隐私与账号注销的数据处理流程”</td>
+</tr>
+<tr>
+<td>架构演进思维</td>
+<td>技术债务治理、架构取舍、并发竞争识别</td>
+<td>识别技术债务，小步持续重构；权衡复杂度、性能、成本；识别并发更新数据竞争问题</td>
+<td>项目迭代中局部重构旧模块；PG行锁简单实践；记录架构选型的权衡，拒绝过度设计</td>
+<td>“架构没有完美方案，我会结合业务阶段做取舍，优先避免过度设计，随业务逐步演进”</td>
+</tr>
+<tr>
+<td>预案演练</td>
+<td>故障预案与简易混沌演练</td>
+<td>针对核心故障编写处置预案；模拟依赖故障验证降级逻辑是否生效</td>
+<td>编写核心场景故障预案；模拟AI第三方服务失败，验证系统降级逻辑</td>
+<td>“除了实现正常流程，我也会思考各种依赖故障场景，准备降级与故障处置预案”</td>
+</tr>
+</table>
+
+</details>
+
+<!-- 第八章 实战落地清单 -->
+<details>
+<summary>八、项目实战落地清单</summary>
+<div class="section-intro">
+    可直接执行的行动清单，按阶段推进，边学边练，把知识真正变成自己的能力。
+</div>
+
+<h3>8.1 第一阶段：现有项目梳理与规范化（1-2周）</h3>
+<ul>
+    <li>☐ 梳理所有云函数，按「入口→业务→数据」三层重构，分层清晰</li>
+    <li>☐ 整理数据库所有表，输出表结构文档，标注字段含义、类型、索引</li>
+    <li>☐ 梳理所有云函数的入参、出参、功能，输出接口文档</li>
+    <li>☐ 统一所有接口返回格式，封装 success/fail 公共方法</li>
+    <li>☐ 统一错误码定义，全项目对齐</li>
+    <li>☐ 所有接口加入参数校验</li>
+    <li>☐ 检查所有 SQL 语句，给常用查询字段补上索引</li>
+    <li>☐ 代码里硬编码的配置全部改成环境变量</li>
+    <li>☐ 给所有表加上 updated_at 自动更新触发器</li>
+</ul>
+
+<h3>8.2 第二阶段：工程化体系补全（2-3周）</h3>
+<ul>
+    <li>☐ 搭建开发、测试两套 CloudBase 环境，实现配置隔离</li>
+    <li>☐ 完善数据库迁移机制，所有表结构变更都走迁移文件</li>
+    <li>☐ 沉淀公共共享模块：鉴权、响应、数据库访问、限流</li>
+    <li>☐ 配置 CloudBase CLI，实现命令行一键部署云函数</li>
+    <li>☐ 统一 Git 提交规范，建立 main/develop/feature 分支策略</li>
+    <li>☐ 编写部署脚本、迁移执行脚本，自动化重复操作</li>
+    <li>☐ 给核心业务逻辑加上单元测试</li>
+    <li>☐ 建立函数自检机制，部署后自动验证健康状态</li>
+</ul>
+
+<h3>8.3 第三阶段：运维与稳定性能力落地（1-2周）</h3>
+<ul>
+    <li>☐ 配置数据库自动备份策略，手动做一次恢复演练</li>
+    <li>☐ 给所有云函数加上规范的错误日志，包含上下文信息</li>
+    <li>☐ 整理线上问题排查手册，包含常见问题、排查步骤</li>
+    <li>☐ 做一次完整的版本发布演练，走开发→测试→上线完整流程</li>
+    <li>☐ 优化核心云函数冷启动性能，减小部署包体积</li>
+    <li>☐ 核心接口实现幂等性，防止重复提交</li>
+    <li>☐ 给重要接口加上限流保护</li>
+    <li>☐ 设计版本回滚方案，验证可快速回退</li>
+</ul>
+
+<h3>8.4 第四阶段：AI 工程化深化（1-2周）</h3>
+<ul>
+    <li>☐ 重构 AI 调用为统一接入层，屏蔽服务商差异</li>
+    <li>☐ 接入第二个大模型服务商，实现主备自动切换</li>
+    <li>☐ 实现 Token 用量统计，按用户、按天维度记录</li>
+    <li>☐ 加上成本护栏：单用户限额、全局日限额、超额告警</li>
+    <li>☐ AI 生图改为异步任务队列架构，用定时 Worker 处理</li>
+    <li>☐ 实现任务状态机、租约式领取、失败重试</li>
+    <li>☐ 做输入裁剪优化，控制 Token 成本</li>
+</ul>
+
+<h3>8.5 第五阶段：企业级能力进阶（持续）</h3>
+<ul>
+    <li>☐ 学习事务、锁、并发控制等数据库高级知识</li>
+    <li>☐ 做一次全量安全审计，检查权限、注入风险</li>
+    <li>☐ 学习 CI/CD 流水线配置，实现提交自动部署测试环境</li>
+    <li>☐ 研究灰度发布、限流降级等高可用方案</li>
+    <li>☐ 持续优化成本，合理配置云函数资源，避免浪费</li>
+    <li>☐ 定期复盘线上问题，沉淀方法论</li>
+</ul>
+
+<div class="tip">
+    💡 执行建议：每周完成 3-5 项，不用追求速度，每做完一项都真正理解为什么这么做。两个月下来，后端工程能力会有质的提升。
+</div>
+</details>
+
+<p style="text-align:center; color:#999; margin-top:40px; font-size:13px;">
+    手册持续迭代 · 结合项目实战边学边练 · 技术栈 Flutter + CloudBase + Node.js + PostgreSQL
+</p>
+
+</body>
+</html>
